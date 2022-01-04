@@ -3,6 +3,8 @@
 #include "GameTexture.h"
 #include <cassert>
 #include <cstdio>
+#include <array>
+#include <string>
 
 namespace
 {
@@ -70,19 +72,30 @@ namespace
 
 int main(int argc, char* args[])
 {
+	// satisfy compiler warning for not referencing parameters
 	for (int i = 0; i < argc; ++i)
 	{
 		printf("command line args %u %s\n", i, args[i]);
 	}
 
+	// initialise SDL and other systems such as font and PNG loading
 	SDL_Structure sdl = init();
 
-	printf("SDL Successfully Initialised");
+	printf("SDL Initialisation complete");
 
 	// load fonts and textures
 	TTF_Font* font = loadFont("font/lazy.ttf", 28);
 	game::Texture texture{ sdl.renderer, "img/dice.png" };
 	game::Texture fontTexture{ sdl.renderer, font, "hello texture world!" };
+
+	// use unique_ptr to add texture to an array or vector 
+	// since default construction of Texture has been removed
+	std::array<std::unique_ptr<game::Texture>, 10> texArr;
+	for (int i = 0; i < 10; ++i)
+	{
+		const std::string str = std::to_string(i);
+		texArr[i] = std::make_unique<game::Texture>( sdl.renderer, font, str.c_str() );
+	}
 
 	//Main loop flag
 	bool quit = false;
@@ -93,23 +106,28 @@ int main(int argc, char* args[])
 	//While application is running
 	while (!quit)
 	{
-		//Handle events on queue
+		// handle events on queue
 		while (SDL_PollEvent(&e) != 0)
 		{
-			//User requests quit
+			// user requests quit
 			if (e.type == SDL_QUIT)
 			{
 				quit = true;
 			}
 		}
 
-		//Clear screen
+		// clear screen
 		SDL_SetRenderDrawColor(sdl.renderer, 0x00, 0x00, 0x20, 0xFF);
 		SDL_RenderClear(sdl.renderer);
 
 		//Render current frame
 		texture.render((SCREEN_WIDTH - texture.getWidth()) / 2, (SCREEN_HEIGHT - texture.getHeight()) / 2);
 		fontTexture.render(0, 0, NULL, 0.0);
+
+		for (int i = 0; i < 10; ++i)
+		{
+			texArr[i]->render(0, 30 + 30 * i);
+		}
 
 		//Update screen
 		SDL_RenderPresent(sdl.renderer);

@@ -6,6 +6,18 @@ namespace game
 	Texture::Texture(SDL_Renderer* renderer, const char* pngPath)
 		: m_width{0}, m_height{0}, m_renderer{renderer}, m_texture(nullptr, SDL_DestroyTexture)
 	{
+		initImpl(pngPath);
+	}
+
+	bool Texture::init(SDL_Renderer* renderer, const char* pngPath)
+	{
+		m_renderer = renderer;
+		initImpl(pngPath);
+		return true;
+	}
+
+	bool Texture::initImpl(const char* pngPath)
+	{
 		//The final texture
 		SDL_Texture* newTexture = NULL;
 
@@ -20,7 +32,7 @@ namespace game
 			//Color key image
 			SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
-			//Create texture from surface pixels
+			// create texture from surface pixels
 			newTexture = SDL_CreateTextureFromSurface(m_renderer, loadedSurface);
 			if (newTexture == NULL)
 			{
@@ -28,24 +40,37 @@ namespace game
 			}
 			else
 			{
-				//Get image dimensions
+				// store image dimensions
 				m_width = loadedSurface->w;
 				m_height = loadedSurface->h;
 			}
 
-			//Get rid of old loaded surface
+			// delete intermediate surface (required to load to texture)
 			SDL_FreeSurface(loadedSurface);
 		}
 
 		//Return success
 		m_texture.reset(newTexture);
 		assert(m_texture != nullptr);
+		return true;
 	}
 
 	Texture::Texture(SDL_Renderer* renderer, TTF_Font* font, const char* text)
 		: m_width{ 0 }, m_height{ 0 }, m_renderer{ renderer }, m_texture(nullptr, SDL_DestroyTexture)
 	{
-		//Render text surface
+		initImpl(font, text);
+	}
+
+	bool Texture::init(SDL_Renderer* renderer, TTF_Font* font, const char* text)
+	{
+		m_renderer = renderer;
+		initImpl(font, text);
+		return true;
+	}
+
+	bool Texture::initImpl(TTF_Font* font, const char* text)
+	{
+		// TODO: parameterize color
 		SDL_Color textColor{ 0xFF, 0xFF, 0xFF };
 		SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, textColor);
 		if (textSurface == NULL)
@@ -54,7 +79,7 @@ namespace game
 		}
 		else
 		{
-			//Create texture from surface pixels
+			// create texture from surface pixels
 			m_texture.reset(SDL_CreateTextureFromSurface(m_renderer, textSurface));
 			if (m_texture == nullptr)
 			{
@@ -62,17 +87,17 @@ namespace game
 			}
 			else
 			{
-				//Get image dimensions
+				// store image dimensions
 				m_width = textSurface->w;
 				m_height = textSurface->h;
 			}
 
-			//Get rid of old surface
+			// delete intermediate surface (required to load to texture)
 			SDL_FreeSurface(textSurface);
 		}
 
-		//Return success
 		assert(m_texture != nullptr);
+		return true;
 	}
 
 	void Texture::setColor(Uint8 red, Uint8 green, Uint8 blue)
