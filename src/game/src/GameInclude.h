@@ -1,6 +1,6 @@
 #pragma once
 
-//#pragma warning( push )
+#pragma warning( push )
 
 #pragma warning( disable: 26812 26819 )
 
@@ -10,4 +10,8 @@
 #include "SDL_ttf.h"
 #include "SDL_image.h"
 
-//#pragma warning( pop )
+#pragma warning( pop )
+
+constexpr int SCREEN_WIDTH = 1280;
+constexpr int SCREEN_HEIGHT = 720;
+

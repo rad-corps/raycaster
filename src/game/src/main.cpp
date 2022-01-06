@@ -1,6 +1,7 @@
 
 #include "GameInclude.h"
 #include "GameTexture.h"
+#include "GameStateMain.h"
 #include <cassert>
 #include <cstdio>
 #include <array>
@@ -8,9 +9,6 @@
 
 namespace
 {
-	constexpr int SCREEN_WIDTH = 1280;
-	constexpr int SCREEN_HEIGHT = 720;
-
 	struct SDL_Structure
 	{
 		SDL_Renderer* renderer;
@@ -84,18 +82,9 @@ int main(int argc, char* args[])
 	printf("SDL Initialisation complete");
 
 	// load fonts and textures
-	TTF_Font* font = loadFont("font/lazy.ttf", 28);
-	game::Texture texture{ sdl.renderer, "img/dice.png" };
-	game::Texture fontTexture{ sdl.renderer, font, "hello texture world!" };
-
-	// use unique_ptr to add texture to an array or vector 
-	// since default construction of Texture has been removed
-	std::array<std::unique_ptr<game::Texture>, 10> texArr;
-	for (int i = 0; i < 10; ++i)
-	{
-		const std::string str = std::to_string(i);
-		texArr[i] = std::make_unique<game::Texture>( sdl.renderer, font, str.c_str() );
-	}
+	TTF_Font* font = loadFont("font/PTC55F.ttf", 28);
+	
+	std::unique_ptr<game::IGameState> gameState(new game::GameStateMain(sdl.renderer, font));
 
 	//Main loop flag
 	bool quit = false;
@@ -114,19 +103,20 @@ int main(int argc, char* args[])
 			{
 				quit = true;
 			}
+			else if (e.type == SDL_KEYDOWN)
+			{
+				gameState->keyDown(e.key.keysym.sym);
+			}
 		}
 
 		// clear screen
 		SDL_SetRenderDrawColor(sdl.renderer, 0x00, 0x00, 0x20, 0xFF);
 		SDL_RenderClear(sdl.renderer);
 
-		//Render current frame
-		texture.render((SCREEN_WIDTH - texture.getWidth()) / 2, (SCREEN_HEIGHT - texture.getHeight()) / 2);
-		fontTexture.render(0, 0, NULL, 0.0);
-
-		for (int i = 0; i < 10; ++i)
+		std::unique_ptr<game::IGameState> newState = gameState->update();
+		if (newState)
 		{
-			texArr[i]->render(0, 30 + 30 * i);
+			gameState = std::move(newState);
 		}
 
 		//Update screen

@@ -9,8 +9,8 @@ namespace game
 	class Texture
 	{
 	public:
-		// allow default construction.
-		// will be unusable until init is called. 
+		// don't allow default construction
+		// we don't want to allow a Texture to be in an invalid state. 
 		Texture() = delete;
 
 		// remove copy construction/assignment
@@ -18,8 +18,8 @@ namespace game
 		Texture& operator=(const Texture&) = delete;
 
 		// enforce default move construction and assignment
-		Texture(Texture&&) = default;
-		Texture& operator=(Texture&&) = default;
+		Texture(Texture&&) = delete;
+		Texture& operator=(Texture&&) = delete;
 
 		// create a texture from a .PNG file
 		Texture(SDL_Renderer* renderer, const char* pngPath);
