@@ -114,8 +114,13 @@ int main(int argc, char* args[])
 		SDL_RenderClear(sdl.renderer);
 
 		std::unique_ptr<game::IGameState> newState = gameState->update();
+		
+		// even if the state changed, render the old state one last time
+		// as the new state has not had a chance to update yet.
+		gameState->render();
 		if (newState)
 		{
+			gameState.reset(nullptr);
 			gameState = std::move(newState);
 		}
 

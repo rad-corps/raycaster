@@ -20,12 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\GameStateMain.cpp" />
+    <ClCompile Include="src\GameStateMoving.cpp" />
     <ClCompile Include="src\GameTexture.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GameInclude.h" />
     <ClInclude Include="src\GameStateMain.h" />
+    <ClInclude Include="src\GameStateMoving.h" />
     <ClInclude Include="src\IGameState.h" />
     <ClInclude Include="src\GameTexture.h" />
   </ItemGroup>

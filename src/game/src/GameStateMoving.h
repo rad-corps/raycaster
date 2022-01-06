@@ -9,10 +9,10 @@
 
 namespace game
 {
-	class GameStateMain : public IGameState
+	class GameStateMoving : public IGameState
 	{
 	public:
-		GameStateMain(SDL_Renderer* renderer, TTF_Font* font);
+		GameStateMoving(SDL_Renderer* renderer, TTF_Font* font);
 		std::unique_ptr<IGameState> update() override;
 		void render() override;
 		void keyDown(SDL_Keycode) override;
