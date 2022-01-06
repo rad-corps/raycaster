@@ -19,17 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\GameStateMain.cpp" />
-    <ClCompile Include="src\GameStateMoving.cpp" />
+    <ClCompile Include="src\GameRendering.cpp" />
     <ClCompile Include="src\GameTexture.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\states\GameStateMain.cpp" />
+    <ClCompile Include="src\states\GameStateScaling.cpp" />
+    <ClCompile Include="src\states\IGameState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GameInclude.h" />
-    <ClInclude Include="src\GameStateMain.h" />
-    <ClInclude Include="src\GameStateMoving.h" />
-    <ClInclude Include="src\IGameState.h" />
+    <ClInclude Include="src\GameRendering.h" />
     <ClInclude Include="src\GameTexture.h" />
+    <ClInclude Include="src\states\GameStateMain.h" />
+    <ClInclude Include="src\states\GameStateScaling.h" />
+    <ClInclude Include="src\states\IGameState.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

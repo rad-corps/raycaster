@@ -1,7 +1,7 @@
 
 #include "GameInclude.h"
 #include "GameTexture.h"
-#include "GameStateMain.h"
+#include "states/GameStateMain.h"
 #include <cassert>
 #include <cstdio>
 #include <array>
@@ -9,12 +9,6 @@
 
 namespace
 {
-	struct SDL_Structure
-	{
-		SDL_Renderer* renderer;
-		SDL_Window* window;
-	};
-
 	TTF_Font* loadFont(const char* font, int fontSz)
 	{
 		TTF_Font* ret = TTF_OpenFont(font, fontSz);
@@ -22,9 +16,8 @@ namespace
 		return ret;
 	}
 
-	SDL_Structure init()
+	void init()
 	{
-		SDL_Structure ret;
 		//Initialize SDL
 		if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		{
@@ -49,7 +42,7 @@ namespace
 			printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
 		}
 
-		ret.window = SDL_CreateWindow(
+		auto window = SDL_CreateWindow(
 			"SDL Game",
 			SDL_WINDOWPOS_UNDEFINED,
 			SDL_WINDOWPOS_UNDEFINED,
@@ -58,13 +51,13 @@ namespace
 			SDL_WINDOW_SHOWN
 		);
 
-		ret.renderer = SDL_CreateRenderer(
-			ret.window,
-			-1, // index of the rendering driver to init. -1 for first available 
-			SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+		global::instance.setRenderer(
+			SDL_CreateRenderer(
+				window,
+				-1, // index of the rendering driver to init. -1 for first available 
+				SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+			)
 		);
-
-		return ret;
 	}
 }
 
@@ -77,14 +70,14 @@ int main(int argc, char* args[])
 	}
 
 	// initialise SDL and other systems such as font and PNG loading
-	SDL_Structure sdl = init();
+	init();
 
-	printf("SDL Initialisation complete");
+	printf("SDL Initialisation complete\n");
 
 	// load fonts and textures
-	TTF_Font* font = loadFont("font/PTC55F.ttf", 28);
+	global::instance.setFont(loadFont("font/PTC55F.ttf", 28));
 	
-	std::unique_ptr<game::IGameState> gameState(new game::GameStateMain(sdl.renderer, font));
+	std::unique_ptr<game::IGameState> gameState = std::make_unique<game::GameStateMain>();
 
 	//Main loop flag
 	bool quit = false;
@@ -110,22 +103,21 @@ int main(int argc, char* args[])
 		}
 
 		// clear screen
-		SDL_SetRenderDrawColor(sdl.renderer, 0x00, 0x00, 0x20, 0xFF);
-		SDL_RenderClear(sdl.renderer);
+		SDL_SetRenderDrawColor(global::instance.getRenderer(), 0x00, 0x00, 0x20, 0xFF);
+		SDL_RenderClear(global::instance.getRenderer());
 
-		std::unique_ptr<game::IGameState> newState = gameState->update();
-		
-		// even if the state changed, render the old state one last time
-		// as the new state has not had a chance to update yet.
-		gameState->render();
-		if (newState)
+		gameState->update();
+		if (gameState->hasPendingState())
 		{
-			gameState.reset(nullptr);
-			gameState = std::move(newState);
+			gameState = gameState->popPendingState();
+		}
+		else
+		{
+			gameState->render();
 		}
 
 		//Update screen
-		SDL_RenderPresent(sdl.renderer);
+		SDL_RenderPresent(global::instance.getRenderer());
 	}
 
 	return 0;

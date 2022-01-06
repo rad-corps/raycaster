@@ -3,20 +3,8 @@
 
 namespace game
 {
-	Texture::Texture(SDL_Renderer* renderer, const char* pngPath)
-		: m_width{0}, m_height{0}, m_renderer{renderer}, m_texture(nullptr, SDL_DestroyTexture)
-	{
-		initImpl(pngPath);
-	}
-
-	bool Texture::init(SDL_Renderer* renderer, const char* pngPath)
-	{
-		m_renderer = renderer;
-		initImpl(pngPath);
-		return true;
-	}
-
-	bool Texture::initImpl(const char* pngPath)
+	Texture::Texture(const char* pngPath)
+		: m_width{0}, m_height{0}, m_texture(nullptr, SDL_DestroyTexture)
 	{
 		//The final texture
 		SDL_Texture* newTexture = NULL;
@@ -33,7 +21,7 @@ namespace game
 			SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
 			// create texture from surface pixels
-			newTexture = SDL_CreateTextureFromSurface(m_renderer, loadedSurface);
+			newTexture = SDL_CreateTextureFromSurface(global::instance.getRenderer(), loadedSurface);
 			if (newTexture == NULL)
 			{
 				printf("Unable to create texture from %s! SDL Error: %s\n", pngPath, SDL_GetError());
@@ -52,25 +40,11 @@ namespace game
 		//Return success
 		m_texture.reset(newTexture);
 		assert(m_texture != nullptr);
-		return true;
 	}
 
-	Texture::Texture(SDL_Renderer* renderer, TTF_Font* font, const char* text)
-		: m_width{ 0 }, m_height{ 0 }, m_renderer{ renderer }, m_texture(nullptr, SDL_DestroyTexture)
+	Texture::Texture(TTF_Font* font, const char* text)
+		: m_width{ 0 }, m_height{ 0 }, m_texture(nullptr, SDL_DestroyTexture)
 	{
-		initImpl(font, text);
-	}
-
-	bool Texture::init(SDL_Renderer* renderer, TTF_Font* font, const char* text)
-	{
-		m_renderer = renderer;
-		initImpl(font, text);
-		return true;
-	}
-
-	bool Texture::initImpl(TTF_Font* font, const char* text)
-	{
-		// TODO: parameterize color
 		SDL_Color textColor{ 0xFF, 0xFF, 0xFF };
 		SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, textColor);
 		if (textSurface == NULL)
@@ -80,7 +54,7 @@ namespace game
 		else
 		{
 			// create texture from surface pixels
-			m_texture.reset(SDL_CreateTextureFromSurface(m_renderer, textSurface));
+			m_texture.reset(SDL_CreateTextureFromSurface(global::instance.getRenderer(), textSurface));
 			if (m_texture == nullptr)
 			{
 				printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
@@ -97,7 +71,6 @@ namespace game
 		}
 
 		assert(m_texture != nullptr);
-		return true;
 	}
 
 	void Texture::setColor(Uint8 red, Uint8 green, Uint8 blue)
@@ -118,10 +91,10 @@ namespace game
 		SDL_SetTextureAlphaMod(m_texture.get(), alpha);
 	}
 
-	void Texture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+	void Texture::render(int x, int y, SDL_Rect* clip, float scale, double angle, SDL_Point* center, SDL_RendererFlip flip)
 	{
 		//Set rendering space and render to screen
-		SDL_Rect renderQuad = { x, y, m_width, m_height };
+		SDL_Rect renderQuad{ x, y, static_cast<int>(scale * m_width), static_cast<int>(scale * m_height) };
 
 		//Set clip rendering dimensions
 		if (clip != NULL)
@@ -131,7 +104,7 @@ namespace game
 		}
 
 		//Render to screen
-		SDL_RenderCopyEx(m_renderer, m_texture.get(), clip, &renderQuad, angle, center, flip);
+		SDL_RenderCopyEx(global::instance.getRenderer(), m_texture.get(), clip, &renderQuad, angle, center, flip);
 	}
 
 	int Texture::getWidth()

@@ -9,6 +9,7 @@
 #include "SDL_mouse.h"
 #include "SDL_ttf.h"
 #include "SDL_image.h"
+#include "GameRendering.h"
 
 #pragma warning( pop )
 

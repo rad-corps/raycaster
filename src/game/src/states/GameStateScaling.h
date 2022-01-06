@@ -4,16 +4,16 @@
 #include <array>
 #include <memory>
 #include "IGameState.h"
-#include "GameTexture.h"
-#include "GameInclude.h"
+#include "../GameTexture.h"
+#include "../GameInclude.h"
 
 namespace game
 {
-	class GameStateMain : public IGameState
+	class GameStateScaling : public IGameState
 	{
 	public:
-		GameStateMain(SDL_Renderer* renderer, TTF_Font* font);
-		std::unique_ptr<IGameState> update() override;
+		GameStateScaling();
+		void update() override;
 		void render() override;
 		void keyDown(SDL_Keycode) override;
 		void keyUp(SDL_Keycode) override;
