@@ -23,6 +23,7 @@
     <ClCompile Include="src\GameTexture.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\states\GameStateMain.cpp" />
+    <ClCompile Include="src\states\GameStateRotating.cpp" />
     <ClCompile Include="src\states\GameStateScaling.cpp" />
     <ClCompile Include="src\states\IGameState.cpp" />
   </ItemGroup>
@@ -31,6 +32,7 @@
     <ClInclude Include="src\GameRendering.h" />
     <ClInclude Include="src\GameTexture.h" />
     <ClInclude Include="src\states\GameStateMain.h" />
+    <ClInclude Include="src\states\GameStateRotating.h" />
     <ClInclude Include="src\states\GameStateScaling.h" />
     <ClInclude Include="src\states\IGameState.h" />
   </ItemGroup>

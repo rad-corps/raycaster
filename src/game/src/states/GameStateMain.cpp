@@ -1,9 +1,10 @@
 #include "GameStateMain.h"
 #include "GameStateScaling.h"
+#include "GameStateRotating.h"
 
 namespace
 {
-	constexpr int NUM_OPTIONS = 1;
+	constexpr int NUM_OPTIONS = 2;
 }
 
 namespace game
@@ -15,7 +16,7 @@ namespace game
 		std::unique_ptr<game::Texture> bgTex;
 
 		Pimpl()
-			: optionsStrings{"0: Scaling"},
+			: optionsStrings{"0: Scaling", "1: Rotating"},
 			  bgTex{std::make_unique<game::Texture>("img/dice.png")}
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
@@ -61,6 +62,7 @@ namespace game
 			printf("0 pressed\n"); break;
 		case SDLK_1:
 		case SDLK_KP_1:
+			pushPendingState(std::make_unique<GameStateRotating>());
 			printf("1 pressed\n"); break;
 		case SDLK_2:
 		case SDLK_KP_2:
