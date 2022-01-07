@@ -100,6 +100,10 @@ int main(int argc, char* args[])
 			{
 				gameState->keyDown(e.key.keysym.sym);
 			}
+			else if (e.type == SDL_KEYUP)
+			{
+				gameState->keyUp(e.key.keysym.sym);
+			}
 		}
 
 		// clear screen

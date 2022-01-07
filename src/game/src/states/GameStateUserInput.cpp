@@ -104,6 +104,18 @@ namespace game
 		}
 	}
 
-	void GameStateUserInput::keyUp(SDL_Keycode)
-	{}
+	void GameStateUserInput::keyUp(SDL_Keycode keycode)
+	{
+		switch (keycode)
+		{
+		case SDLK_w:
+		case SDLK_s:
+			m_impl->velocity.y = 0;
+			break;
+		case SDLK_a:
+		case SDLK_d:
+			m_impl->velocity.x = 0;
+			break;
+		}
+	}
 }
