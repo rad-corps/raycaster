@@ -34,6 +34,7 @@ namespace game
 		std::unique_ptr<game::Texture> movingTex;
 		Scaler scaler;
 		glm::vec2 pos;
+		glm::vec2 velocity;
 
 		Pimpl() 
 			: optionsStrings{"0: Back", "W: Up", "A: Left", "S: Down", "D: Right" }
@@ -57,6 +58,7 @@ namespace game
 	void GameStateUserInput::update()
 	{
 		m_impl->scaler.update();
+		m_impl->pos += m_impl->velocity;
 	}
 
 	void GameStateUserInput::render()
@@ -88,23 +90,20 @@ namespace game
 			pushPendingState(std::make_unique<GameStateMain>());
 			break;
 		case SDLK_w:
-			m_impl->pos.y -= VELOCITY;
+			m_impl->velocity.y = -VELOCITY;
 			break;
 		case SDLK_a:
-			m_impl->pos.x -= VELOCITY;
+			m_impl->velocity.x = -VELOCITY;
 			break;
 		case SDLK_s:
-			m_impl->pos.y += VELOCITY;
+			m_impl->velocity.y = VELOCITY;
 			break;
 		case SDLK_d:
-			m_impl->pos.x += VELOCITY;
+			m_impl->velocity.x = VELOCITY;
 			break;
 		}
-
 	}
 
 	void GameStateUserInput::keyUp(SDL_Keycode)
-	{
-
-	}
+	{}
 }
