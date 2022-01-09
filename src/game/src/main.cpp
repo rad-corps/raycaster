@@ -1,7 +1,7 @@
 
 #include "Globals.h"
 #include "GameTexture.h"
-#include "scenes/GameSceneMain.h"
+#include "game/scenes/GameSceneMain.h"
 #include <cassert>
 #include <cstdio>
 #include <array>
@@ -77,7 +77,7 @@ int main(int argc, char* args[])
 	// load fonts and textures
 	global::instance.setFont(loadFont("font/PTC55F.ttf", 28));
 	
-	std::unique_ptr<game::IGameScene> gameState = std::make_unique<game::GameSceneMain>();
+	std::unique_ptr<rcgf::IGameScene> gameState = std::make_unique<game::GameSceneMain>();
 
 	//Main loop flag
 	bool quit = false;

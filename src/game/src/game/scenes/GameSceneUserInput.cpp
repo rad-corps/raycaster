@@ -30,20 +30,20 @@ namespace game
 	struct GameSceneUserInput::Pimpl
 	{
 		std::array<std::string, 5> optionsStrings;
-		std::array<std::unique_ptr<game::Texture>, NUM_OPTIONS> texArr;
-		std::unique_ptr<game::Texture> movingTex;
+		std::array<std::unique_ptr<rcgf::Texture>, NUM_OPTIONS> texArr;
+		std::unique_ptr<rcgf::Texture> movingTex;
 		Scaler scaler;
 		glm::vec2 pos;
 		glm::vec2 velocity;
 
 		Pimpl() 
 			: optionsStrings{"0: Back", "W: Up", "A: Left", "S: Down", "D: Right" }
-			, movingTex{std::make_unique<game::Texture>("img/dice.png")}
+			, movingTex{std::make_unique<rcgf::Texture>("img/dice.png")}
 			, pos{0.f,0.f}
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
 			{
-				texArr[i] = std::make_unique<game::Texture>(
+				texArr[i] = std::make_unique<rcgf::Texture>(
 					global::instance.getFont(), 
 					optionsStrings[i].c_str()
 				);

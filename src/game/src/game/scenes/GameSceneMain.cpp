@@ -13,16 +13,16 @@ namespace game
 	struct GameSceneMain::Pimpl
 	{
 		const std::array<std::string, 4> optionsStrings;
-		std::array<std::unique_ptr<game::Texture>, NUM_OPTIONS> texArr;
-		std::unique_ptr<game::Texture> bgTex;
+		std::array<std::unique_ptr<rcgf::Texture>, NUM_OPTIONS> texArr;
+		std::unique_ptr<rcgf::Texture> bgTex;
 
 		Pimpl()
 			: optionsStrings{"0: Scaling", "1: Rotating", "2: User Input"},
-			  bgTex{std::make_unique<game::Texture>("img/dice.png")}
+			  bgTex{std::make_unique<rcgf::Texture>("img/dice.png")}
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
 			{
-				texArr[i] = std::make_unique<game::Texture>(
+				texArr[i] = std::make_unique<rcgf::Texture>(
 					global::instance.getFont(), 
 					optionsStrings[i].c_str()
 				);

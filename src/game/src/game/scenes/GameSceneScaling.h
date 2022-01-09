@@ -9,10 +9,10 @@
 
 namespace game
 {
-	class GameStateRotating : public IGameScene
+	class GameSceneScaling : public rcgf::IGameScene
 	{
 	public:
-		GameStateRotating();
+		GameSceneScaling();
 		void update() override;
 		void render() override;
 		void keyDown(SDL_Keycode) override;

@@ -9,10 +9,10 @@
 
 namespace game
 {
-	class GameSceneScaling : public IGameScene
+	class GameSceneUserInput : public rcgf::IGameScene
 	{
 	public:
-		GameSceneScaling();
+		GameSceneUserInput();
 		void update() override;
 		void render() override;
 		void keyDown(SDL_Keycode) override;

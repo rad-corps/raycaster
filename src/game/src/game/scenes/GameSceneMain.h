@@ -9,10 +9,10 @@
 
 namespace game
 {
-	class GameSceneUserInput : public IGameScene
+	class GameSceneMain : public rcgf::IGameScene
 	{
 	public:
-		GameSceneUserInput();
+		GameSceneMain();
 		void update() override;
 		void render() override;
 		void keyDown(SDL_Keycode) override;

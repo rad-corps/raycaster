@@ -4,7 +4,7 @@
 #include <memory>
 #include "Globals.h"
 
-namespace game
+namespace rcgf
 {
 	class Texture
 	{

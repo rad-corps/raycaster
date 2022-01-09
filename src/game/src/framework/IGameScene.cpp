@@ -1,6 +1,6 @@
 #include "IGameScene.h"
 
-namespace game
+namespace rcgf
 {
 	void IGameScene::pushPendingState(std::unique_ptr<IGameScene> nextState_)
 	{

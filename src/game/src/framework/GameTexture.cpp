@@ -1,7 +1,7 @@
 #include "GameTexture.h"
 #include <cassert>
 
-namespace game
+namespace rcgf
 {
 	Texture::Texture(const char* pngPath)
 		: m_width{0}, m_height{0}, m_texture(nullptr, SDL_DestroyTexture)

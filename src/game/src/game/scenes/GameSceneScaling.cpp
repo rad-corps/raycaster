@@ -53,17 +53,17 @@ namespace game
 	struct GameSceneScaling::Pimpl
 	{
 		std::array<std::string, 1> optionsStrings;
-		std::array<std::unique_ptr<game::Texture>, NUM_OPTIONS> texArr;
-		std::unique_ptr<game::Texture> movingTex;
+		std::array<std::unique_ptr<rcgf::Texture>, NUM_OPTIONS> texArr;
+		std::unique_ptr<rcgf::Texture> movingTex;
 		Scaler scaler;
 
 		Pimpl() 
 			: optionsStrings{"0: Back"}
-			, movingTex{std::make_unique<game::Texture>("img/dice.png")}			
+			, movingTex{std::make_unique<rcgf::Texture>("img/dice.png")}			
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
 			{
-				texArr[i] = std::make_unique<game::Texture>(
+				texArr[i] = std::make_unique<rcgf::Texture>(
 					global::instance.getFont(), 
 					optionsStrings[i].c_str()
 				);

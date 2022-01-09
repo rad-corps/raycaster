@@ -3,7 +3,7 @@
 #include <memory> // std::unique_ptr
 #include "Globals.h"
 
-namespace game
+namespace rcgf
 {
 	class IGameScene
 	{
