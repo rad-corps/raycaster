@@ -2,10 +2,11 @@
 #include "GameSceneScaling.h"
 #include "GameSceneRotating.h"
 #include "GameSceneUserInput.h"
+#include "GameSceneAABBCollision.h"
 
 namespace
 {
-	constexpr int NUM_OPTIONS = 3;
+	constexpr int NUM_OPTIONS = 4;
 }
 
 namespace game
@@ -17,7 +18,7 @@ namespace game
 		std::unique_ptr<rcgf::Texture> bgTex;
 
 		Pimpl()
-			: optionsStrings{"0: Scaling", "1: Rotating", "2: User Input"},
+			: optionsStrings{"0: Scaling", "1: Rotating", "2: User Input", "3: AABB Collision"},
 			  bgTex{std::make_unique<rcgf::Texture>("img/dice.png")}
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
@@ -60,18 +61,19 @@ namespace game
 		case SDLK_0:
 		case SDLK_KP_0:
 			pushPendingState(std::make_unique<GameSceneScaling>());
-			printf("0 pressed\n"); break;
+			break;
 		case SDLK_1:
 		case SDLK_KP_1:
 			pushPendingState(std::make_unique<GameStateRotating>());
-			printf("1 pressed\n"); break;
+			break;
 		case SDLK_2:
 		case SDLK_KP_2:
 			pushPendingState(std::make_unique<GameSceneUserInput>());
-			printf("2 pressed\n"); break;
+			break;
 		case SDLK_3:
 		case SDLK_KP_3:
-			printf("3 pressed\n"); break;
+			pushPendingState(std::make_unique<GameSceneAABBCollision>());
+			break;
 		}
 	}
 	

@@ -23,6 +23,7 @@
     <ClCompile Include="src\framework\Texture.cpp" />
     <ClCompile Include="src\framework\Globals.cpp" />
     <ClCompile Include="src\framework\IGameScene.cpp" />
+    <ClCompile Include="src\game\scenes\GameSceneAABBCollision.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMain.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneRotating.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneScaling.cpp" />
@@ -34,6 +35,7 @@
     <ClInclude Include="src\framework\Texture.h" />
     <ClInclude Include="src\framework\Globals.h" />
     <ClInclude Include="src\framework\IGameScene.h" />
+    <ClInclude Include="src\game\scenes\GameSceneAABBCollision.h" />
     <ClInclude Include="src\game\scenes\GameSceneMain.h" />
     <ClInclude Include="src\game\scenes\GameSceneRotating.h" />
     <ClInclude Include="src\game\scenes\GameSceneScaling.h" />

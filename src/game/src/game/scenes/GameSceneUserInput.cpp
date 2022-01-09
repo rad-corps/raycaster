@@ -56,8 +56,7 @@ namespace game
 				);
 			}
 
-			std::unique_ptr<rcgf::Texture> tempTexChicken = std::make_unique<rcgf::Texture>("img/chicken_2.png");
-			animation = std::make_unique<rcgf::Animation>(std::move(tempTexChicken), SPRITE_W, SPRITE_H, 4, 4);
+			animation = std::make_unique<rcgf::Animation>(std::make_unique<rcgf::Texture>("img/chicken_2.png"), SPRITE_W, SPRITE_H, 4, 4);
 		}
 	};
 
@@ -72,7 +71,7 @@ namespace game
 		{
 			m_impl->animCounter = 0;
 			++m_impl->animIdx;
-			if (m_impl->animIdx > 15)
+			if (m_impl->animIdx > 7)
 			{
 				m_impl->animIdx = 0;
 			}
