@@ -1,13 +1,13 @@
-#include "IGameState.h"
+#include "IGameScene.h"
 
 namespace game
 {
-	void IGameState::pushPendingState(std::unique_ptr<IGameState> nextState_)
+	void IGameScene::pushPendingState(std::unique_ptr<IGameScene> nextState_)
 	{
 		m_nextState = std::move(nextState_);
 	}
 
-	std::unique_ptr<IGameState> IGameState::popPendingState()
+	std::unique_ptr<IGameScene> IGameScene::popPendingState()
 	{
 		if (m_nextState)
 		{
@@ -16,7 +16,7 @@ namespace game
 		return nullptr;
 	}
 	
-	bool IGameState::hasPendingState()
+	bool IGameScene::hasPendingState()
 	{
 		return m_nextState ? true : false;
 	}

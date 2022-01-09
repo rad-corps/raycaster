@@ -1,5 +1,5 @@
-#include "GameStateScaling.h"
-#include "GameStateMain.h"
+#include "GameSceneScaling.h"
+#include "GameSceneMain.h"
 
 namespace
 {
@@ -50,7 +50,7 @@ namespace
 
 namespace game
 {
-	struct GameStateScaling::Pimpl
+	struct GameSceneScaling::Pimpl
 	{
 		std::array<std::string, 1> optionsStrings;
 		std::array<std::unique_ptr<game::Texture>, NUM_OPTIONS> texArr;
@@ -71,16 +71,16 @@ namespace game
 		}
 	};
 
-	GameStateScaling::GameStateScaling()
+	GameSceneScaling::GameSceneScaling()
 		: m_impl{ std::make_unique<Pimpl>() }
 	{}
 
-	void GameStateScaling::update()
+	void GameSceneScaling::update()
 	{
 		m_impl->scaler.update();
 	}
 
-	void GameStateScaling::render()
+	void GameSceneScaling::render()
 	{
 		for (int i = 0; i < NUM_OPTIONS; ++i)
 		{
@@ -99,20 +99,20 @@ namespace game
 		);
 	}
 
-	void GameStateScaling::keyDown(SDL_Keycode keycode)
+	void GameSceneScaling::keyDown(SDL_Keycode keycode)
 	{
 		switch (keycode)
 		{
 		case SDLK_0:
 		case SDLK_KP_0:
 			printf("switching to game state main\n"); 
-			pushPendingState(std::make_unique<GameStateMain>());
+			pushPendingState(std::make_unique<GameSceneMain>());
 			break;
 		}
 
 	}
 
-	void GameStateScaling::keyUp(SDL_Keycode)
+	void GameSceneScaling::keyUp(SDL_Keycode)
 	{
 
 	}

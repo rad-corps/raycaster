@@ -1,4 +1,4 @@
-#include "GameRendering.h"
+#include "Globals.h"
 
 namespace
 {

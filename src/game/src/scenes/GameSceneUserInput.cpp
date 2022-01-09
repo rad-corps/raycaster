@@ -1,5 +1,5 @@
-#include "GameStateUserInput.h"
-#include "GameStateMain.h"
+#include "GameSceneUserInput.h"
+#include "GameSceneMain.h"
 #include "glm/vec2.hpp"
 
 namespace
@@ -27,7 +27,7 @@ namespace
 
 namespace game
 {
-	struct GameStateUserInput::Pimpl
+	struct GameSceneUserInput::Pimpl
 	{
 		std::array<std::string, 5> optionsStrings;
 		std::array<std::unique_ptr<game::Texture>, NUM_OPTIONS> texArr;
@@ -51,17 +51,17 @@ namespace game
 		}
 	};
 
-	GameStateUserInput::GameStateUserInput()
+	GameSceneUserInput::GameSceneUserInput()
 		: m_impl{ std::make_unique<Pimpl>() }
 	{}
 
-	void GameStateUserInput::update()
+	void GameSceneUserInput::update()
 	{
 		m_impl->scaler.update();
 		m_impl->pos += m_impl->velocity;
 	}
 
-	void GameStateUserInput::render()
+	void GameSceneUserInput::render()
 	{
 		for (int i = 0; i < NUM_OPTIONS; ++i)
 		{
@@ -80,14 +80,14 @@ namespace game
 		);
 	}
 
-	void GameStateUserInput::keyDown(SDL_Keycode keycode)
+	void GameSceneUserInput::keyDown(SDL_Keycode keycode)
 	{
 		switch (keycode)
 		{
 		case SDLK_0:
 		case SDLK_KP_0:
 			printf("switching to game state main from user input\n"); 
-			pushPendingState(std::make_unique<GameStateMain>());
+			pushPendingState(std::make_unique<GameSceneMain>());
 			break;
 		case SDLK_w:
 			m_impl->velocity.y = -VELOCITY;
@@ -104,7 +104,7 @@ namespace game
 		}
 	}
 
-	void GameStateUserInput::keyUp(SDL_Keycode keycode)
+	void GameSceneUserInput::keyUp(SDL_Keycode keycode)
 	{
 		switch (keycode)
 		{

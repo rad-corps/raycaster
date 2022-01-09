@@ -5,10 +5,10 @@
 
 namespace game
 {
-	class IGameState
+	class IGameScene
 	{
 	public:
-		virtual ~IGameState() = default;
+		virtual ~IGameScene() = default;
 
 		// return nullptr on no change. 
 		virtual void update() = 0;
@@ -16,12 +16,12 @@ namespace game
 		virtual void keyDown(SDL_Keycode) = 0;
 		virtual void keyUp(SDL_Keycode) = 0;
 
-		void pushPendingState(std::unique_ptr<IGameState>);
+		void pushPendingState(std::unique_ptr<IGameScene>);
 		bool hasPendingState();
-		std::unique_ptr<IGameState> popPendingState();
+		std::unique_ptr<IGameScene> popPendingState();
 
 	private:
-		std::unique_ptr<IGameState> m_nextState;
+		std::unique_ptr<IGameScene> m_nextState;
 
 	};
 }

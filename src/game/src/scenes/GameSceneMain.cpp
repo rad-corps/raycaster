@@ -1,7 +1,7 @@
-#include "GameStateMain.h"
-#include "GameStateScaling.h"
-#include "GameStateRotating.h"
-#include "GameStateUserInput.h"
+#include "GameSceneMain.h"
+#include "GameSceneScaling.h"
+#include "GameSceneRotating.h"
+#include "GameSceneUserInput.h"
 
 namespace
 {
@@ -10,7 +10,7 @@ namespace
 
 namespace game
 {
-	struct GameStateMain::Pimpl
+	struct GameSceneMain::Pimpl
 	{
 		const std::array<std::string, 4> optionsStrings;
 		std::array<std::unique_ptr<game::Texture>, NUM_OPTIONS> texArr;
@@ -30,16 +30,16 @@ namespace game
 		}
 	};
 
-	GameStateMain::GameStateMain()
+	GameSceneMain::GameSceneMain()
 		: m_impl{std::make_unique<Pimpl>()}
 	{}
 
-	void GameStateMain::update()
+	void GameSceneMain::update()
 	{
 		
 	}
 
-	void GameStateMain::render()
+	void GameSceneMain::render()
 	{
 		//Render current frame
 		m_impl->bgTex->render(
@@ -53,13 +53,13 @@ namespace game
 		}
 	}
 
-	void GameStateMain::keyDown(SDL_Keycode keycode)
+	void GameSceneMain::keyDown(SDL_Keycode keycode)
 	{
 		switch (keycode)
 		{
 		case SDLK_0:
 		case SDLK_KP_0:
-			pushPendingState(std::make_unique<GameStateScaling>());
+			pushPendingState(std::make_unique<GameSceneScaling>());
 			printf("0 pressed\n"); break;
 		case SDLK_1:
 		case SDLK_KP_1:
@@ -67,7 +67,7 @@ namespace game
 			printf("1 pressed\n"); break;
 		case SDLK_2:
 		case SDLK_KP_2:
-			pushPendingState(std::make_unique<GameStateUserInput>());
+			pushPendingState(std::make_unique<GameSceneUserInput>());
 			printf("2 pressed\n"); break;
 		case SDLK_3:
 		case SDLK_KP_3:
@@ -75,7 +75,7 @@ namespace game
 		}
 	}
 	
-	void GameStateMain::keyUp(SDL_Keycode)
+	void GameSceneMain::keyUp(SDL_Keycode)
 	{
 
 	}

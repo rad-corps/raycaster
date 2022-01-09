@@ -3,16 +3,16 @@
 #include <string>
 #include <array>
 #include <memory>
-#include "IGameState.h"
+#include "IGameScene.h"
 #include "../GameTexture.h"
 #include "../GameInclude.h"
 
 namespace game
 {
-	class GameStateMain : public IGameState
+	class GameStateRotating : public IGameScene
 	{
 	public:
-		GameStateMain();
+		GameStateRotating();
 		void update() override;
 		void render() override;
 		void keyDown(SDL_Keycode) override;

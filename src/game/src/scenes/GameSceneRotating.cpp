@@ -1,5 +1,5 @@
-#include "GameStateRotating.h"
-#include "GameStateMain.h"
+#include "GameSceneRotating.h"
+#include "GameSceneMain.h"
 
 namespace
 {
@@ -81,7 +81,7 @@ namespace game
 		case SDLK_0:
 		case SDLK_KP_0:
 			printf("switching to game state main\n"); 
-			pushPendingState(std::make_unique<GameStateMain>());
+			pushPendingState(std::make_unique<GameSceneMain>());
 			break;
 		}
 
