@@ -1,6 +1,6 @@
 #include "GameSceneUserInput.h"
 #include "GameSceneMain.h"
-#include "glm/vec2.hpp"
+
 
 namespace
 {
@@ -68,8 +68,6 @@ namespace game
 			m_impl->texArr[i]->render(30, 30 + 30 * i);
 		}
 		const double angle = m_impl->scaler.getScale();
-		const int w = m_impl->movingTex->getWidth();
-		const int h = m_impl->movingTex->getHeight();
 
 		m_impl->movingTex->render(
 			static_cast<int>(m_impl->pos.x),

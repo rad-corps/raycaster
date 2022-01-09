@@ -19,24 +19,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\GameTexture.cpp" />
-    <ClCompile Include="src\Globals.cpp" />
+    <ClCompile Include="src\framework\GameTexture.cpp" />
+    <ClCompile Include="src\framework\Globals.cpp" />
+    <ClCompile Include="src\framework\IGameScene.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\scenes\GameSceneMain.cpp" />
     <ClCompile Include="src\scenes\GameSceneRotating.cpp" />
     <ClCompile Include="src\scenes\GameSceneScaling.cpp" />
     <ClCompile Include="src\scenes\GameSceneUserInput.cpp" />
-    <ClCompile Include="src\scenes\IGameScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\GameInclude.h" />
-    <ClInclude Include="src\GameTexture.h" />
-    <ClInclude Include="src\Globals.h" />
+    <ClInclude Include="src\framework\GameTexture.h" />
+    <ClInclude Include="src\framework\Globals.h" />
+    <ClInclude Include="src\framework\IGameScene.h" />
     <ClInclude Include="src\scenes\GameSceneMain.h" />
     <ClInclude Include="src\scenes\GameSceneRotating.h" />
     <ClInclude Include="src\scenes\GameSceneScaling.h" />
     <ClInclude Include="src\scenes\GameSceneUserInput.h" />
-    <ClInclude Include="src\scenes\IGameScene.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -145,8 +144,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <AdditionalIncludeDirectories>..\..\include\SDL2-2.0.18;..\..\include\SDL_image-2.0.5;..\..\include\SDL2_ttf-2.0.15;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\..\include\SDL2-2.0.18;..\..\include\SDL_image-2.0.5;..\..\include\SDL2_ttf-2.0.15;..\..\include;.\src\framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -164,8 +163,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <AdditionalIncludeDirectories>..\..\include\SDL2-2.0.18;..\..\include\SDL_image-2.0.5;..\..\include\SDL2_ttf-2.0.15;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\..\include\SDL2-2.0.18;..\..\include\SDL_image-2.0.5;..\..\include\SDL2_ttf-2.0.15;..\..\include;.\src\framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

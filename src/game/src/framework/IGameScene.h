@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory> // std::unique_ptr
-#include "../GameInclude.h"
+#include "Globals.h"
 
 namespace game
 {

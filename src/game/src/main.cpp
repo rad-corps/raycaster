@@ -1,5 +1,5 @@
 
-#include "GameInclude.h"
+#include "Globals.h"
 #include "GameTexture.h"
 #include "scenes/GameSceneMain.h"
 #include <cassert>

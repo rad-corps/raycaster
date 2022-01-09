@@ -2,7 +2,7 @@
 
 #include <string>
 #include <memory>
-#include "GameInclude.h"
+#include "Globals.h"
 
 namespace game
 {
