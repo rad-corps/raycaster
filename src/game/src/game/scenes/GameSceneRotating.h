@@ -4,7 +4,7 @@
 #include <array>
 #include <memory>
 #include "IGameScene.h"
-#include "GameTexture.h"
+#include "Texture.h"
 #include "Globals.h"
 
 namespace game

@@ -1,4 +1,4 @@
-#include "GameTexture.h"
+#include "Texture.h"
 #include <cassert>
 
 namespace rcgf

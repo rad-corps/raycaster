@@ -1,11 +1,15 @@
 #include "GameSceneUserInput.h"
 #include "GameSceneMain.h"
+#include "Animation.h"
 
 
 namespace
 {
 	constexpr int NUM_OPTIONS = 5;
 	constexpr float VELOCITY = 10.f;
+
+	constexpr int SPRITE_H = 59;
+	constexpr int SPRITE_W = 62;
 
 	class Scaler
 	{
@@ -32,6 +36,9 @@ namespace game
 		std::array<std::string, 5> optionsStrings;
 		std::array<std::unique_ptr<rcgf::Texture>, NUM_OPTIONS> texArr;
 		std::unique_ptr<rcgf::Texture> movingTex;
+		std::unique_ptr<rcgf::Animation> animation;
+		int animIdx = 0;
+		int animCounter = 0;
 		Scaler scaler;
 		glm::vec2 pos;
 		glm::vec2 velocity;
@@ -48,6 +55,9 @@ namespace game
 					optionsStrings[i].c_str()
 				);
 			}
+
+			std::unique_ptr<rcgf::Texture> tempTexChicken = std::make_unique<rcgf::Texture>("img/chicken_2.png");
+			animation = std::make_unique<rcgf::Animation>(std::move(tempTexChicken), SPRITE_W, SPRITE_H, 4, 4);
 		}
 	};
 
@@ -57,6 +67,16 @@ namespace game
 
 	void GameSceneUserInput::update()
 	{
+		++m_impl->animCounter;
+		if (m_impl->animCounter > 5)
+		{
+			m_impl->animCounter = 0;
+			++m_impl->animIdx;
+			if (m_impl->animIdx > 15)
+			{
+				m_impl->animIdx = 0;
+			}
+		}
 		m_impl->scaler.update();
 		m_impl->pos += m_impl->velocity;
 	}
@@ -76,6 +96,8 @@ namespace game
 			1.f,
 			angle
 		);
+
+		m_impl->animation->render(m_impl->animIdx, 600, 50);
 	}
 
 	void GameSceneUserInput::keyDown(SDL_Keycode keycode)

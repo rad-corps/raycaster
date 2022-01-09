@@ -19,7 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\framework\GameTexture.cpp" />
+    <ClCompile Include="src\framework\Animation.cpp" />
+    <ClCompile Include="src\framework\Texture.cpp" />
     <ClCompile Include="src\framework\Globals.cpp" />
     <ClCompile Include="src\framework\IGameScene.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMain.cpp" />
@@ -29,7 +30,8 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\framework\GameTexture.h" />
+    <ClInclude Include="src\framework\Animation.h" />
+    <ClInclude Include="src\framework\Texture.h" />
     <ClInclude Include="src\framework\Globals.h" />
     <ClInclude Include="src\framework\IGameScene.h" />
     <ClInclude Include="src\game\scenes\GameSceneMain.h" />

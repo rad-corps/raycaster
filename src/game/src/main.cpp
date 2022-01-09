@@ -1,6 +1,6 @@
 
 #include "Globals.h"
-#include "GameTexture.h"
+#include "Texture.h"
 #include "game/scenes/GameSceneMain.h"
 #include <cassert>
 #include <cstdio>
