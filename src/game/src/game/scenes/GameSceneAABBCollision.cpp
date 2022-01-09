@@ -1,5 +1,6 @@
 #include "GameSceneAABBCollision.h"
 #include "GameSceneMain.h"
+#include "Collision.h"
 #include "Globals.h"
 
 namespace
@@ -33,17 +34,7 @@ namespace game
 	void GameSceneAABBCollision::update()
 	{
 		// check for collision
-		SDL_Rect* r1 = &m_impl->r1;
-		SDL_Rect* r2 = &m_impl->r2;
-
-		if (r1->x + r1->w < r2->x // rect 1 on the left
-			|| r2->x + r2->w < r1->x  // rect 1 on the right
-			|| r2->y + r2->h < r1->y  //
-			|| r1->y + r1->h < r2->y  // 
-			)
-			m_impl->collisionFlag = false;
-		else
-			m_impl->collisionFlag = true;
+		m_impl->collisionFlag = rcgf::collision::aabb(m_impl->r1, m_impl->r2);
 	}
 
 	void GameSceneAABBCollision::render()
