@@ -3,22 +3,23 @@
 #include "GameSceneRotating.h"
 #include "GameSceneUserInput.h"
 #include "GameSceneAABBCollision.h"
+#include "GameScenePolygon.h"
 
 namespace
 {
-	constexpr int NUM_OPTIONS = 4;
+	constexpr int NUM_OPTIONS = 5;
 }
 
 namespace game
 {
 	struct GameSceneMain::Pimpl
 	{
-		const std::array<std::string, 4> optionsStrings;
+		const std::array<std::string, NUM_OPTIONS> optionsStrings;
 		std::array<std::unique_ptr<rcgf::Texture>, NUM_OPTIONS> texArr;
 		std::unique_ptr<rcgf::Texture> bgTex;
 
 		Pimpl()
-			: optionsStrings{"0: Scaling", "1: Rotating", "2: User Input", "3: AABB Collision"},
+			: optionsStrings{"0: Scaling", "1: Rotating", "2: User Input", "3: AABB Collision", "4: Polygon"},
 			  bgTex{std::make_unique<rcgf::Texture>("img/dice.png")}
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
@@ -73,6 +74,10 @@ namespace game
 		case SDLK_3:
 		case SDLK_KP_3:
 			pushPendingState(std::make_unique<GameSceneAABBCollision>());
+			break;
+		case SDLK_4:
+		case SDLK_KP_4:
+			pushPendingState(std::make_unique<GameScenePolygon>());
 			break;
 		}
 	}
