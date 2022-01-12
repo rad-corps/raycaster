@@ -39,6 +39,8 @@ namespace game
 		points[4].y = 10;
 		SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderDrawLines(global::instance.getRenderer(), points, 5);
+
+		global::instance.renderMonospaceText("HELLO WORLD 0123456789!", 100, 100);
 	}
 
 	void GameScenePolygon::keyDown(SDL_Keycode keycode)

@@ -10,6 +10,7 @@
 #include "SDL_ttf.h"
 #include "SDL_image.h"
 #include "glm/vec2.hpp"
+#include <string>
 
 #pragma warning( pop )
 
@@ -21,10 +22,10 @@ namespace global
 	class Global
 	{
 	public: 
+		void init();
 		TTF_Font* getFont();
 		SDL_Renderer* getRenderer();
-		void setRenderer(SDL_Renderer*);
-		void setFont(TTF_Font*);
+		void renderMonospaceText(const std::string& inp, int x, int y);
 	};
 
 	extern Global instance;

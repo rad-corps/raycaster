@@ -9,55 +9,9 @@
 
 namespace
 {
-	TTF_Font* loadFont(const char* font, int fontSz)
-	{
-		TTF_Font* ret = TTF_OpenFont(font, fontSz);
-		assert(ret != NULL);
-		return ret;
-	}
-
 	void init()
 	{
-		//Initialize SDL
-		if (SDL_Init(SDL_INIT_VIDEO) < 0)
-		{
-			printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-		}
-
-		//Set texture filtering to linear
-		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0"))
-		{
-			printf("Warning: Nearest pixel filtering not enabled!");
-		}
-
-		//Initialize PNG loading
-		if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
-		{
-			printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-		}
-
-		//Initialize SDL_ttf
-		if (TTF_Init() == -1)
-		{
-			printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
-		}
-
-		auto window = SDL_CreateWindow(
-			"SDL Game",
-			SDL_WINDOWPOS_UNDEFINED,
-			SDL_WINDOWPOS_UNDEFINED,
-			SCREEN_WIDTH,
-			SCREEN_HEIGHT,
-			SDL_WINDOW_SHOWN
-		);
-
-		global::instance.setRenderer(
-			SDL_CreateRenderer(
-				window,
-				-1, // index of the rendering driver to init. -1 for first available 
-				SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-			)
-		);
+		global::instance.init();
 	}
 }
 
@@ -74,8 +28,7 @@ int main(int argc, char* args[])
 
 	printf("SDL Initialisation complete\n");
 
-	// load fonts and textures
-	global::instance.setFont(loadFont("font/PTC55F.ttf", 28));
+	
 	
 	std::unique_ptr<rcgf::IGameScene> gameState = std::make_unique<game::GameSceneMain>();
 
