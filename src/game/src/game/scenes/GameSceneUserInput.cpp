@@ -1,6 +1,7 @@
 #include "GameSceneUserInput.h"
 #include "GameSceneMain.h"
 #include "Animation.h"
+#include <sstream>
 
 
 namespace
@@ -82,6 +83,15 @@ namespace game
 
 	void GameSceneUserInput::render()
 	{
+		// get mouse position
+		{
+			int x, y;
+			SDL_GetMouseState(&x, &y);
+			std::stringstream ss;
+			ss << "x:" << x << " y:" << y;
+			global::instance.renderMonospaceText(ss.str(), x, y);
+		}
+
 		for (int i = 0; i < NUM_OPTIONS; ++i)
 		{
 			m_impl->texArr[i]->render(30, 30 + 30 * i);
