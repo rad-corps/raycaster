@@ -74,6 +74,8 @@ namespace global
 		// load fonts and textures
 		setFont(loadFont("font/PTC55F.ttf", 28));
 
+
+		// works but its too big
 		monoText = std::make_unique<rcgf::Animation>(
 			std::make_unique<rcgf::Texture>("img/mono_font.png"), 
 			20, // sprite width

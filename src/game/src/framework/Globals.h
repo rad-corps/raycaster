@@ -10,12 +10,15 @@
 #include "SDL_ttf.h"
 #include "SDL_image.h"
 #include "glm/vec2.hpp"
+#include "glm/gtx/vector_angle.hpp"
 #include <string>
 
 #pragma warning( pop )
 
 constexpr int SCREEN_WIDTH = 1280;
+constexpr int CENTER_X = SCREEN_WIDTH / 2;
 constexpr int SCREEN_HEIGHT = 720;
+constexpr int CENTER_Y = SCREEN_HEIGHT / 2;
 
 namespace global
 {

@@ -2,6 +2,7 @@
 #include "GameSceneMain.h"
 #include "Collision.h"
 #include "Globals.h"
+#include "Polygon.h"
 
 namespace
 {
@@ -11,7 +12,9 @@ namespace game
 {
 	struct GameScenePolygon::Pimpl
 	{
+		std::unique_ptr<rcgf::Square> square;
 		Pimpl() 
+			: square{std::make_unique<rcgf::Square>(100)}
 		{
 		}
 	};
@@ -41,6 +44,8 @@ namespace game
 		SDL_RenderDrawLines(global::instance.getRenderer(), points, 5);
 
 		global::instance.renderMonospaceText("HELLO WORLD 0123456789!", 100, 100);
+
+		m_impl->square->render(glm::vec2(200,220));
 	}
 
 	void GameScenePolygon::keyDown(SDL_Keycode keycode)
