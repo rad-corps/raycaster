@@ -1,6 +1,5 @@
 #include "GameSceneMain.h"
-#include "GameSceneScaling.h"
-#include "GameSceneRotating.h"
+#include "GameSceneTransform.h"
 #include "GameSceneUserInput.h"
 #include "GameSceneAABBCollision.h"
 #include "GameScenePolygon.h"
@@ -20,7 +19,7 @@ namespace game
 		std::unique_ptr<rcgf::Texture> bgTex;
 
 		Pimpl()
-			: optionsStrings{"0: Scale/Rotate/Translate", "1: User Input", "2: AABB Collision", "3: Polygon", "4: Math"},
+			: optionsStrings{"0: Transform", "1: User Input", "2: AABB Collision", "3: Polygon", "4: Math"},
 			  bgTex{std::make_unique<rcgf::Texture>("img/dice.png")}
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
@@ -62,7 +61,7 @@ namespace game
 		{
 		case SDLK_0:
 		case SDLK_KP_0:
-			pushPendingState(std::make_unique<GameSceneScaling>());
+			pushPendingState(std::make_unique<GameSceneTransform>());
 			break;
 		case SDLK_1:
 		case SDLK_KP_1:

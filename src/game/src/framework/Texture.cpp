@@ -91,8 +91,15 @@ namespace rcgf
 		SDL_SetTextureAlphaMod(m_texture.get(), alpha);
 	}
 
-	void Texture::render(int x, int y, SDL_Rect* clip, float scale, double angle, SDL_Point* center, SDL_RendererFlip flip)
+	void Texture::render(int x, int y, SDL_Rect* clip, float scale, double angle, SDL_RendererFlip flip, bool drawFromCenter)
 	{
+		if ( drawFromCenter )
+		{
+			// find center then move x and y back from center
+			x -= static_cast<int>(scale * m_width / 2);
+			y -= static_cast<int>(scale * m_height / 2);
+		}
+
 		//Set rendering space and render to screen
 		SDL_Rect renderQuad{ x, y, static_cast<int>(scale * m_width), static_cast<int>(scale * m_height) };
 
@@ -104,7 +111,7 @@ namespace rcgf
 		}
 
 		//Render to screen
-		SDL_RenderCopyEx(global::instance.getRenderer(), m_texture.get(), clip, &renderQuad, angle, center, flip);
+		SDL_RenderCopyEx(global::instance.getRenderer(), m_texture.get(), clip, &renderQuad, angle, NULL, flip);
 	}
 
 	int Texture::getWidth()
