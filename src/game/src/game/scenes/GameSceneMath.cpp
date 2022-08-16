@@ -72,6 +72,7 @@ namespace game
 		{
 		case SDLK_0:
 		case SDLK_KP_0:
+		case SDLK_ESCAPE:
 			pushPendingState(std::make_unique<GameSceneMain>());
 			break;
 		}
