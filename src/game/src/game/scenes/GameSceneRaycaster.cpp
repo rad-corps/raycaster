@@ -11,9 +11,10 @@ namespace
 	constexpr float PI = 3.14159265359f;
 	constexpr int mapCols = 8;
 	constexpr int mapRows = 8;
+	constexpr int mapSz = mapCols * mapRows;
 	constexpr int mapCellPx = 64;
 
-	std::array<int, mapCols * mapRows> map =
+	std::array<int, mapSz> map =
 	{
 		1,1,1,1,1,1,1,1,
 		1,0,0,0,0,0,0,1,
@@ -32,7 +33,7 @@ namespace
 		float angle;
 
 		Player()
-			: x{ 100.f }, y{ 100.f }, angle{ 0.f }
+			: x{ 100.f }, y{ 400.f }, angle{ 0.f }
 		{}
 
 		bool facingDown()
@@ -42,6 +43,14 @@ namespace
 		bool facingUp()
 		{
 			return PI < angle;
+		}
+		bool facingRight()
+		{
+			return angle < PI / 2 || 3 * PI / 2 < angle;
+		}
+		bool facingLeft()
+		{
+			return PI / 2 < angle && angle < 3 * PI / 2;
 		}
 		void render()
 		{
@@ -101,34 +110,100 @@ namespace
 			SDL_RenderFillRect(global::instance.getRenderer(), &r);
 		}
 
+		int toMapIndex(float x, float y)
+		{
+			const int xIndex = ((int)x / mapCellPx);
+			const int yIndex = ((int)y / mapCellPx);
+			const int mapIndex = xIndex + yIndex * mapCols;
+			
+			// its possible to calculate a bad value with bad input, so lets
+			// just agree to return -1
+			if (mapIndex < 0 || mapSz <= mapIndex )
+			{
+				return -1;
+			}
+			return mapIndex;
+		}
+
+		bool isWall(float x, float y)
+		{
+			const int mapIndex = toMapIndex(x, y);
+
+			// deal with -1 return value
+			if (mapIndex == -1)
+				return true;
+
+			assert(0 <= mapIndex && mapIndex < mapSz);
+			return 0 < map[mapIndex];
+		}
+
 		void doRayTest()
 		{
 
 			Player& player = *p_player;
+			float rowIntersectDistance = 10000000.f;
+			float colIntersectDistance = 10000000.f;
+			float xIntersect = 10000000.f;
+			float yIntersect = 10000000.f;
 
 			// check horizontals
+			if (player.facingRight())
+			{
+				
+				const int firstColIntersect = ((int)player.x / mapCellPx) * mapCellPx + mapCellPx;
+				const float tempAngle = player.angle;
+				cout << tempAngle << endl;
+				const float adjLen = firstColIntersect - player.x;
+				const float oppLen = tan(tempAngle) * adjLen;
+				const float xOffset = mapCellPx;
+				const float yOffset = tan(tempAngle) * mapCellPx;
 
-			// 1. are we facing up?? (up and down are inverted :( )
-			//cout << "check horizontals" << endl;
+				// cumulative check positions
+				float checkX = (float)firstColIntersect;
+				float checkY = oppLen + player.y;
+				drawIntersect((int)checkX, (int)checkY);
+
+				while (!isWall(checkX, checkY))
+				{
+					checkX += xOffset; checkY += yOffset;
+					drawIntersect((int)checkX, (int)checkY);
+				}
+				colIntersectDistance = sqrt((float)pow(checkX - player.x, 2) + (float)pow(checkY - player.y, 2));
+				xIntersect = checkX;
+				yIntersect = checkY;
+			}
+			else if (player.facingLeft()) 
+			{
+				//cout << "facing left" << endl;
+			}
 			if (player.facingUp())
 			{
-				// find the nearest row line (y position)
 				const int firstRowIntersect = ((int)player.y / mapCellPx) * mapCellPx;
-
-				// draw a dot at the intersection
-				drawIntersect((int) player.x, firstRowIntersect);
-
-				// find the x position 
 				const float tempAngle = player.angle - PI - (PI / 2);
-				const float adjacentDist = player.y - firstRowIntersect;
-				const float myTan = tan(tempAngle);
-				const float oppositDist = myTan * adjacentDist;
-
-				// draw a dot at the first intersect position
-				drawIntersect((int)oppositDist + (int)player.x, firstRowIntersect);
+				const float adjLen = player.y - firstRowIntersect;
+				const float oppLen = tan(tempAngle) * adjLen;
+				const float xOffset = tan(tempAngle) * mapCellPx;
+				const float yOffset = -mapCellPx;
+				float checkX = oppLen + player.x;
+				float checkY = (float)firstRowIntersect - 0.1f;
+				drawIntersect((int)checkX, (int)checkY);
+				while (!isWall(checkX, checkY))
+				{
+					checkX += xOffset; checkY += yOffset;
+					drawIntersect((int)checkX, (int)checkY);
+				}			
+				rowIntersectDistance = sqrt((float)pow(checkX - player.x, 2) + (float)pow(checkY - player.y, 2));
+				if (rowIntersectDistance < colIntersectDistance)
+				{
+					xIntersect = checkX;
+					yIntersect = checkY;
+				}
 			}
-
-			// check verticals
+			else if (player.facingDown())
+			{
+				//cout << "facing down" << endl;
+			}
+			SDL_RenderDrawLine(global::instance.getRenderer(), (int)player.x, (int)player.y, (int)xIntersect, (int)yIntersect);
 		}
 
 		void render()
