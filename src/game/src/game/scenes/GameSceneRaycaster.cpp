@@ -149,10 +149,8 @@ namespace
 			// check horizontals
 			if (player.facingRight())
 			{
-				
 				const int firstColIntersect = ((int)player.x / mapCellPx) * mapCellPx + mapCellPx;
 				const float tempAngle = player.angle;
-				cout << tempAngle << endl;
 				const float adjLen = firstColIntersect - player.x;
 				const float oppLen = tan(tempAngle) * adjLen;
 				const float xOffset = mapCellPx;
@@ -161,12 +159,12 @@ namespace
 				// cumulative check positions
 				float checkX = (float)firstColIntersect;
 				float checkY = oppLen + player.y;
-				drawIntersect((int)checkX, (int)checkY);
+				// drawIntersect((int)checkX, (int)checkY);
 
 				while (!isWall(checkX, checkY))
 				{
 					checkX += xOffset; checkY += yOffset;
-					drawIntersect((int)checkX, (int)checkY);
+					// drawIntersect((int)checkX, (int)checkY);
 				}
 				colIntersectDistance = sqrt((float)pow(checkX - player.x, 2) + (float)pow(checkY - player.y, 2));
 				xIntersect = checkX;
@@ -174,23 +172,44 @@ namespace
 			}
 			else if (player.facingLeft()) 
 			{
-				//cout << "facing left" << endl;
+				const int firstColIntersect = ((int)player.x / mapCellPx) * mapCellPx;
+				const float tempAngle = (2 * PI - player.angle);
+				const float adjLen = player.x - firstColIntersect;
+				const float oppLen = tan(tempAngle) * adjLen;
+				const float xOffset = -mapCellPx;
+				const float yOffset = tan(tempAngle) * mapCellPx;
+
+				// cumulative check positions
+				float checkX = (float)firstColIntersect - 0.1f;
+				float checkY = oppLen + player.y;
+				// drawIntersect((int)checkX, (int)checkY);
+
+				while (!isWall(checkX, checkY))
+				{
+					checkX += xOffset; checkY += yOffset;
+					// drawIntersect((int)checkX, (int)checkY);
+				}
+				colIntersectDistance = sqrt((float)pow(checkX - player.x, 2) + (float)pow(checkY - player.y, 2));
+				xIntersect = checkX;
+				yIntersect = checkY;
 			}
+
+			// check verticals
 			if (player.facingUp())
 			{
 				const int firstRowIntersect = ((int)player.y / mapCellPx) * mapCellPx;
-				const float tempAngle = player.angle - PI - (PI / 2);
+				const float tempAngle = player.angle - 3 * PI / 2;
 				const float adjLen = player.y - firstRowIntersect;
 				const float oppLen = tan(tempAngle) * adjLen;
 				const float xOffset = tan(tempAngle) * mapCellPx;
 				const float yOffset = -mapCellPx;
 				float checkX = oppLen + player.x;
 				float checkY = (float)firstRowIntersect - 0.1f;
-				drawIntersect((int)checkX, (int)checkY);
+				// drawIntersect((int)checkX, (int)checkY);
 				while (!isWall(checkX, checkY))
 				{
 					checkX += xOffset; checkY += yOffset;
-					drawIntersect((int)checkX, (int)checkY);
+					// drawIntersect((int)checkX, (int)checkY);
 				}			
 				rowIntersectDistance = sqrt((float)pow(checkX - player.x, 2) + (float)pow(checkY - player.y, 2));
 				if (rowIntersectDistance < colIntersectDistance)
@@ -201,7 +220,26 @@ namespace
 			}
 			else if (player.facingDown())
 			{
-				//cout << "facing down" << endl;
+				const int firstRowIntersect = ((int)player.y / mapCellPx) * mapCellPx + mapCellPx;
+				const float tempAngle = PI / 2 - player.angle;
+				const float adjLen = firstRowIntersect - player.y;
+				const float oppLen = tan(tempAngle) * adjLen;
+				const float xOffset = tan(tempAngle) * mapCellPx;
+				const float yOffset = mapCellPx;
+				float checkX = oppLen + player.x;
+				float checkY = (float)firstRowIntersect;
+				// drawIntersect((int)checkX, (int)checkY);
+				while (!isWall(checkX, checkY))
+				{
+					checkX += xOffset; checkY += yOffset;
+					// drawIntersect((int)checkX, (int)checkY);
+				}
+				rowIntersectDistance = sqrt((float)pow(checkX - player.x, 2) + (float)pow(checkY - player.y, 2));
+				if (rowIntersectDistance < colIntersectDistance)
+				{
+					xIntersect = checkX;
+					yIntersect = checkY;
+				}
 			}
 			SDL_RenderDrawLine(global::instance.getRenderer(), (int)player.x, (int)player.y, (int)xIntersect, (int)yIntersect);
 		}
