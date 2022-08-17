@@ -2,6 +2,7 @@
 #include "GameSceneMain.h"
 #include "Globals.h"
 #include <iostream>
+#include <bitset>
 
 using std::cout;
 using std::endl;
@@ -13,6 +14,42 @@ namespace
 	constexpr int mapRows = 8;
 	constexpr int mapSz = mapCols * mapRows;
 	constexpr int mapCellPx = 64;
+
+	enum Facing : unsigned char
+	{
+		UP = 0x0001,
+		RIGHT = 0x0002,
+		DOWN = 0x0004,
+		LEFT = 0x0008,
+	};
+
+	bool facingDown(float angle_)
+	{
+		return 0 < angle_ && angle_ < PI;
+	}
+	bool facingUp(float angle_)
+	{
+		return PI < angle_;
+	}
+	bool facingRight(float angle_)
+	{
+		return angle_ < PI / 2 || 3 * PI / 2 < angle_;
+	}
+	bool facingLeft(float angle_)
+	{
+		return PI / 2 < angle_ && angle_ < 3 * PI / 2;
+	}
+
+	unsigned char getFacing(float angle_)
+	{
+		unsigned char ret = 0;
+		if (facingUp(angle_)) ret |= Facing::UP;
+		if (facingRight(angle_)) ret |= Facing::RIGHT;
+		if (facingDown(angle_)) ret |= Facing::DOWN;
+		if (facingLeft(angle_)) ret |= Facing::LEFT;
+		return ret;
+	}
+
 
 	std::array<int, mapSz> map =
 	{
@@ -35,6 +72,25 @@ namespace
 		Player()
 			: x{ 100.f }, y{ 400.f }, angle{ 0.f }
 		{}
+
+		// dont go more than one whole circle out of bounds
+		float sumAngle(float add) const
+		{
+			add += angle;
+			if (add < 0) add += PI * 2;
+			else if (2 * PI < add) add -= PI * 2;
+			return add;
+		}
+
+		unsigned char getFacing()
+		{
+			unsigned char ret = 0;
+			if (facingUp()) ret |= Facing::UP;
+			if (facingRight()) ret |= Facing::RIGHT;
+			if (facingDown()) ret |= Facing::DOWN;
+			if (facingLeft()) ret |= Facing::LEFT;
+			return ret;
+		}
 
 		bool facingDown()
 		{
@@ -98,10 +154,10 @@ namespace
 
 	struct RayTest
 	{
-		Player* p_player;
+		//Player* p_player;
 
-		RayTest() = delete;
-		RayTest(Player* player_) :p_player{ player_ } {}
+		//RayTest() = delete;
+		//RayTest(Player* player_) :p_player{ player_ } {}
 
 		void drawIntersect(int x, int y)
 		{
@@ -137,111 +193,102 @@ namespace
 			return 0 < map[mapIndex];
 		}
 
-		void doRayTest()
+		void doRayTest(float x, float y, float angle, unsigned char facing)
 		{
-
-			Player& player = *p_player;
+			//Player& player = *p_player;
 			float rowIntersectDistance = 10000000.f;
 			float colIntersectDistance = 10000000.f;
 			float xIntersect = 10000000.f;
 			float yIntersect = 10000000.f;
 
 			// check horizontals
-			if (player.facingRight())
+			if (facing & Facing::RIGHT)
 			{
-				const int firstColIntersect = ((int)player.x / mapCellPx) * mapCellPx + mapCellPx;
-				const float tempAngle = player.angle;
-				const float adjLen = firstColIntersect - player.x;
+				//cout << "right" << endl;
+				const int firstColIntersect = ((int)x / mapCellPx) * mapCellPx + mapCellPx;
+				const float tempAngle = angle;
+				const float adjLen = firstColIntersect - x;
 				const float oppLen = tan(tempAngle) * adjLen;
 				const float xOffset = mapCellPx;
 				const float yOffset = tan(tempAngle) * mapCellPx;
-
-				// cumulative check positions
 				float checkX = (float)firstColIntersect;
-				float checkY = oppLen + player.y;
-				// drawIntersect((int)checkX, (int)checkY);
+				float checkY = oppLen + y;
 
 				while (!isWall(checkX, checkY))
 				{
 					checkX += xOffset; checkY += yOffset;
-					// drawIntersect((int)checkX, (int)checkY);
 				}
-				colIntersectDistance = sqrt((float)pow(checkX - player.x, 2) + (float)pow(checkY - player.y, 2));
+				colIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
 				xIntersect = checkX;
 				yIntersect = checkY;
 			}
-			else if (player.facingLeft()) 
+			else if (facing & Facing::LEFT) 
 			{
-				const int firstColIntersect = ((int)player.x / mapCellPx) * mapCellPx;
-				const float tempAngle = (2 * PI - player.angle);
-				const float adjLen = player.x - firstColIntersect;
+				//cout << "left" << endl;
+				const int firstColIntersect = ((int)x / mapCellPx) * mapCellPx;
+				const float tempAngle = (2 * PI - angle);
+				const float adjLen = x - firstColIntersect;
 				const float oppLen = tan(tempAngle) * adjLen;
 				const float xOffset = -mapCellPx;
 				const float yOffset = tan(tempAngle) * mapCellPx;
-
-				// cumulative check positions
 				float checkX = (float)firstColIntersect - 0.1f;
-				float checkY = oppLen + player.y;
-				// drawIntersect((int)checkX, (int)checkY);
+				float checkY = oppLen + y;
 
 				while (!isWall(checkX, checkY))
 				{
 					checkX += xOffset; checkY += yOffset;
-					// drawIntersect((int)checkX, (int)checkY);
 				}
-				colIntersectDistance = sqrt((float)pow(checkX - player.x, 2) + (float)pow(checkY - player.y, 2));
+				colIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
 				xIntersect = checkX;
 				yIntersect = checkY;
 			}
 
 			// check verticals
-			if (player.facingUp())
+			if (facing & Facing::UP)
 			{
-				const int firstRowIntersect = ((int)player.y / mapCellPx) * mapCellPx;
-				const float tempAngle = player.angle - 3 * PI / 2;
-				const float adjLen = player.y - firstRowIntersect;
+				//cout << "up" << endl;
+				const int firstRowIntersect = ((int)y / mapCellPx) * mapCellPx;
+				const float tempAngle = angle - 3 * PI / 2;
+				const float adjLen = y - firstRowIntersect;
 				const float oppLen = tan(tempAngle) * adjLen;
 				const float xOffset = tan(tempAngle) * mapCellPx;
 				const float yOffset = -mapCellPx;
-				float checkX = oppLen + player.x;
+				float checkX = oppLen + x;
 				float checkY = (float)firstRowIntersect - 0.1f;
-				// drawIntersect((int)checkX, (int)checkY);
 				while (!isWall(checkX, checkY))
 				{
 					checkX += xOffset; checkY += yOffset;
-					// drawIntersect((int)checkX, (int)checkY);
 				}			
-				rowIntersectDistance = sqrt((float)pow(checkX - player.x, 2) + (float)pow(checkY - player.y, 2));
+				rowIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
 				if (rowIntersectDistance < colIntersectDistance)
 				{
 					xIntersect = checkX;
 					yIntersect = checkY;
 				}
 			}
-			else if (player.facingDown())
+			else if (facing & Facing::DOWN)
 			{
-				const int firstRowIntersect = ((int)player.y / mapCellPx) * mapCellPx + mapCellPx;
-				const float tempAngle = PI / 2 - player.angle;
-				const float adjLen = firstRowIntersect - player.y;
+				//cout << "down" << endl;
+				const int firstRowIntersect = ((int)y / mapCellPx) * mapCellPx + mapCellPx;
+				const float tempAngle = PI / 2 - angle;
+				const float adjLen = firstRowIntersect - y;
 				const float oppLen = tan(tempAngle) * adjLen;
 				const float xOffset = tan(tempAngle) * mapCellPx;
 				const float yOffset = mapCellPx;
-				float checkX = oppLen + player.x;
+				float checkX = oppLen + x;
 				float checkY = (float)firstRowIntersect;
-				// drawIntersect((int)checkX, (int)checkY);
 				while (!isWall(checkX, checkY))
 				{
 					checkX += xOffset; checkY += yOffset;
-					// drawIntersect((int)checkX, (int)checkY);
 				}
-				rowIntersectDistance = sqrt((float)pow(checkX - player.x, 2) + (float)pow(checkY - player.y, 2));
+				rowIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
 				if (rowIntersectDistance < colIntersectDistance)
 				{
 					xIntersect = checkX;
 					yIntersect = checkY;
 				}
 			}
-			SDL_RenderDrawLine(global::instance.getRenderer(), (int)player.x, (int)player.y, (int)xIntersect, (int)yIntersect);
+			SDL_RenderDrawLine(global::instance.getRenderer(), (int)x, (int)y, (int)xIntersect, (int)yIntersect);
 		}
 
 		void render()
@@ -257,7 +304,7 @@ namespace game
 	struct GameSceneRaycaster::Pimpl
 	{
 		Player player;
-		std::unique_ptr<RayTest> rt = std::make_unique<RayTest>(&player);
+		RayTest rt;
 		Pimpl()
 		{}
 	};
@@ -294,8 +341,13 @@ namespace game
 		}
 
 		m_impl->player.render();
-		m_impl->rt->doRayTest();
-		
+
+		for (float angle = -PI / 5; angle < PI / 5; angle += PI / 150)
+		{
+			float finalAngle = m_impl->player.sumAngle(angle);
+			m_impl->rt.doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, getFacing(finalAngle));
+		}
+			
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
@@ -321,8 +373,6 @@ namespace game
 		case SDLK_s:
 			m_impl->player.move(false);
 			break;
-		case SDLK_e:
-			m_impl->rt->doRayTest();
 		}
 
 	}
