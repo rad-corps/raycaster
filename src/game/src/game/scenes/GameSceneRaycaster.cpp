@@ -11,7 +11,7 @@ namespace
 	constexpr float PI = 3.14159265359f;
 	constexpr int mapCols = 8;
 	constexpr int mapRows = 8;
-	constexpr int mapCellPx = 32;
+	constexpr int mapCellPx = 64;
 
 	std::array<int, mapCols * mapRows> map =
 	{
@@ -35,20 +35,20 @@ namespace
 			: x{ 100.f }, y{ 100.f }, angle{ 0.f }
 		{}
 
-		bool facingUp()
+		bool facingDown()
 		{
-			cout << angle << endl;
 			return 0 < angle && angle < PI;
 		}
-		bool facingDown()
+		bool facingUp()
 		{
 			return PI < angle;
 		}
 		void render()
 		{
 			// draw the player
+			int constexpr playerDiameter = 2;
 			SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 200, 0, 0xFF);
-			SDL_Rect r{ (int)x,(int)y,4,4 };
+			SDL_Rect r{ (int)x - playerDiameter,(int)y - playerDiameter,playerDiameter*2,playerDiameter*2 };
 			SDL_RenderFillRect(global::instance.getRenderer(), &r);
 
 			// draw line to show rotation
@@ -86,6 +86,57 @@ namespace
 			x += cos(movementAngle) * movementSpeed;
 		}
 	};
+
+	struct RayTest
+	{
+		Player* p_player;
+
+		RayTest() = delete;
+		RayTest(Player* player_) :p_player{ player_ } {}
+
+		void drawIntersect(int x, int y)
+		{
+			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0, 0xFF);
+			SDL_Rect r{ x-1, y-1, 3, 3 };
+			SDL_RenderFillRect(global::instance.getRenderer(), &r);
+		}
+
+		void doRayTest()
+		{
+
+			Player& player = *p_player;
+
+			// check horizontals
+
+			// 1. are we facing up?? (up and down are inverted :( )
+			//cout << "check horizontals" << endl;
+			if (player.facingUp())
+			{
+				// find the nearest row line (y position)
+				const int firstRowIntersect = ((int)player.y / mapCellPx) * mapCellPx;
+
+				// draw a dot at the intersection
+				drawIntersect((int) player.x, firstRowIntersect);
+
+				// find the x position 
+				const float tempAngle = player.angle - PI - (PI / 2);
+				const float adjacentDist = player.y - firstRowIntersect;
+				const float myTan = tan(tempAngle);
+				const float oppositDist = myTan * adjacentDist;
+
+				// draw a dot at the first intersect position
+				drawIntersect((int)oppositDist + (int)player.x, firstRowIntersect);
+			}
+
+			// check verticals
+		}
+
+		void render()
+		{
+
+		}
+
+	};
 }
 
 namespace game
@@ -93,25 +144,9 @@ namespace game
 	struct GameSceneRaycaster::Pimpl
 	{
 		Player player;
+		std::unique_ptr<RayTest> rt = std::make_unique<RayTest>(&player);
 		Pimpl()
-		{
-		}
-
-		void doRayTest()
-		{
-			cout << "raytest" << endl;
-
-			// check horizontals
-
-			// 1. are we facing up?? (up and down are inverted :( )
-			if (player.facingUp())
-			{
-				// find the nearest row line
-
-			}
-
-			// check verticals
-		}
+		{}
 	};
 
 	GameSceneRaycaster::GameSceneRaycaster()
@@ -146,6 +181,7 @@ namespace game
 		}
 
 		m_impl->player.render();
+		m_impl->rt->doRayTest();
 		
 	}
 
@@ -173,7 +209,7 @@ namespace game
 			m_impl->player.move(false);
 			break;
 		case SDLK_e:
-			m_impl->doRayTest();
+			m_impl->rt->doRayTest();
 		}
 
 	}
