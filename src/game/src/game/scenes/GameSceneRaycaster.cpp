@@ -20,6 +20,12 @@ namespace
 	constexpr int mapRows = 8;
 	constexpr int mapSz = mapCols * mapRows;
 	constexpr int mapCellPx = 64;
+	constexpr float movementSpeed = 2.f;
+	constexpr float rotationSpeed = 0.05f;
+	constexpr float FOV_MIN = -PI / 5;
+	constexpr float FOV_MAX = PI / 5;
+	constexpr float ANGLE_STEP = ((PI / 5) * 2) / SCREEN_WIDTH;
+	constexpr int RAYCAST_COLUMN_WIDTH = 1;
 
 	enum Facing : unsigned char
 	{
@@ -60,11 +66,11 @@ namespace
 	std::array<int, mapSz> map =
 	{
 		1,1,1,1,1,1,1,1,
-		1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,1,
-		1,0,1,0,0,0,0,1,
-		1,0,1,0,0,0,0,1,
-		1,1,1,0,0,0,0,1,
+		1,0,0,0,1,0,0,1,
+		1,0,0,0,1,0,0,1,
+		1,0,1,0,1,0,0,1,
+		1,0,1,0,1,0,0,1,
+		1,1,1,0,1,1,0,1,
 		1,0,0,0,0,0,0,1,
 		1,1,1,1,1,1,1,1
 	};
@@ -112,7 +118,6 @@ namespace
 		
 		void rotate(RotateDirection dir)
 		{
-			constexpr float rotationSpeed = 0.1f;
 			if (dir == RotateDirection::Clockwise) angle += rotationSpeed;
 			else angle -= rotationSpeed;
 			if (angle < 0) angle += PI * 2;
@@ -121,7 +126,6 @@ namespace
 
 		void move(bool forward)
 		{
-			constexpr int movementSpeed = 5;
 			float movementAngle = angle;
 			if (!forward)
 			{
@@ -273,11 +277,20 @@ namespace
 				SDL_Rect r;
 				r.x = pxCol;
 				r.w = pxWidth;
-				r.h = SCREEN_HEIGHT - (int)distance;
+				r.h = (SCREEN_HEIGHT * 10) / ((int)distance+1);
 				r.y = (SCREEN_HEIGHT - r.h) / 2;
 
-				SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 100, 100, 0xFF);
+				
+				if (rowIntersectDistance < colIntersectDistance)
+				{
+					SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 100, 100, 0xFF);
+				}
+				else
+				{
+					SDL_SetRenderDrawColor(global::instance.getRenderer(), 50, 50, 50, 0xFF);
+				}
 				SDL_RenderFillRect(global::instance.getRenderer(), &r);
+				
 			}
 			if (showTopDown)
 			{
@@ -301,7 +314,11 @@ namespace game
 			{SDLK_w, false},
 			{SDLK_a, false},
 			{SDLK_s, false},
-			{SDLK_d, false}
+			{SDLK_d, false},
+			{SDLK_LEFT, false},
+			{SDLK_RIGHT, false},
+			{SDLK_UP, false},
+			{SDLK_DOWN, false},
 		};
 		Pimpl()
 		{}
@@ -317,22 +334,21 @@ namespace game
 		NOW = SDL_GetPerformanceCounter();
 		deltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency());
 
-		if (m_impl->keyStates[SDLK_d])m_impl->player.rotate(Player::RotateDirection::Clockwise);
-		if (m_impl->keyStates[SDLK_a])m_impl->player.rotate(Player::RotateDirection::Anticlockwise);
-		if (m_impl->keyStates[SDLK_w])m_impl->player.move(true);
-		if (m_impl->keyStates[SDLK_s])m_impl->player.move(false);
+		if (m_impl->keyStates[SDLK_d] || m_impl->keyStates[SDLK_RIGHT]) m_impl->player.rotate(Player::RotateDirection::Clockwise);
+		if (m_impl->keyStates[SDLK_a] || m_impl->keyStates[SDLK_LEFT])  m_impl->player.rotate(Player::RotateDirection::Anticlockwise);
+		if (m_impl->keyStates[SDLK_w] || m_impl->keyStates[SDLK_UP])    m_impl->player.move(true);
+		if (m_impl->keyStates[SDLK_s] || m_impl->keyStates[SDLK_DOWN])  m_impl->player.move(false);
 	}
 
 	void GameSceneRaycaster::render()
 	{
 		// raycast and render the 3d scene
 		int pxCol = 0;
-		const int pxWidth = 10;
-		for (float angle = -PI / 5; angle < PI / 5; angle += PI / 150)
+		for (float angle = FOV_MIN; angle < FOV_MAX; angle += ANGLE_STEP)
 		{
 			float finalAngle = m_impl->player.sumAngle(angle);
-			m_impl->rt.doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, getFacing(finalAngle), m_impl->showTopDown, m_impl->show3D, pxCol, pxWidth);
-			pxCol += pxWidth;
+			m_impl->rt.doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, getFacing(finalAngle), m_impl->showTopDown, m_impl->show3D, pxCol, RAYCAST_COLUMN_WIDTH);
+			pxCol += RAYCAST_COLUMN_WIDTH;
 		}
 
 		// draw the map
@@ -358,7 +374,13 @@ namespace game
 
 			m_impl->player.render();
 		}
-			
+
+		// show x pixel coords for reference
+		SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+		for (int i = 100; i < SCREEN_WIDTH; i += 100)
+		{
+			SDL_RenderDrawLine(global::instance.getRenderer(), i, SCREEN_HEIGHT, i, SCREEN_HEIGHT - 20);
+		}
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
@@ -371,6 +393,10 @@ namespace game
 		case SDLK_d:
 		case SDLK_w:
 		case SDLK_s:
+		case SDLK_LEFT:
+		case SDLK_RIGHT:
+		case SDLK_UP:
+		case SDLK_DOWN:
 			m_impl->keyStates[keycode] = true;
 			break;
 		}
