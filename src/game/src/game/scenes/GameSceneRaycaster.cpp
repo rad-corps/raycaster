@@ -82,32 +82,6 @@ namespace
 			return add;
 		}
 
-		unsigned char getFacing()
-		{
-			unsigned char ret = 0;
-			if (facingUp()) ret |= Facing::UP;
-			if (facingRight()) ret |= Facing::RIGHT;
-			if (facingDown()) ret |= Facing::DOWN;
-			if (facingLeft()) ret |= Facing::LEFT;
-			return ret;
-		}
-
-		bool facingDown()
-		{
-			return 0 < angle && angle < PI;
-		}
-		bool facingUp()
-		{
-			return PI < angle;
-		}
-		bool facingRight()
-		{
-			return angle < PI / 2 || 3 * PI / 2 < angle;
-		}
-		bool facingLeft()
-		{
-			return PI / 2 < angle && angle < 3 * PI / 2;
-		}
 		void render()
 		{
 			// draw the player
@@ -193,11 +167,12 @@ namespace
 			return 0 < map[mapIndex];
 		}
 
-		void doRayTest(float x, float y, float angle, unsigned char facing)
+		void doRayTest(float x, float y, float angle, unsigned char facing, bool showTopDown, bool show3D, int pxCol, int pxWidth)
 		{
 			//Player& player = *p_player;
 			float rowIntersectDistance = 10000000.f;
 			float colIntersectDistance = 10000000.f;
+			float distance = 10000000.f;
 			float xIntersect = 10000000.f;
 			float yIntersect = 10000000.f;
 
@@ -219,6 +194,7 @@ namespace
 					checkX += xOffset; checkY += yOffset;
 				}
 				colIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
+				distance = colIntersectDistance;
 				xIntersect = checkX;
 				yIntersect = checkY;
 			}
@@ -239,6 +215,7 @@ namespace
 					checkX += xOffset; checkY += yOffset;
 				}
 				colIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
+				distance = colIntersectDistance;
 				xIntersect = checkX;
 				yIntersect = checkY;
 			}
@@ -262,6 +239,7 @@ namespace
 				rowIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
 				if (rowIntersectDistance < colIntersectDistance)
 				{
+					distance = rowIntersectDistance;
 					xIntersect = checkX;
 					yIntersect = checkY;
 				}
@@ -284,11 +262,28 @@ namespace
 				rowIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
 				if (rowIntersectDistance < colIntersectDistance)
 				{
+					distance = rowIntersectDistance;
 					xIntersect = checkX;
 					yIntersect = checkY;
 				}
 			}
-			SDL_RenderDrawLine(global::instance.getRenderer(), (int)x, (int)y, (int)xIntersect, (int)yIntersect);
+			if (show3D)
+			{
+				SDL_Rect r;
+				r.x = pxCol;
+				r.w = pxWidth;
+				r.h = SCREEN_HEIGHT - (int)distance;
+				r.y = (SCREEN_HEIGHT - r.h) / 2;
+
+				SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 100, 100, 0xFF);
+				SDL_RenderFillRect(global::instance.getRenderer(), &r);
+			}
+			if (showTopDown)
+			{
+				SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 200, 0, 0xFF);
+				SDL_RenderDrawLine(global::instance.getRenderer(), (int)x, (int)y, (int)xIntersect, (int)yIntersect);
+			}
+				
 		}
 
 		void render()
@@ -305,6 +300,8 @@ namespace game
 	{
 		Player player;
 		RayTest rt;
+		bool showTopDown = true;
+		bool show3D = false;
 		Pimpl()
 		{}
 	};
@@ -319,33 +316,38 @@ namespace game
 
 	void GameSceneRaycaster::render()
 	{
-		// draw a grid to match the map
-		SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 0, 200, 0xFF);
-
-		// draw the map
-		for (int row = 0; row < mapRows; ++row)
-		{
-			for (int col = 0; col < mapCols; ++col)
-			{
-				// calc rect position and dimension
-				SDL_Rect rect{ col * mapCellPx, row * mapCellPx, mapCellPx, mapCellPx };
-				if (map[col + row * mapCols] > 0)
-				{
-					SDL_RenderFillRect(global::instance.getRenderer(), &rect);
-				}
-				else
-				{
-					SDL_RenderDrawRect(global::instance.getRenderer(), &rect);
-				}
-			}
-		}
-
-		m_impl->player.render();
-
+		// raycast and render the 3d scene
+		int pxCol = 0;
+		const int pxWidth = 10;
 		for (float angle = -PI / 5; angle < PI / 5; angle += PI / 150)
 		{
 			float finalAngle = m_impl->player.sumAngle(angle);
-			m_impl->rt.doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, getFacing(finalAngle));
+			m_impl->rt.doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, getFacing(finalAngle), m_impl->showTopDown, m_impl->show3D, pxCol, pxWidth);
+			pxCol += pxWidth;
+		}
+
+		// draw the map
+		if (m_impl->showTopDown)
+		{
+			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 0, 200, 0xFF);
+			for (int row = 0; row < mapRows; ++row)
+			{
+				for (int col = 0; col < mapCols; ++col)
+				{
+					// calc rect position and dimension
+					SDL_Rect rect{ col * mapCellPx, row * mapCellPx, mapCellPx, mapCellPx };
+					if (map[col + row * mapCols] > 0)
+					{
+						SDL_RenderFillRect(global::instance.getRenderer(), &rect);
+					}
+					else
+					{
+						SDL_RenderDrawRect(global::instance.getRenderer(), &rect);
+					}
+				}
+			}
+
+			m_impl->player.render();
 		}
 			
 	}
@@ -372,6 +374,12 @@ namespace game
 			break;
 		case SDLK_s:
 			m_impl->player.move(false);
+			break;
+		case SDLK_TAB:
+			m_impl->showTopDown = !m_impl->showTopDown;
+			break;
+		case SDLK_PERIOD:
+			m_impl->show3D = !m_impl->show3D;
 			break;
 		}
 
