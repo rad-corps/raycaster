@@ -9,6 +9,12 @@ using std::endl;
 
 namespace
 {
+	// timing variables
+	Uint64 NOW = SDL_GetPerformanceCounter();
+	Uint64 LAST = 0;
+	double deltaTime = 0;
+
+
 	constexpr float PI = 3.14159265359f;
 	constexpr int mapCols = 8;
 	constexpr int mapRows = 8;
@@ -128,11 +134,6 @@ namespace
 
 	struct RayTest
 	{
-		//Player* p_player;
-
-		//RayTest() = delete;
-		//RayTest(Player* player_) :p_player{ player_ } {}
-
 		void drawIntersect(int x, int y)
 		{
 			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0, 0xFF);
@@ -285,12 +286,6 @@ namespace
 			}
 				
 		}
-
-		void render()
-		{
-
-		}
-
 	};
 }
 
@@ -302,6 +297,12 @@ namespace game
 		RayTest rt;
 		bool showTopDown = true;
 		bool show3D = false;
+		std::map<SDL_Keycode, bool> keyStates= {
+			{SDLK_w, false},
+			{SDLK_a, false},
+			{SDLK_s, false},
+			{SDLK_d, false}
+		};
 		Pimpl()
 		{}
 	};
@@ -312,6 +313,14 @@ namespace game
 
 	void GameSceneRaycaster::update()
 	{
+		LAST = NOW;
+		NOW = SDL_GetPerformanceCounter();
+		deltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency());
+
+		if (m_impl->keyStates[SDLK_d])m_impl->player.rotate(Player::RotateDirection::Clockwise);
+		if (m_impl->keyStates[SDLK_a])m_impl->player.rotate(Player::RotateDirection::Anticlockwise);
+		if (m_impl->keyStates[SDLK_w])m_impl->player.move(true);
+		if (m_impl->keyStates[SDLK_s])m_impl->player.move(false);
 	}
 
 	void GameSceneRaycaster::render()
@@ -354,6 +363,18 @@ namespace game
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
 	{
+		m_impl->keyStates[keycode] = true;
+
+		switch (keycode)
+		{
+		case SDLK_a:
+		case SDLK_d:
+		case SDLK_w:
+		case SDLK_s:
+			m_impl->keyStates[keycode] = true;
+			break;
+		}
+
 		switch (keycode)
 		{
 		case SDLK_0:
@@ -361,19 +382,6 @@ namespace game
 		case SDLK_ESCAPE:
 			printf("switching to game state main\n");
 			pushPendingState(std::make_unique<GameSceneMain>());
-			break;
-
-		case SDLK_a:
-			m_impl->player.rotate(Player::RotateDirection::Anticlockwise);
-			break;
-		case SDLK_d:
-			m_impl->player.rotate(Player::RotateDirection::Clockwise);
-			break;
-		case SDLK_w:
-			m_impl->player.move(true);
-			break;
-		case SDLK_s:
-			m_impl->player.move(false);
 			break;
 		case SDLK_TAB:
 			m_impl->showTopDown = !m_impl->showTopDown;
@@ -385,8 +393,8 @@ namespace game
 
 	}
 
-	void GameSceneRaycaster::keyUp(SDL_Keycode)
+	void GameSceneRaycaster::keyUp(SDL_Keycode keycode)
 	{
-
+		m_impl->keyStates[keycode] = false;
 	}
 }
