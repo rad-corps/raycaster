@@ -16,16 +16,17 @@ namespace
 
 
 	constexpr float PI = 3.14159265359f;
-	constexpr int mapCols = 8;
-	constexpr int mapRows = 8;
-	constexpr int mapSz = mapCols * mapRows;
-	constexpr int mapCellPx = 64;
-	constexpr float movementSpeed = 2.f;
-	constexpr float rotationSpeed = 0.05f;
-	constexpr float FOV_MIN = -PI / 5;
-	constexpr float FOV_MAX = PI / 5;
-	constexpr float ANGLE_STEP = ((PI / 5) * 2) / SCREEN_WIDTH;
-	constexpr int RAYCAST_COLUMN_WIDTH = 1;
+	constexpr int MAP_COLS = 8;
+	constexpr int MAP_ROWS = 8;
+	constexpr int MAP_SZ = MAP_COLS * MAP_ROWS;
+	constexpr int MAP_CELL_PX = 16;
+	constexpr float MOVEMENT_SPEED = 1.f;
+	constexpr float ROTATION_SPEED = 0.03f;
+	constexpr float FOV = PI / 3.f; // 60 degrees
+	constexpr int X_PX_STEP = 1;
+	constexpr float X_START_POS = 20.f;
+	constexpr float Y_START_POS = 20.f;
+	constexpr float START_ANGLE = 0.f;
 
 	enum Facing : unsigned char
 	{
@@ -63,7 +64,7 @@ namespace
 	}
 
 
-	std::array<int, mapSz> map =
+	std::array<int, MAP_SZ> map =
 	{
 		1,1,1,1,1,1,1,1,
 		1,0,0,0,1,0,0,1,
@@ -82,7 +83,7 @@ namespace
 		float angle;
 
 		Player()
-			: x{ 100.f }, y{ 400.f }, angle{ 0.f }
+			: x{ X_START_POS }, y{ Y_START_POS }, angle{ 0.f }
 		{}
 
 		// dont go more than one whole circle out of bounds
@@ -101,13 +102,6 @@ namespace
 			SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 200, 0, 0xFF);
 			SDL_Rect r{ (int)x - playerDiameter,(int)y - playerDiameter,playerDiameter*2,playerDiameter*2 };
 			SDL_RenderFillRect(global::instance.getRenderer(), &r);
-
-			// draw line to show rotation
-			//  - calculate sin and cos of angle
-			float sinTheta = sin(angle) * 20;
-			float cosTheta = cos(angle) * 20;
-
-			SDL_RenderDrawLine(global::instance.getRenderer(), (int)x, (int)y, (int)cosTheta + (int)x, (int)sinTheta + (int)y);
 		}
 
 		enum class RotateDirection
@@ -118,8 +112,8 @@ namespace
 		
 		void rotate(RotateDirection dir)
 		{
-			if (dir == RotateDirection::Clockwise) angle += rotationSpeed;
-			else angle -= rotationSpeed;
+			if (dir == RotateDirection::Clockwise) angle += ROTATION_SPEED;
+			else angle -= ROTATION_SPEED;
 			if (angle < 0) angle += PI * 2;
 			else if (2 * PI < angle) angle -= PI * 2;
 		}
@@ -131,8 +125,8 @@ namespace
 			{
 				PI < movementAngle ? movementAngle -= PI : movementAngle += PI;
 			}
-			y += sin(movementAngle) * movementSpeed;
-			x += cos(movementAngle) * movementSpeed;
+			y += sin(movementAngle) * MOVEMENT_SPEED;
+			x += cos(movementAngle) * MOVEMENT_SPEED;
 		}
 	};
 
@@ -147,13 +141,13 @@ namespace
 
 		int toMapIndex(float x, float y)
 		{
-			const int xIndex = ((int)x / mapCellPx);
-			const int yIndex = ((int)y / mapCellPx);
-			const int mapIndex = xIndex + yIndex * mapCols;
+			const int xIndex = ((int)x / MAP_CELL_PX);
+			const int yIndex = ((int)y / MAP_CELL_PX);
+			const int mapIndex = xIndex + yIndex * MAP_COLS;
 			
 			// its possible to calculate a bad value with bad input, so lets
 			// just agree to return -1
-			if (mapIndex < 0 || mapSz <= mapIndex )
+			if (mapIndex < 0 || MAP_SZ <= mapIndex )
 			{
 				return -1;
 			}
@@ -168,11 +162,11 @@ namespace
 			if (mapIndex == -1)
 				return true;
 
-			assert(0 <= mapIndex && mapIndex < mapSz);
+			assert(0 <= mapIndex && mapIndex < MAP_SZ);
 			return 0 < map[mapIndex];
 		}
 
-		void doRayTest(float x, float y, float angle, unsigned char facing, bool showTopDown, bool show3D, int pxCol, int pxWidth)
+		void doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, bool showTopDown, bool show3D, int pxCol, int pxWidth)
 		{
 			//Player& player = *p_player;
 			float rowIntersectDistance = 10000000.f;
@@ -180,17 +174,18 @@ namespace
 			float distance = 10000000.f;
 			float xIntersect = 10000000.f;
 			float yIntersect = 10000000.f;
+			float alignedAngle = 0.f;
 
 			// check horizontals
 			if (facing & Facing::RIGHT)
 			{
 				//cout << "right" << endl;
-				const int firstColIntersect = ((int)x / mapCellPx) * mapCellPx + mapCellPx;
-				const float tempAngle = angle;
+				const int firstColIntersect = ((int)x / MAP_CELL_PX) * MAP_CELL_PX + MAP_CELL_PX;
+				const float tempAngle = rayAngle;
 				const float adjLen = firstColIntersect - x;
 				const float oppLen = tan(tempAngle) * adjLen;
-				const float xOffset = mapCellPx;
-				const float yOffset = tan(tempAngle) * mapCellPx;
+				const float xOffset = MAP_CELL_PX;
+				const float yOffset = tan(tempAngle) * MAP_CELL_PX;
 				float checkX = (float)firstColIntersect;
 				float checkY = oppLen + y;
 
@@ -202,16 +197,17 @@ namespace
 				distance = colIntersectDistance;
 				xIntersect = checkX;
 				yIntersect = checkY;
+				alignedAngle = tempAngle;
 			}
 			else if (facing & Facing::LEFT) 
 			{
 				//cout << "left" << endl;
-				const int firstColIntersect = ((int)x / mapCellPx) * mapCellPx;
-				const float tempAngle = (2 * PI - angle);
+				const int firstColIntersect = ((int)x / MAP_CELL_PX) * MAP_CELL_PX;
+				const float tempAngle = (2 * PI - rayAngle);
 				const float adjLen = x - firstColIntersect;
 				const float oppLen = tan(tempAngle) * adjLen;
-				const float xOffset = -mapCellPx;
-				const float yOffset = tan(tempAngle) * mapCellPx;
+				const float xOffset = -MAP_CELL_PX;
+				const float yOffset = tan(tempAngle) * MAP_CELL_PX;
 				float checkX = (float)firstColIntersect - 0.1f;
 				float checkY = oppLen + y;
 
@@ -223,18 +219,19 @@ namespace
 				distance = colIntersectDistance;
 				xIntersect = checkX;
 				yIntersect = checkY;
+				alignedAngle = tempAngle;
 			}
 
 			// check verticals
 			if (facing & Facing::UP)
 			{
 				//cout << "up" << endl;
-				const int firstRowIntersect = ((int)y / mapCellPx) * mapCellPx;
-				const float tempAngle = angle - 3 * PI / 2;
+				const int firstRowIntersect = ((int)y / MAP_CELL_PX) * MAP_CELL_PX;
+				const float tempAngle = rayAngle - 3 * PI / 2;
 				const float adjLen = y - firstRowIntersect;
 				const float oppLen = tan(tempAngle) * adjLen;
-				const float xOffset = tan(tempAngle) * mapCellPx;
-				const float yOffset = -mapCellPx;
+				const float xOffset = tan(tempAngle) * MAP_CELL_PX;
+				const float yOffset = -MAP_CELL_PX;
 				float checkX = oppLen + x;
 				float checkY = (float)firstRowIntersect - 0.1f;
 				while (!isWall(checkX, checkY))
@@ -247,17 +244,18 @@ namespace
 					distance = rowIntersectDistance;
 					xIntersect = checkX;
 					yIntersect = checkY;
+					alignedAngle = tempAngle;
 				}
 			}
 			else if (facing & Facing::DOWN)
 			{
 				//cout << "down" << endl;
-				const int firstRowIntersect = ((int)y / mapCellPx) * mapCellPx + mapCellPx;
-				const float tempAngle = PI / 2 - angle;
+				const int firstRowIntersect = ((int)y / MAP_CELL_PX) * MAP_CELL_PX + MAP_CELL_PX;
+				const float tempAngle = PI / 2 - rayAngle;
 				const float adjLen = firstRowIntersect - y;
 				const float oppLen = tan(tempAngle) * adjLen;
-				const float xOffset = tan(tempAngle) * mapCellPx;
-				const float yOffset = mapCellPx;
+				const float xOffset = tan(tempAngle) * MAP_CELL_PX;
+				const float yOffset = MAP_CELL_PX;
 				float checkX = oppLen + x;
 				float checkY = (float)firstRowIntersect;
 				while (!isWall(checkX, checkY))
@@ -270,24 +268,26 @@ namespace
 					distance = rowIntersectDistance;
 					xIntersect = checkX;
 					yIntersect = checkY;
+					alignedAngle = tempAngle;
 				}
 			}
 			if (show3D)
 			{
+				float angleDifference = rayAngle - playerAngle;
+
 				SDL_Rect r;
 				r.x = pxCol;
 				r.w = pxWidth;
-				r.h = (SCREEN_HEIGHT * 10) / ((int)distance+1);
+				r.h = (int)((SCREEN_HEIGHT * 10) / (distance * cos(angleDifference)));
 				r.y = (SCREEN_HEIGHT - r.h) / 2;
-
 				
 				if (rowIntersectDistance < colIntersectDistance)
 				{
-					SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 100, 100, 0xFF);
+					SDL_SetRenderDrawColor(global::instance.getRenderer(), 80, 80, 200, 0xFF);
 				}
 				else
 				{
-					SDL_SetRenderDrawColor(global::instance.getRenderer(), 50, 50, 50, 0xFF);
+					SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 100, 200, 0xFF);
 				}
 				SDL_RenderFillRect(global::instance.getRenderer(), &r);
 				
@@ -308,8 +308,8 @@ namespace game
 	{
 		Player player;
 		RayTest rt;
-		bool showTopDown = true;
-		bool show3D = false;
+		bool showTopDown = false;
+		bool show3D = true;
 		std::map<SDL_Keycode, bool> keyStates= {
 			{SDLK_w, false},
 			{SDLK_a, false},
@@ -342,26 +342,38 @@ namespace game
 
 	void GameSceneRaycaster::render()
 	{
-		// raycast and render the 3d scene
-		int pxCol = 0;
-		for (float angle = FOV_MIN; angle < FOV_MAX; angle += ANGLE_STEP)
+
+		// render the 3D world from the player perspective
 		{
-			float finalAngle = m_impl->player.sumAngle(angle);
-			m_impl->rt.doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, getFacing(finalAngle), m_impl->showTopDown, m_impl->show3D, pxCol, RAYCAST_COLUMN_WIDTH);
-			pxCol += RAYCAST_COLUMN_WIDTH;
+			constexpr float FOV_OFFSET = -(FOV / 2);
+			for (int xPx = 0; xPx < SCREEN_WIDTH; xPx += X_PX_STEP)
+			{
+				// px is what % across screen?
+				const float pxPerc = xPx / (float)SCREEN_WIDTH;
+
+				// calculate the angle to raycast based on the x screen position
+				const float angle = pxPerc * FOV + FOV_OFFSET;
+
+				// sum with the player's current angle to get the angle to send to the engine
+				const float finalAngle = m_impl->player.sumAngle(angle);
+
+				// cast the rays and render to screen
+				m_impl->rt.doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, getFacing(finalAngle), m_impl->showTopDown, m_impl->show3D, xPx, X_PX_STEP);
+			}
+
 		}
 
 		// draw the map
 		if (m_impl->showTopDown)
 		{
 			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 0, 200, 0xFF);
-			for (int row = 0; row < mapRows; ++row)
+			for (int row = 0; row < MAP_ROWS; ++row)
 			{
-				for (int col = 0; col < mapCols; ++col)
+				for (int col = 0; col < MAP_COLS; ++col)
 				{
 					// calc rect position and dimension
-					SDL_Rect rect{ col * mapCellPx, row * mapCellPx, mapCellPx, mapCellPx };
-					if (map[col + row * mapCols] > 0)
+					SDL_Rect rect{ col * MAP_CELL_PX, row * MAP_CELL_PX, MAP_CELL_PX, MAP_CELL_PX };
+					if (map[col + row * MAP_COLS] > 0)
 					{
 						SDL_RenderFillRect(global::instance.getRenderer(), &rect);
 					}
@@ -376,11 +388,11 @@ namespace game
 		}
 
 		// show x pixel coords for reference
-		SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-		for (int i = 100; i < SCREEN_WIDTH; i += 100)
-		{
-			SDL_RenderDrawLine(global::instance.getRenderer(), i, SCREEN_HEIGHT, i, SCREEN_HEIGHT - 20);
-		}
+		//SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+		//for (int i = 100; i < SCREEN_WIDTH; i += 100)
+		//{
+		//	SDL_RenderDrawLine(global::instance.getRenderer(), i, SCREEN_HEIGHT, i, SCREEN_HEIGHT - 20);
+		//}
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
