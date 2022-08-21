@@ -1,6 +1,5 @@
 #include "GameSceneMain.h"
-#include "GameSceneScaling.h"
-#include "GameSceneRotating.h"
+#include "GameSceneTransform.h"
 #include "GameSceneUserInput.h"
 #include "GameSceneAABBCollision.h"
 #include "GameScenePolygon.h"
@@ -9,7 +8,7 @@
 
 namespace
 {
-	constexpr int NUM_OPTIONS = 7;
+	constexpr int NUM_OPTIONS = 6;
 }
 
 namespace game
@@ -21,7 +20,7 @@ namespace game
 		std::unique_ptr<rcgf::Texture> bgTex;
 
 		Pimpl()
-			: optionsStrings{"0: Scaling", "1: Rotating", "2: User Input", "3: AABB Collision", "4: Polygon", "5: Math", "6: Raycasting"},
+			: optionsStrings{"0: Transform", "1: User Input", "2: AABB Collision", "3: Polygon", "4: Math", "5: Raycasting"},
 			  bgTex{std::make_unique<rcgf::Texture>("img/dice.png")}
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
@@ -63,30 +62,26 @@ namespace game
 		{
 		case SDLK_0:
 		case SDLK_KP_0:
-			pushPendingState(std::make_unique<GameSceneScaling>());
+			pushPendingState(std::make_unique<GameSceneTransform>());
 			break;
 		case SDLK_1:
 		case SDLK_KP_1:
-			pushPendingState(std::make_unique<GameStateRotating>());
+			pushPendingState(std::make_unique<GameSceneUserInput>());
 			break;
 		case SDLK_2:
 		case SDLK_KP_2:
-			pushPendingState(std::make_unique<GameSceneUserInput>());
+			pushPendingState(std::make_unique<GameSceneAABBCollision>());
 			break;
 		case SDLK_3:
 		case SDLK_KP_3:
-			pushPendingState(std::make_unique<GameSceneAABBCollision>());
+			pushPendingState(std::make_unique<GameScenePolygon>());
 			break;
 		case SDLK_4:
 		case SDLK_KP_4:
-			pushPendingState(std::make_unique<GameScenePolygon>());
+			pushPendingState(std::make_unique<GameSceneMath>());
 			break;
 		case SDLK_5:
 		case SDLK_KP_5:
-			pushPendingState(std::make_unique<GameSceneMath>());
-			break;
-		case SDLK_6:
-		case SDLK_KP_6:
 			pushPendingState(std::make_unique<GameSceneRaycaster>());
 			break;
 		}
