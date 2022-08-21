@@ -29,6 +29,8 @@
     <ClCompile Include="src\game\scenes\GameSceneMain.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMath.cpp" />
     <ClCompile Include="src\game\scenes\GameScenePolygon.cpp" />
+
+    <ClCompile Include="src\game\scenes\GameSceneRaycaster.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneTransform.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneUserInput.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -45,6 +47,9 @@
     <ClInclude Include="src\game\scenes\GameSceneMain.h" />
     <ClInclude Include="src\game\scenes\GameSceneMath.h" />
     <ClInclude Include="src\game\scenes\GameScenePolygon.h" />
+    <ClInclude Include="src\game\scenes\GameSceneRaycaster.h" />
+    <ClInclude Include="src\game\scenes\GameSceneRotating.h" />
+    <ClInclude Include="src\game\scenes\GameSceneScaling.h" />
     <ClInclude Include="src\game\scenes\GameSceneTransform.h" />
     <ClInclude Include="src\game\scenes\GameSceneUserInput.h" />
   </ItemGroup>

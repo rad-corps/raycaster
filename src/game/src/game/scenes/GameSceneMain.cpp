@@ -4,10 +4,11 @@
 #include "GameSceneAABBCollision.h"
 #include "GameScenePolygon.h"
 #include "GameSceneMath.h"
+#include "GameSceneRaycaster.h"
 
 namespace
 {
-	constexpr int NUM_OPTIONS = 5;
+	constexpr int NUM_OPTIONS = 6;
 }
 
 namespace game
@@ -19,7 +20,7 @@ namespace game
 		std::unique_ptr<rcgf::Texture> bgTex;
 
 		Pimpl()
-			: optionsStrings{"0: Transform", "1: User Input", "2: AABB Collision", "3: Polygon", "4: Math"},
+			: optionsStrings{"0: Transform", "1: User Input", "2: AABB Collision", "3: Polygon", "4: Math", "5: Raycasting"},
 			  bgTex{std::make_unique<rcgf::Texture>("img/dice.png")}
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
@@ -78,6 +79,10 @@ namespace game
 		case SDLK_4:
 		case SDLK_KP_4:
 			pushPendingState(std::make_unique<GameSceneMath>());
+			break;
+		case SDLK_5:
+		case SDLK_KP_5:
+			pushPendingState(std::make_unique<GameSceneRaycaster>());
 			break;
 		}
 	}

@@ -115,6 +115,7 @@ namespace game
 		{
 		case SDLK_0:
 		case SDLK_KP_0:
+		case SDLK_ESCAPE:
 			printf("switching to game state main from user input\n"); 
 			pushPendingState(std::make_unique<GameSceneMain>());
 			break;

@@ -90,7 +90,7 @@ namespace global
 		for (const char& c : inp)
 		{
 			monoText->render(static_cast<int>(c - 32), x, y);
-			x += 20;
+			x += 12;
 		}
 	}
 

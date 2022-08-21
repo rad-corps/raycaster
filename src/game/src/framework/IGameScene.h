@@ -2,6 +2,7 @@
 
 #include <memory> // std::unique_ptr
 #include "Globals.h"
+#include <map>
 
 namespace rcgf
 {
