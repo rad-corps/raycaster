@@ -6,6 +6,7 @@
 #include <chrono>
 #include <sstream>
 #include <iomanip> //std::setprecision
+#include "Player.h"
 
 // typedef std::chrono::high_resolution_clock Clock;
 
@@ -14,18 +15,15 @@ using std::endl;
 
 namespace
 {
-	constexpr float PI = 3.14159265359f;
+	
 	constexpr int MAP_COLS = 32;
 	constexpr int MAP_ROWS = 32;
 	constexpr int MAP_SZ = MAP_COLS * MAP_ROWS;
 	constexpr int MAP_CELL_PX = 16;
-	constexpr float MOVEMENT_SPEED = 1.f;
-	constexpr float ROTATION_SPEED = 0.03f;
 	constexpr float FOV = PI / 3.f; // 60 degrees
 	constexpr int X_PX_STEP = 1;
 	constexpr int COLUMNS = SCREEN_WIDTH / X_PX_STEP;
-	constexpr float X_START_POS = 20.f;
-	constexpr float Y_START_POS = 20.f;
+
 	constexpr float START_ANGLE = 0.f;
 
 	struct Color
@@ -115,60 +113,6 @@ namespace
 		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 	};
 
-	struct Player
-	{
-		float x;
-		float y;
-		float angle;
-
-		Player()
-			: x{ X_START_POS }, y{ Y_START_POS }, angle{ 0.f }
-		{}
-
-		// dont go more than one whole circle out of bounds
-		float sumAngle(float add) const
-		{
-			add += angle;
-			if (add < 0) add += PI * 2;
-			else if (2 * PI < add) add -= PI * 2;
-			return add;
-		}
-
-		void render()
-		{
-			// draw the player
-			int constexpr playerDiameter = 2;
-			SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 200, 0, 0xFF);
-			SDL_Rect r{ (int)x - playerDiameter,(int)y - playerDiameter,playerDiameter*2,playerDiameter*2 };
-			SDL_RenderFillRect(global::instance.getRenderer(), &r);
-		}
-
-		enum class RotateDirection
-		{
-			Clockwise,
-			Anticlockwise
-		};
-		
-		void rotate(RotateDirection dir)
-		{
-			if (dir == RotateDirection::Clockwise) angle += ROTATION_SPEED;
-			else angle -= ROTATION_SPEED;
-			if (angle < 0) angle += PI * 2;
-			else if (2 * PI < angle) angle -= PI * 2;
-		}
-
-		void move(bool forward)
-		{
-			float movementAngle = angle;
-			if (!forward)
-			{
-				PI < movementAngle ? movementAngle -= PI : movementAngle += PI;
-			}
-			y += sin(movementAngle) * MOVEMENT_SPEED;
-			x += cos(movementAngle) * MOVEMENT_SPEED;
-		}
-	};
-
 	struct RayTest
 	{
 		void drawIntersect(int x, int y)
@@ -215,6 +159,7 @@ namespace
 			float alignedAngle = 0.f;
 
 			// check horizontals
+			// TODO: collapse LEFT and RIGHT branches together
 			if (facing & Facing::RIGHT)
 			{
 				const int firstColIntersect = ((int)x / MAP_CELL_PX) * MAP_CELL_PX + MAP_CELL_PX;
@@ -259,6 +204,7 @@ namespace
 			}
 
 			// check verticals
+			// TODO: collapse UP and DOWN branches together
 			if (facing & Facing::UP)
 			{
 				const int firstRowIntersect = ((int)y / MAP_CELL_PX) * MAP_CELL_PX;
@@ -305,6 +251,8 @@ namespace
 					alignedAngle = tempAngle;
 				}
 			}
+
+			// TODO: include this with return data and render outside this function
 			if (showTopDown)
 			{
 				SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 200, 0, 0xFF);
