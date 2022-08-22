@@ -27,9 +27,9 @@ namespace game
 	void Player::render()
 	{
 		// draw the player
-		int constexpr playerDiameter = 2;
+		constexpr int playerDiameter = 2;
+		const SDL_Rect r{ (int)x - playerDiameter,(int)y - playerDiameter,playerDiameter * 2,playerDiameter * 2 };
 		SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 200, 0, 0xFF);
-		SDL_Rect r{ (int)x - playerDiameter,(int)y - playerDiameter,playerDiameter * 2,playerDiameter * 2 };
 		SDL_RenderFillRect(global::instance.getRenderer(), &r);
 	}
 
