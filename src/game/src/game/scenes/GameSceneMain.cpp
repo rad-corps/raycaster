@@ -4,7 +4,7 @@
 #include "GameSceneAABBCollision.h"
 #include "GameScenePolygon.h"
 #include "GameSceneMath.h"
-#include "GameSceneRaycaster.h"
+#include "../raycaster/GameSceneRaycaster.h"
 
 namespace
 {

@@ -1,5 +1,5 @@
 #include "GameSceneRaycaster.h"
-#include "GameSceneMain.h"
+#include "../scenes/GameSceneMain.h"
 #include "Globals.h"
 #include <iostream>
 #include <bitset>
@@ -7,26 +7,16 @@
 #include <sstream>
 #include <iomanip> //std::setprecision
 
-typedef std::chrono::high_resolution_clock Clock;
+// typedef std::chrono::high_resolution_clock Clock;
 
 using std::cout;
 using std::endl;
 
 namespace
 {
-	// timing variables
-	Uint64 NOW = SDL_GetPerformanceCounter();
-	Uint64 LAST = 0;
-	double deltaTime = 0;
-	int frame = 0;
-	float rayTimer = 0.f;
-	float rayTimers[60];
-	float renderTimer = 0.f;
-	float renderTimers[60];
-
 	constexpr float PI = 3.14159265359f;
-	constexpr int MAP_COLS = 8;
-	constexpr int MAP_ROWS = 8;
+	constexpr int MAP_COLS = 32;
+	constexpr int MAP_ROWS = 32;
 	constexpr int MAP_SZ = MAP_COLS * MAP_ROWS;
 	constexpr int MAP_CELL_PX = 16;
 	constexpr float MOVEMENT_SPEED = 1.f;
@@ -91,14 +81,38 @@ namespace
 
 	std::array<int, MAP_SZ> map =
 	{
-		1,1,1,1,1,1,1,1,
-		1,0,0,0,1,0,0,1,
-		1,0,0,0,1,0,0,1,
-		1,0,1,0,1,0,0,1,
-		1,0,1,0,1,0,0,1,
-		1,1,1,0,1,1,0,1,
-		1,0,0,0,0,0,0,1,
-		1,1,1,1,1,1,1,1
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,
+		1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,
+		1,0,1,0,1,0,0,1,1,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,1,0,1,0,1,0,0,1,
+		1,0,1,0,1,0,0,1,1,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,1,0,1,0,1,0,0,1,
+		1,0,0,0,1,1,0,1,1,1,1,0,1,1,0,1,1,1,0,0,0,1,0,1,1,1,1,0,1,1,0,1,
+		1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 	};
 
 	struct Player
@@ -193,7 +207,6 @@ namespace
 
 		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, bool showTopDown, int pxCol, int pxWidth)
 		{
-			//Player& player = *p_player;
 			float rowIntersectDistance = 10000000.f;
 			float colIntersectDistance = 10000000.f;
 			float distance = 10000000.f;
@@ -204,7 +217,6 @@ namespace
 			// check horizontals
 			if (facing & Facing::RIGHT)
 			{
-				//cout << "right" << endl;
 				const int firstColIntersect = ((int)x / MAP_CELL_PX) * MAP_CELL_PX + MAP_CELL_PX;
 				const float tempAngle = rayAngle;
 				const float adjLen = firstColIntersect - x;
@@ -226,7 +238,6 @@ namespace
 			}
 			else if (facing & Facing::LEFT) 
 			{
-				//cout << "left" << endl;
 				const int firstColIntersect = ((int)x / MAP_CELL_PX) * MAP_CELL_PX;
 				const float tempAngle = (2 * PI - rayAngle);
 				const float adjLen = x - firstColIntersect;
@@ -250,7 +261,6 @@ namespace
 			// check verticals
 			if (facing & Facing::UP)
 			{
-				//cout << "up" << endl;
 				const int firstRowIntersect = ((int)y / MAP_CELL_PX) * MAP_CELL_PX;
 				const float tempAngle = rayAngle - 3 * PI / 2;
 				const float adjLen = y - firstRowIntersect;
@@ -274,7 +284,6 @@ namespace
 			}
 			else if (facing & Facing::DOWN)
 			{
-				//cout << "down" << endl;
 				const int firstRowIntersect = ((int)y / MAP_CELL_PX) * MAP_CELL_PX + MAP_CELL_PX;
 				const float tempAngle = PI / 2 - rayAngle;
 				const float adjLen = firstRowIntersect - y;
@@ -317,7 +326,6 @@ namespace
 				ret.color.g = 80;
 				ret.color.b = 200;
 				ret.color.a = 0xFF;
-				//SDL_SetRenderDrawColor(global::instance.getRenderer(), 80, 80, 200, 0xFF);
 			}
 			else
 			{
@@ -325,12 +333,60 @@ namespace
 				ret.color.g = 100;
 				ret.color.b = 200;
 				ret.color.a = 0xFF;
-				//SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 100, 200, 0xFF);
 			}
-			//SDL_RenderFillRect(global::instance.getRenderer(), &r);
 			return ret;
 		}
 	};
+
+	template<size_t NumIterations>
+	class MeanTimer
+	{
+	public:
+		MeanTimer() = default;
+
+		void Start()
+		{
+			start = std::chrono::high_resolution_clock::now();
+		}
+
+		// return time as miliseconds
+		float Stop()
+		{
+			std::chrono::steady_clock::time_point end = std::chrono::high_resolution_clock::now();
+			results[counter++] = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.f;
+			
+			// wrap
+			if (NumIterations == counter)
+			{
+				counter = 0;
+
+				// recalc cache result
+				cacheResult = 0.f;
+				for (size_t i = 0; i < NumIterations; ++i)
+				{
+					cacheResult += results[i];
+				}
+				cacheResult /= NumIterations;
+			}
+			return cacheResult;
+		}
+		std::string AsString(size_t dp)
+		{
+			std::stringstream ss;
+			ss << std::fixed << std::setprecision(dp) << cacheResult;
+			std::string ret = ss.str();
+			return ret;
+		}
+
+	private:
+		size_t counter = 0;
+		float results[NumIterations] = {0.f};
+		float cacheResult = 0.f;
+		std::chrono::steady_clock::time_point start;
+	};
+
+	MeanTimer<30> renderTimer;
+	MeanTimer<30> rayTimer;
 }
 
 namespace game
@@ -361,10 +417,6 @@ namespace game
 
 	void GameSceneRaycaster::update()
 	{
-		LAST = NOW;
-		NOW = SDL_GetPerformanceCounter();
-		deltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency());
-
 		if (m_impl->keyStates[SDLK_d] || m_impl->keyStates[SDLK_RIGHT]) m_impl->player.rotate(Player::RotateDirection::Clockwise);
 		if (m_impl->keyStates[SDLK_a] || m_impl->keyStates[SDLK_LEFT])  m_impl->player.rotate(Player::RotateDirection::Anticlockwise);
 		if (m_impl->keyStates[SDLK_w] || m_impl->keyStates[SDLK_UP])    m_impl->player.move(true);
@@ -377,7 +429,7 @@ namespace game
 
 		// render the 3D world from the player perspective
 		{
-			auto t1 = Clock::now();
+			rayTimer.Start();
 			ColumnRenderData columnRenderData[COLUMNS];
 			constexpr float FOV_OFFSET = -(FOV / 2);
 			for (int column = 0; column < COLUMNS; ++column)
@@ -397,55 +449,23 @@ namespace game
 				// cast the rays and render to screen
 				columnRenderData[column] = m_impl->rt.doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, getFacing(finalAngle), m_impl->showTopDown, xPx, X_PX_STEP);
 			}
-		
-			// only recalculate every now and then
-			auto t2 = Clock::now();
-			rayTimers[frame] = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() / 1000000.f;
-			if (frame == 0)
-			{
-				rayTimer = 0.f;
-				for (int i = 0; i < 60; ++i)
-				{
-					rayTimer += rayTimers[i];
-				}
-				rayTimer /= 60;
-			}
-
-
+			rayTimer.Stop();
 
 			// draw the 3d scene
+			renderTimer.Start();
 			if (m_impl->show3D)
-			{
-				t1 = Clock::now();
+			{				
 				for (int column = 0; column < COLUMNS; ++column)
 				{
 					ColumnRenderData& col = columnRenderData[column];
 					SDL_SetRenderDrawColor(global::instance.getRenderer(), col.color.r, col.color.g, col.color.b, col.color.a);
 					SDL_RenderFillRect(global::instance.getRenderer(), &col.rect);
 				}
-				t2 = Clock::now();
-				renderTimers[frame] = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() / 1000000.f;
-				if (frame == 0)
-				{
-					renderTimer = 0.f;
-					for (int i = 0; i < 60; ++i)
-					{
-						renderTimer += renderTimers[i];
-					}
-					renderTimer /= 60;
-				}
-					
 			}
+			renderTimer.Stop();
 
-
-			std::stringstream rayTimerSS;
-			rayTimerSS << std::fixed << std::setprecision(1) << rayTimer;
-
-			std::stringstream renderTimerSS;
-			renderTimerSS << std::fixed << std::setprecision(1) << renderTimer;
-
-			global::instance.renderMonospaceText("Ray:" + rayTimerSS.str() + " ms", SCREEN_WIDTH - 200, 0);
-			global::instance.renderMonospaceText("Ren:" + renderTimerSS.str() + " ms", SCREEN_WIDTH - 200, 15);
+			global::instance.renderMonospaceText("Ray:" + rayTimer.AsString(1) + " ms", SCREEN_WIDTH - 200, 0);
+			global::instance.renderMonospaceText("Ren:" + renderTimer.AsString(1) + " ms", SCREEN_WIDTH - 200, 15);
 
 		}
 
@@ -472,9 +492,6 @@ namespace game
 
 			m_impl->player.render();
 		}
-
-		frame > 59 ? frame = 0: ++frame;
-
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
