@@ -3,6 +3,11 @@
 #include "Globals.h"
 #include <iostream>
 #include <bitset>
+#include <chrono>
+#include <sstream>
+#include <iomanip> //std::setprecision
+
+typedef std::chrono::high_resolution_clock Clock;
 
 using std::cout;
 using std::endl;
@@ -13,7 +18,11 @@ namespace
 	Uint64 NOW = SDL_GetPerformanceCounter();
 	Uint64 LAST = 0;
 	double deltaTime = 0;
-
+	int frame = 0;
+	float rayTimer = 0.f;
+	float rayTimers[60];
+	float renderTimer = 0.f;
+	float renderTimers[60];
 
 	constexpr float PI = 3.14159265359f;
 	constexpr int MAP_COLS = 8;
@@ -24,9 +33,25 @@ namespace
 	constexpr float ROTATION_SPEED = 0.03f;
 	constexpr float FOV = PI / 3.f; // 60 degrees
 	constexpr int X_PX_STEP = 1;
+	constexpr int COLUMNS = SCREEN_WIDTH / X_PX_STEP;
 	constexpr float X_START_POS = 20.f;
 	constexpr float Y_START_POS = 20.f;
 	constexpr float START_ANGLE = 0.f;
+
+	struct Color
+	{
+		Uint8 r;
+		Uint8 g;
+		Uint8 b;
+		Uint8 a;
+	};
+
+	struct ColumnRenderData
+	{
+		SDL_Rect rect;
+		Color color;
+	};
+	
 
 	enum Facing : unsigned char
 	{
@@ -166,7 +191,7 @@ namespace
 			return 0 < map[mapIndex];
 		}
 
-		void doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, bool showTopDown, bool show3D, int pxCol, int pxWidth)
+		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, bool showTopDown, int pxCol, int pxWidth)
 		{
 			//Player& player = *p_player;
 			float rowIntersectDistance = 10000000.f;
@@ -271,33 +296,39 @@ namespace
 					alignedAngle = tempAngle;
 				}
 			}
-			if (show3D)
-			{
-				float angleDifference = rayAngle - playerAngle;
-
-				SDL_Rect r;
-				r.x = pxCol;
-				r.w = pxWidth;
-				r.h = (int)((SCREEN_HEIGHT * 10) / (distance * cos(angleDifference)));
-				r.y = (SCREEN_HEIGHT - r.h) / 2;
-				
-				if (rowIntersectDistance < colIntersectDistance)
-				{
-					SDL_SetRenderDrawColor(global::instance.getRenderer(), 80, 80, 200, 0xFF);
-				}
-				else
-				{
-					SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 100, 200, 0xFF);
-				}
-				SDL_RenderFillRect(global::instance.getRenderer(), &r);
-				
-			}
 			if (showTopDown)
 			{
 				SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 200, 0, 0xFF);
 				SDL_RenderDrawLine(global::instance.getRenderer(), (int)x, (int)y, (int)xIntersect, (int)yIntersect);
 			}
-				
+			
+			const float angleDifference = rayAngle - playerAngle;
+
+			ColumnRenderData ret;
+			
+			ret.rect.x = pxCol;
+			ret.rect.w = pxWidth;
+			ret.rect.h = (int)((SCREEN_HEIGHT * 10) / (distance * cos(angleDifference)));
+			ret.rect.y = (SCREEN_HEIGHT - ret.rect.h) / 2;
+
+			if (rowIntersectDistance < colIntersectDistance)
+			{
+				ret.color.r = 80;
+				ret.color.g = 80;
+				ret.color.b = 200;
+				ret.color.a = 0xFF;
+				//SDL_SetRenderDrawColor(global::instance.getRenderer(), 80, 80, 200, 0xFF);
+			}
+			else
+			{
+				ret.color.r = 100;
+				ret.color.g = 100;
+				ret.color.b = 200;
+				ret.color.a = 0xFF;
+				//SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 100, 200, 0xFF);
+			}
+			//SDL_RenderFillRect(global::instance.getRenderer(), &r);
+			return ret;
 		}
 	};
 }
@@ -343,11 +374,17 @@ namespace game
 	void GameSceneRaycaster::render()
 	{
 
+
 		// render the 3D world from the player perspective
 		{
+			auto t1 = Clock::now();
+			ColumnRenderData columnRenderData[COLUMNS];
 			constexpr float FOV_OFFSET = -(FOV / 2);
-			for (int xPx = 0; xPx < SCREEN_WIDTH; xPx += X_PX_STEP)
+			for (int column = 0; column < COLUMNS; ++column)
 			{
+				// which x position pixel (column number in pixels)?
+				const int xPx = column * X_PX_STEP;
+				
 				// px is what % across screen?
 				const float pxPerc = xPx / (float)SCREEN_WIDTH;
 
@@ -358,8 +395,57 @@ namespace game
 				const float finalAngle = m_impl->player.sumAngle(angle);
 
 				// cast the rays and render to screen
-				m_impl->rt.doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, getFacing(finalAngle), m_impl->showTopDown, m_impl->show3D, xPx, X_PX_STEP);
+				columnRenderData[column] = m_impl->rt.doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, getFacing(finalAngle), m_impl->showTopDown, xPx, X_PX_STEP);
 			}
+		
+			// only recalculate every now and then
+			auto t2 = Clock::now();
+			rayTimers[frame] = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() / 1000000.f;
+			if (frame == 0)
+			{
+				rayTimer = 0.f;
+				for (int i = 0; i < 60; ++i)
+				{
+					rayTimer += rayTimers[i];
+				}
+				rayTimer /= 60;
+			}
+
+
+
+			// draw the 3d scene
+			if (m_impl->show3D)
+			{
+				t1 = Clock::now();
+				for (int column = 0; column < COLUMNS; ++column)
+				{
+					ColumnRenderData& col = columnRenderData[column];
+					SDL_SetRenderDrawColor(global::instance.getRenderer(), col.color.r, col.color.g, col.color.b, col.color.a);
+					SDL_RenderFillRect(global::instance.getRenderer(), &col.rect);
+				}
+				t2 = Clock::now();
+				renderTimers[frame] = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() / 1000000.f;
+				if (frame == 0)
+				{
+					renderTimer = 0.f;
+					for (int i = 0; i < 60; ++i)
+					{
+						renderTimer += renderTimers[i];
+					}
+					renderTimer /= 60;
+				}
+					
+			}
+
+
+			std::stringstream rayTimerSS;
+			rayTimerSS << std::fixed << std::setprecision(1) << rayTimer;
+
+			std::stringstream renderTimerSS;
+			renderTimerSS << std::fixed << std::setprecision(1) << renderTimer;
+
+			global::instance.renderMonospaceText("Ray:" + rayTimerSS.str() + " ms", SCREEN_WIDTH - 200, 0);
+			global::instance.renderMonospaceText("Ren:" + renderTimerSS.str() + " ms", SCREEN_WIDTH - 200, 15);
 
 		}
 
@@ -387,12 +473,8 @@ namespace game
 			m_impl->player.render();
 		}
 
-		// show x pixel coords for reference
-		//SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-		//for (int i = 100; i < SCREEN_WIDTH; i += 100)
-		//{
-		//	SDL_RenderDrawLine(global::instance.getRenderer(), i, SCREEN_HEIGHT, i, SCREEN_HEIGHT - 20);
-		//}
+		frame > 59 ? frame = 0: ++frame;
+
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
