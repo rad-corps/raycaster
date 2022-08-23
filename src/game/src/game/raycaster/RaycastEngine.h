@@ -32,10 +32,17 @@ namespace game
 		Uint8 a;
 	};
 
+	struct Line
+	{
+		SDL_Point start;
+		SDL_Point end;
+	};
+
 	struct ColumnRenderData
 	{
 		SDL_Rect rect;
 		Color color;
+		Line ray;
 	};
 
 	struct RayTest
@@ -43,6 +50,6 @@ namespace game
 		void drawIntersect(int x, int y);
 		int toMapIndex(float x, float y);
 		bool isWall(float x, float y, std::array<int, game::MAP_SZ>* map);
-		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, bool showTopDown, int pxCol, int pxWidth, std::array<int, game::MAP_SZ>* map);
+		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, int pxCol, int pxWidth, std::array<int, game::MAP_SZ>* map);
 	};
 }

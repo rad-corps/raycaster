@@ -63,7 +63,7 @@ namespace game
 		return 0 < (*map)[mapIndex];
 	}
 
-	ColumnRenderData RayTest::doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, bool showTopDown, int pxCol, int pxWidth, std::array<int, game::MAP_SZ>* map)
+	ColumnRenderData RayTest::doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, int pxCol, int pxWidth, std::array<int, game::MAP_SZ>* map)
 	{
 		float rowIntersectDistance = 10000000.f;
 		float colIntersectDistance = 10000000.f;
@@ -166,16 +166,14 @@ namespace game
 			}
 		}
 
-		// TODO: include this with return data and render outside this function
-		if (showTopDown)
-		{
-			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 200, 0, 0xFF);
-			SDL_RenderDrawLine(global::instance.getRenderer(), (int)x, (int)y, (int)xIntersect, (int)yIntersect);
-		}
+		ColumnRenderData ret;
+
+		ret.ray.start.x = (int)x;
+		ret.ray.start.y = (int)y;
+		ret.ray.end.x = (int)xIntersect;
+		ret.ray.end.y = (int)yIntersect;
 
 		const float angleDifference = rayAngle - playerAngle;
-
-		ColumnRenderData ret;
 
 		ret.rect.x = pxCol;
 		ret.rect.w = pxWidth;
