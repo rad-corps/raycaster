@@ -45,7 +45,7 @@ namespace game
 		Line ray;
 	};
 
-	struct RayTest
+	namespace raycast_engine
 	{
 		void drawIntersect(int x, int y);
 		int toMapIndex(float x, float y);
