@@ -6,9 +6,13 @@
 #include <cstdio>
 #include <array>
 #include <string>
+#include <chrono>
+
 
 namespace
 {
+	constexpr double FIXED_UPDATE = 1000 / 60.0;
+
 	void init()
 	{
 		global::instance.init();
@@ -38,9 +42,18 @@ int main(int argc, char* args[])
 	//Event handler
 	SDL_Event e;
 
+	// used to calculate call to fixedUpdate 
+	double deltaTimeMs = 0.f;
+
+	std::chrono::steady_clock::time_point time1 = std::chrono::high_resolution_clock::now();
+	std::chrono::steady_clock::time_point time2 = std::chrono::high_resolution_clock::now();
+	
+
+
 	//While application is running
 	while (!quit)
 	{
+		time1 = std::chrono::high_resolution_clock::now();
 		// handle events on queue
 		while (SDL_PollEvent(&e) != 0)
 		{
@@ -75,6 +88,15 @@ int main(int argc, char* args[])
 
 		//Update screen
 		SDL_RenderPresent(global::instance.getRenderer());
+
+		time2 = std::chrono::high_resolution_clock::now();
+		deltaTimeMs += std::chrono::duration_cast<std::chrono::microseconds>(time2 - time1).count() / 1000.0;
+
+		if (deltaTimeMs > FIXED_UPDATE)
+		{
+			deltaTimeMs -= FIXED_UPDATE;
+			gameState->fixedUpdate();
+		}
 	}
 
 	return 0;

@@ -20,7 +20,6 @@ namespace
 	constexpr float FOV = PI / 3.f; // 60 degrees
 	constexpr int X_PX_STEP = 1;
 	constexpr int COLUMNS = SCREEN_WIDTH / X_PX_STEP;
-
 	constexpr float START_ANGLE = 0.f;
 
 	std::array<int, game::MAP_SZ> map =
@@ -59,55 +58,21 @@ namespace
 		1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 	};
 
-	template<size_t NumIterations>
-	class MeanTimer
+	struct SimplePerfCounter
 	{
-	public:
-		MeanTimer() = default;
-
 		void Start()
 		{
 			start = std::chrono::high_resolution_clock::now();
 		}
-
-		// return time as miliseconds
-		float Stop()
+		std::string Stop()
 		{
-			std::chrono::steady_clock::time_point end = std::chrono::high_resolution_clock::now();
-			results[counter++] = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.f;
-			
-			// wrap
-			if (NumIterations == counter)
-			{
-				counter = 0;
-
-				// recalc cache result
-				cacheResult = 0.f;
-				for (size_t i = 0; i < NumIterations; ++i)
-				{
-					cacheResult += results[i];
-				}
-				cacheResult /= NumIterations;
-			}
-			return cacheResult;
-		}
-		std::string AsString(size_t dp)
-		{
+			double result = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000.0;
 			std::stringstream ss;
-			ss << std::fixed << std::setprecision(dp) << cacheResult;
-			std::string ret = ss.str();
-			return ret;
+			ss << std::fixed << std::setprecision(1) << result;
+			return ss.str();
 		}
-
-	private:
-		size_t counter = 0;
-		float results[NumIterations] = {0.f};
-		float cacheResult = 0.f;
 		std::chrono::steady_clock::time_point start;
-	};
-
-	MeanTimer<30> renderTimer;
-	MeanTimer<30> rayTimer;
+	} perfCounter;
 }
 
 namespace game
@@ -131,11 +96,17 @@ namespace game
 		{}
 	};
 
+
 	GameSceneRaycaster::GameSceneRaycaster()
 		: m_impl{ std::make_unique<Pimpl>() }
 	{}
 
 	void GameSceneRaycaster::update()
+	{
+
+	}
+
+	void GameSceneRaycaster::fixedUpdate()
 	{
 		if (m_impl->keyStates[SDLK_d] || m_impl->keyStates[SDLK_RIGHT]) m_impl->player.rotate(Player::RotateDirection::Clockwise);
 		if (m_impl->keyStates[SDLK_a] || m_impl->keyStates[SDLK_LEFT])  m_impl->player.rotate(Player::RotateDirection::Anticlockwise);
@@ -147,7 +118,7 @@ namespace game
 	{
 		// render the 3D world from the player perspective
 		{
-			rayTimer.Start();
+			perfCounter.Start();
 			ColumnRenderData columnRenderData[COLUMNS];
 			constexpr float FOV_OFFSET = -(FOV / 2);
 			for (int column = 0; column < COLUMNS; ++column)
@@ -167,10 +138,10 @@ namespace game
 				// cast the rays and render to screen
 				columnRenderData[column] = raycast_engine::doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, getFacing(finalAngle), xPx, X_PX_STEP, &map);
 			}
-			rayTimer.Stop();
+			const std::string strRayTime = perfCounter.Stop();
 
 			// draw the 3d scene
-			renderTimer.Start();
+			perfCounter.Start();
 			if (m_impl->show3D)
 			{				
 				for (int column = 0; column < COLUMNS; ++column)
@@ -187,10 +158,10 @@ namespace game
 				}
 			}
 			
-			renderTimer.Stop();
+			const std::string strRenderTime = perfCounter.Stop();
 
-			global::instance.renderMonospaceText("Ray:" + rayTimer.AsString(1) + " ms", SCREEN_WIDTH - 200, 0);
-			global::instance.renderMonospaceText("Ren:" + renderTimer.AsString(1) + " ms", SCREEN_WIDTH - 200, 15);
+			global::instance.renderMonospaceText("Ray:" + strRayTime + " ms", SCREEN_WIDTH - 200, 0);
+			global::instance.renderMonospaceText("Ren:" + strRenderTime + " ms", SCREEN_WIDTH - 200, 15);
 		}
 
 		// draw the map

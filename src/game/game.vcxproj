@@ -40,6 +40,7 @@
     <ClInclude Include="src\framework\Animation.h" />
     <ClInclude Include="src\framework\Collision.h" />
     <ClInclude Include="src\framework\Line.h" />
+    <ClInclude Include="src\framework\MeanTimer.h" />
     <ClInclude Include="src\framework\Polygon.h" />
     <ClInclude Include="src\framework\Texture.h" />
     <ClInclude Include="src\framework\Globals.h" />

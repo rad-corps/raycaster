@@ -14,6 +14,7 @@ namespace game
 	public:
 		GameSceneUserInput();
 		void update() override;
+		void fixedUpdate() override {};
 		void render() override;
 		void keyDown(SDL_Keycode) override;
 		void keyUp(SDL_Keycode) override;

@@ -32,13 +32,6 @@ namespace game
 
 	namespace raycast_engine
 	{
-		void drawIntersect(int x, int y)
-		{
-			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0, 0xFF);
-			SDL_Rect r{ x - 1, y - 1, 3, 3 };
-			SDL_RenderFillRect(global::instance.getRenderer(), &r);
-		}
-
 		int toMapIndex(float x, float y)
 		{
 			const int xIndex = ((int)x / MAP_CELL_PX);

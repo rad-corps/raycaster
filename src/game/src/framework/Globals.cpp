@@ -67,7 +67,8 @@ namespace global
 			SDL_CreateRenderer(
 				window,
 				-1, // index of the rendering driver to init. -1 for first available 
-				SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+				//SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+				SDL_RENDERER_ACCELERATED
 			)
 		);
 
