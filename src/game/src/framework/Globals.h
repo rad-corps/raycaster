@@ -15,9 +15,9 @@
 
 #pragma warning( pop )
 
-constexpr int SCREEN_WIDTH = 1920;
+constexpr int SCREEN_WIDTH = 1280;
 constexpr int CENTER_X = SCREEN_WIDTH / 2;
-constexpr int SCREEN_HEIGHT = 1080;
+constexpr int SCREEN_HEIGHT = 720;
 constexpr int CENTER_Y = SCREEN_HEIGHT / 2;
 constexpr float PI = 3.14159265359f;
 

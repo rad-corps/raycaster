@@ -45,6 +45,7 @@
     <ClInclude Include="src\framework\Texture.h" />
     <ClInclude Include="src\framework\Globals.h" />
     <ClInclude Include="src\framework\IGameScene.h" />
+    <ClInclude Include="src\game\raycaster\Map.h" />
     <ClInclude Include="src\game\raycaster\Player.h" />
     <ClInclude Include="src\game\raycaster\RaycastEngine.h" />
     <ClInclude Include="src\game\scenes\GameSceneAABBCollision.h" />

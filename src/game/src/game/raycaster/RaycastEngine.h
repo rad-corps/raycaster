@@ -2,14 +2,10 @@
 
 #include "Globals.h"
 #include <array>
+#include "Map.h"
 
 namespace game
 {
-	constexpr int MAP_CELL_PX = 8;
-	constexpr int MAP_COLS = 32;
-	constexpr int MAP_ROWS = 32;
-	constexpr int MAP_SZ = MAP_COLS * MAP_ROWS;
-
 	enum Facing : unsigned char
 	{
 		UP = 0x0001,
@@ -48,7 +44,7 @@ namespace game
 	namespace raycast_engine
 	{
 		int toMapIndex(float x, float y);
-		bool isWall(float x, float y, std::array<int, game::MAP_SZ>* map);
+		bool isWall(float x, float y, GameMap* map);
 		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, int pxCol, int pxWidth, std::array<int, game::MAP_SZ>* map);
 	};
 }

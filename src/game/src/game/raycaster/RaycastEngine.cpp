@@ -47,7 +47,7 @@ namespace game
 			return mapIndex;
 		}
 
-		bool isWall(float x, float y, std::array<int, game::MAP_SZ>* map)
+		bool isWall(float x, float y, GameMap* map)
 		{
 			const int mapIndex = toMapIndex(x, y);
 
@@ -59,7 +59,7 @@ namespace game
 			return 0 < (*map)[mapIndex];
 		}
 
-		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, int pxCol, int pxWidth, std::array<int, game::MAP_SZ>* map)
+		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, int pxCol, int pxWidth, GameMap* map)
 		{
 			float rowIntersectDistance = 10000000.f;
 			float colIntersectDistance = 10000000.f;

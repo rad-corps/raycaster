@@ -8,6 +8,7 @@
 #include <iomanip> //std::setprecision
 #include "Player.h"
 #include "RaycastEngine.h"
+#include "Map.h"
 
 // typedef std::chrono::high_resolution_clock Clock;
 
@@ -22,7 +23,7 @@ namespace
 	constexpr int COLUMNS = SCREEN_WIDTH / X_PX_STEP;
 	constexpr float START_ANGLE = 0.f;
 
-	std::array<int, game::MAP_SZ> map =
+	game::GameMap map =
 	{
 		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 		1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,
