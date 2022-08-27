@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Globals.h"
-
+#include "Map.h"
 namespace game
 {
 	class Player
@@ -19,7 +19,7 @@ namespace game
 		void render();
 
 		void rotate(RotateDirection dir);
-		void move(bool forward);
+		void move(bool forward, GameMap* map);
 
 		float x;
 		float y;

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Player.h"
+#include "Map.h"
+#include <iostream>
 
 namespace
 {
@@ -41,18 +43,25 @@ namespace game
 		else if (2 * PI < angle) angle -= PI * 2;
 	}
 
-	void Player::move(bool forward)
+	void Player::move(bool forward, GameMap* map)
 	{
 		float movementAngle = angle;
 		if (!forward)
 		{
 			PI < movementAngle ? movementAngle -= PI : movementAngle += PI;
 		}
-		y += sin(movementAngle) * MOVEMENT_SPEED;
-		x += cos(movementAngle) * MOVEMENT_SPEED;
+		const float yDelta = sin(movementAngle) * MOVEMENT_SPEED;
+		y += yDelta;
+		if (isWall(x, y, map))
+		{
+			y -= yDelta;
+		}
 
-		// TODO: collision checking
-		// check column collision
-		// checl row collision
+		const float xDelta = cos(movementAngle) * MOVEMENT_SPEED;
+		x += xDelta;
+		if (isWall(x, y, map))
+		{
+			x -= xDelta;
+		}
 	}
 }

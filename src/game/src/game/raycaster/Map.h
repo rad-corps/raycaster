@@ -10,4 +10,7 @@ namespace game
 	constexpr int MAP_SZ = MAP_COLS * MAP_ROWS;
 
 	using GameMap = std::array<int, MAP_SZ>;
+
+	int toMapIndex(float x, float y);
+	bool isWall(float x, float y, GameMap* map);
 }

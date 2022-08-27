@@ -44,7 +44,7 @@ namespace game
 	namespace raycast_engine
 	{
 		int toMapIndex(float x, float y);
-		bool isWall(float x, float y, GameMap* map);
+		
 		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, int pxCol, int pxWidth, std::array<int, game::MAP_SZ>* map);
 	};
 }

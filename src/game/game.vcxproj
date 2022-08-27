@@ -25,6 +25,7 @@
     <ClCompile Include="src\framework\Texture.cpp" />
     <ClCompile Include="src\framework\Globals.cpp" />
     <ClCompile Include="src\framework\IGameScene.cpp" />
+    <ClCompile Include="src\game\raycaster\Map.cpp" />
     <ClCompile Include="src\game\raycaster\Player.cpp" />
     <ClCompile Include="src\game\raycaster\RaycastEngine.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneAABBCollision.cpp" />
