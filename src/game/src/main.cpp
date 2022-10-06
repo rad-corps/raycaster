@@ -70,6 +70,10 @@ int main(int argc, char* args[])
 			{
 				gameState->keyUp(e.key.keysym.sym);
 			}
+			else if (e.type == SDL_MOUSEBUTTONDOWN)
+			{
+				gameState->mouseDown((int)e.button.button, (int)e.button.x, (int)e.button.y);
+			}
 		}
 
 		// clear screen

@@ -35,3 +35,17 @@ namespace global
 	extern Global instance;
 
 }
+
+struct Color
+{
+	Uint8 r;
+	Uint8 g;
+	Uint8 b;
+	Uint8 a;
+};
+
+struct Line
+{
+	SDL_Point start;
+	SDL_Point end;
+};

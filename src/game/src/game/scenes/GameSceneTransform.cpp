@@ -135,6 +135,7 @@ namespace game
 		std::array<std::string, NUM_OPTIONS> optionsStrings;
 		std::array<std::unique_ptr<rcgf::Texture>, NUM_OPTIONS> texArr;
 		std::unique_ptr<rcgf::Texture> movingTex;
+		std::unique_ptr<rcgf::Texture> clippedTex;
 		Scaler scaler;
 		Rotator rotator;
 		Translator translator;
@@ -145,6 +146,7 @@ namespace game
 		Pimpl() 
 			: optionsStrings{"0: Back", "1: Scaling", "2: Rotation", "3: Translate", "4: Flip Horizontal", "5: Flip Vertical"}
 			, movingTex{std::make_unique<rcgf::Texture>("img/dice.png")}
+			, clippedTex{ std::make_unique<rcgf::Texture>("img/wall.png") }
 			, translator(
 				glm::vec2(
 					static_cast<float>(SCREEN_WIDTH / 2),
@@ -196,6 +198,11 @@ namespace game
 			angle,
 			static_cast<SDL_RendererFlip>(flip),
 			true
+		);
+
+		m_impl->clippedTex->render(
+			0,
+			0
 		);
 	}
 

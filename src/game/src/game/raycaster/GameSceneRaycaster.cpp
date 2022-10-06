@@ -9,15 +9,17 @@
 #include "Player.h"
 #include "RaycastEngine.h"
 #include "Map.h"
+#include "Texture.h"
 
 // typedef std::chrono::high_resolution_clock Clock;
 
 using std::cout;
 using std::endl;
 
+#define RENDER_DEBUG_VALUES
+
 namespace
 {
-	
 	constexpr float FOV = PI / 3.f; // 60 degrees
 	constexpr int X_PX_STEP = 1;
 	constexpr int COLUMNS = SCREEN_WIDTH / X_PX_STEP;
@@ -83,6 +85,8 @@ namespace game
 		Player player;
 		bool showTopDown = false;
 		bool show3D = true;
+		rcgf::Texture wallTexture{ "./img/gradient256.png" };
+		Color testColor;
 		std::map<SDL_Keycode, bool> keyStates= {
 			{SDLK_w, false},
 			{SDLK_a, false},
@@ -94,7 +98,9 @@ namespace game
 			{SDLK_DOWN, false},
 		};
 		Pimpl()
-		{}
+		{
+			wallTexture.printDebugInfo();
+		}
 	};
 
 
@@ -119,7 +125,9 @@ namespace game
 	{
 		// render the 3D world from the player perspective
 		{
+#ifdef RENDER_DEBUG_VALUES
 			perfCounter.Start();
+#endif
 			ColumnRenderData columnRenderData[COLUMNS];
 			constexpr float FOV_OFFSET = -(FOV / 2);
 			for (int column = 0; column < COLUMNS; ++column)
@@ -139,10 +147,13 @@ namespace game
 				// cast the rays and render to screen
 				columnRenderData[column] = raycast_engine::doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, getFacing(finalAngle), xPx, X_PX_STEP, &map);
 			}
+
+#ifdef RENDER_DEBUG_VALUES
 			const std::string strRayTime = perfCounter.Stop();
+			perfCounter.Start();
+#endif
 
 			// draw the 3d scene
-			perfCounter.Start();
 			if (m_impl->show3D)
 			{				
 				for (int column = 0; column < COLUMNS; ++column)
@@ -159,10 +170,11 @@ namespace game
 				}
 			}
 			
+#ifdef RENDER_DEBUG_VALUES
 			const std::string strRenderTime = perfCounter.Stop();
-
 			global::instance.renderMonospaceText("Ray:" + strRayTime + " ms", SCREEN_WIDTH - 200, 0);
 			global::instance.renderMonospaceText("Ren:" + strRenderTime + " ms", SCREEN_WIDTH - 200, 15);
+#endif
 		}
 
 		// draw the map
@@ -187,6 +199,26 @@ namespace game
 			}
 
 			m_impl->player.render();
+		}
+
+		// draw the test color
+		m_impl->wallTexture.render(0, 0);
+		const SDL_Rect rect{ SCREEN_WIDTH - 100, 0, 100, 100};
+		const Color& c = m_impl->testColor;
+		SDL_SetRenderDrawColor(global::instance.getRenderer(), c.r, c.g, c.b, c.a);
+		SDL_RenderFillRect(global::instance.getRenderer(), &rect);
+	}
+	
+	void GameSceneRaycaster::mouseDown(int button, int x, int y)
+	{
+		std::cout << "mouseDown: " << button << " " << x << " " << y << std::endl;
+
+		// is the click inside the surface?
+
+		if (x < m_impl->wallTexture.getWidth()
+			&& y < m_impl->wallTexture.getHeight())
+		{
+			m_impl->testColor = m_impl->wallTexture.getPixelColor(x, y);
 		}
 	}
 

@@ -39,14 +39,19 @@ namespace rcgf
 		//Renders texture at given point
 		void render(int x, int y, SDL_Rect* clip = NULL, float scale = 1.0f, double angle = 0.0, SDL_RendererFlip flip = SDL_FLIP_NONE, bool drawFromCenter = false);
 
+		Color getPixelColor(int col, int row);
+
 		// get image dimensions
 		int getWidth();
 		int getHeight();
 
+		void printDebugInfo();
+
 	private:
 
-		// The representation of a hardware texture
 		std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> m_texture;
+		std::unique_ptr<SDL_Surface, decltype(&SDL_FreeSurface)> m_surface;
+		std::string m_name;
 	
 		//Image dimensions
 		int m_width;

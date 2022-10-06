@@ -17,6 +17,7 @@ namespace rcgf
 		virtual void render() = 0;
 		virtual void keyDown(SDL_Keycode) = 0;
 		virtual void keyUp(SDL_Keycode) = 0;
+		virtual void mouseDown(int button, int x, int y) = 0;
 
 		void pushPendingState(std::unique_ptr<IGameScene>);
 		bool hasPendingState();

@@ -20,20 +20,6 @@ namespace game
 	bool facingLeft(float angle_);
 	unsigned char getFacing(float angle_);
 
-	struct Color
-	{
-		Uint8 r;
-		Uint8 g;
-		Uint8 b;
-		Uint8 a;
-	};
-
-	struct Line
-	{
-		SDL_Point start;
-		SDL_Point end;
-	};
-
 	struct ColumnRenderData
 	{
 		SDL_Rect rect;
