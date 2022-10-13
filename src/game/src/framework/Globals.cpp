@@ -72,6 +72,8 @@ namespace global
 			)
 		);
 
+		SDL_SetRenderDrawBlendMode(getRenderer(), SDL_BlendMode::SDL_BLENDMODE_BLEND);
+
 		// load fonts and textures
 		setFont(loadFont("font/PTC55F.ttf", 28));
 

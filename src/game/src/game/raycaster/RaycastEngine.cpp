@@ -1,5 +1,6 @@
 #include "RaycastEngine.h"
 #include <iostream>
+#include <algorithm>
 
 namespace game
 {
@@ -149,19 +150,21 @@ namespace game
 			ret.rect.h = (int)((SCREEN_HEIGHT * 10) / (distance * cos(angleDifference)));
 			ret.rect.y = (SCREEN_HEIGHT - ret.rect.h) / 2;
 
+			
+
 			if (rowIntersectDistance < colIntersectDistance)
 			{
-				ret.color.r = 80;
-				ret.color.g = 80;
-				ret.color.b = 230 - (Uint8)((int)rowIntersectDistance / 4);
-				ret.color.a = 0xFF;
+				ret.color.r = 0;
+				ret.color.g = 0;
+				ret.color.b = 0;
+				ret.color.a = (Uint8)std::max(0, (int)rowIntersectDistance - 32); // distance fade
 			}
 			else
 			{
-				ret.color.r = 100;
-				ret.color.g = 100;
-				ret.color.b = 230 - (Uint8)((int)colIntersectDistance / 4);
-				ret.color.a = 0xFF;
+				ret.color.r = 0;
+				ret.color.g = 0;
+				ret.color.b = 0;
+				ret.color.a = (Uint8)std::max(0, (int)colIntersectDistance - 32); // distance fade
 			}
 			return ret;
 		}

@@ -192,8 +192,8 @@ namespace game
 						SDL_RenderFillRect(global::instance.getRenderer(), &rtp.rect);
 					}
 
-					//SDL_SetRenderDrawColor(global::instance.getRenderer(), col.color.r, col.color.g, col.color.b, col.color.a);
-					//SDL_RenderFillRect(global::instance.getRenderer(), &col.rect);
+					SDL_SetRenderDrawColor(global::instance.getRenderer(), col.color.r, col.color.g, col.color.b, col.color.a);
+					SDL_RenderFillRect(global::instance.getRenderer(), &col.rect);
 
 					if (m_impl->showTopDown)
 					{
