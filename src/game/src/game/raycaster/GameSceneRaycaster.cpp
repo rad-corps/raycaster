@@ -105,21 +105,20 @@ namespace game
 		}
 		void PopulateVertPixelData(ColumnRenderData& crd, const int wallXPos)
 		{
-			wallXPos;
 			const int wallHeight = crd.rect.h;
 			const int textureSz = 16;
 
 			// divide the wall height by the texture size to find how high to make each pixel from the texture
-			const int renderedPxHeight = wallHeight / textureSz;
+			const float renderedPxHeight = wallHeight / (float)textureSz;
 
 			// work top to bottom, and keep track of the last pixel
 			
 			for (int yTexturePx = 0; yTexturePx < textureSz; ++yTexturePx)
 			{
-				crd.verticalPixelArray[yTexturePx].color = wallTexture.getPixelColor(0, yTexturePx);
-				const int yScreenPos = crd.rect.y + yTexturePx * renderedPxHeight;
+				crd.verticalPixelArray[yTexturePx].color = wallTexture.getPixelColor(wallXPos, yTexturePx);
+				const int yScreenPos = (int)(crd.rect.y + yTexturePx * renderedPxHeight);
 				crd.verticalPixelArray[yTexturePx].rect.y = yScreenPos;
-				crd.verticalPixelArray[yTexturePx].rect.h = renderedPxHeight;
+				crd.verticalPixelArray[yTexturePx].rect.h = (int)renderedPxHeight;
 				crd.verticalPixelArray[yTexturePx].rect.x = crd.rect.x;
 				crd.verticalPixelArray[yTexturePx].rect.w = crd.rect.w;
 			}
@@ -172,6 +171,7 @@ namespace game
 				// cast the rays and render to screen
 				crd = raycast_engine::doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, getFacing(finalAngle), xPx, X_PX_STEP, &map);
 
+				// TODO: meaningful 2nd parameter for the distance along the wall texture
 				m_impl->PopulateVertPixelData(crd, 0);
 			}
 
