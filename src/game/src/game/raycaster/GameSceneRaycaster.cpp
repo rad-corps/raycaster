@@ -76,6 +76,8 @@ namespace
 		}
 		std::chrono::steady_clock::time_point start;
 	} perfCounter;
+
+	
 }
 
 namespace game
@@ -85,7 +87,7 @@ namespace game
 		Player player;
 		bool showTopDown = false;
 		bool show3D = true;
-		rcgf::Texture wallTexture{ "./img/gradient256.png" };
+		rcgf::Texture wallTexture{ "./img/16x16_wall_01.png" };
 		Color testColor;
 		std::map<SDL_Keycode, bool> keyStates= {
 			{SDLK_w, false},
@@ -100,6 +102,27 @@ namespace game
 		Pimpl()
 		{
 			wallTexture.printDebugInfo();
+		}
+		void PopulateVertPixelData(ColumnRenderData& crd, const int wallXPos)
+		{
+			wallXPos;
+			const int wallHeight = crd.rect.h;
+			const int textureSz = 16;
+
+			// divide the wall height by the texture size to find how high to make each pixel from the texture
+			const int renderedPxHeight = wallHeight / textureSz;
+
+			// work top to bottom, and keep track of the last pixel
+			
+			for (int yTexturePx = 0; yTexturePx < textureSz; ++yTexturePx)
+			{
+				crd.verticalPixelArray[yTexturePx].color = wallTexture.getPixelColor(0, yTexturePx);
+				const int yScreenPos = crd.rect.y + yTexturePx * renderedPxHeight;
+				crd.verticalPixelArray[yTexturePx].rect.y = yScreenPos;
+				crd.verticalPixelArray[yTexturePx].rect.h = renderedPxHeight;
+				crd.verticalPixelArray[yTexturePx].rect.x = crd.rect.x;
+				crd.verticalPixelArray[yTexturePx].rect.w = crd.rect.w;
+			}
 		}
 	};
 
@@ -128,13 +151,15 @@ namespace game
 #ifdef RENDER_DEBUG_VALUES
 			perfCounter.Start();
 #endif
-			ColumnRenderData columnRenderData[COLUMNS];
+			ColumnRenderData columnRenderDataArray[COLUMNS];
 			constexpr float FOV_OFFSET = -(FOV / 2);
-			for (int column = 0; column < COLUMNS; ++column)
+
+			int xPx = 0;
+			for (ColumnRenderData& crd : columnRenderDataArray)
 			{
 				// which x position pixel (column number in pixels)?
-				const int xPx = column * X_PX_STEP;
-				
+				xPx += X_PX_STEP;
+
 				// px is what % across screen?
 				const float pxPerc = xPx / (float)SCREEN_WIDTH;
 
@@ -145,7 +170,9 @@ namespace game
 				const float finalAngle = m_impl->player.sumAngle(angle);
 
 				// cast the rays and render to screen
-				columnRenderData[column] = raycast_engine::doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, getFacing(finalAngle), xPx, X_PX_STEP, &map);
+				crd = raycast_engine::doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, getFacing(finalAngle), xPx, X_PX_STEP, &map);
+
+				m_impl->PopulateVertPixelData(crd, 0);
 			}
 
 #ifdef RENDER_DEBUG_VALUES
@@ -155,12 +182,18 @@ namespace game
 
 			// draw the 3d scene
 			if (m_impl->show3D)
-			{				
-				for (int column = 0; column < COLUMNS; ++column)
+			{
+				for (const ColumnRenderData& col : columnRenderDataArray)
 				{
-					ColumnRenderData& col = columnRenderData[column];
-					SDL_SetRenderDrawColor(global::instance.getRenderer(), col.color.r, col.color.g, col.color.b, col.color.a);
-					SDL_RenderFillRect(global::instance.getRenderer(), &col.rect);
+					//ColumnRenderData& col = columnRenderData[column];
+					for (const RenderableTexturePixel& rtp : col.verticalPixelArray)
+					{
+						SDL_SetRenderDrawColor(global::instance.getRenderer(), rtp.color.r, rtp.color.g, rtp.color.b, rtp.color.a);
+						SDL_RenderFillRect(global::instance.getRenderer(), &rtp.rect);
+					}
+
+					//SDL_SetRenderDrawColor(global::instance.getRenderer(), col.color.r, col.color.g, col.color.b, col.color.a);
+					//SDL_RenderFillRect(global::instance.getRenderer(), &col.rect);
 
 					if (m_impl->showTopDown)
 					{
