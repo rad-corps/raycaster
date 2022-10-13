@@ -118,7 +118,7 @@ namespace game
 				crd.verticalPixelArray[yTexturePx].color = wallTexture.getPixelColor(wallXPos, yTexturePx);
 				const int yScreenPos = (int)(crd.rect.y + yTexturePx * renderedPxHeight);
 				crd.verticalPixelArray[yTexturePx].rect.y = yScreenPos;
-				crd.verticalPixelArray[yTexturePx].rect.h = (int)renderedPxHeight;
+				crd.verticalPixelArray[yTexturePx].rect.h = (int)renderedPxHeight + 1;
 				crd.verticalPixelArray[yTexturePx].rect.x = crd.rect.x;
 				crd.verticalPixelArray[yTexturePx].rect.w = crd.rect.w;
 			}
