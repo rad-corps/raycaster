@@ -169,7 +169,7 @@ namespace game
 				const float finalAngle = m_impl->player.sumAngle(angle);
 
 				// cast the rays and render to screen
-				crd = raycast_engine::doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, getFacing(finalAngle), xPx, X_PX_STEP, &map);
+				crd = raycast_engine::doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, xPx, X_PX_STEP, &map);
 
 				// TODO: meaningful 2nd parameter for the distance along the wall texture
 				m_impl->PopulateVertPixelData(crd, 0);

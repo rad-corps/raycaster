@@ -33,8 +33,22 @@ namespace game
 
 	namespace raycast_engine
 	{
-		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, unsigned char facing, int pxCol, int pxWidth, GameMap* map)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x">player x position</param>
+		/// <param name="y">player y position</param>
+		/// <param name="rayAngle">individual ray angle</param>
+		/// <param name="playerAngle"></param>
+		/// <param name="pxCol"></param>
+		/// <param name="pxWidth"></param>
+		/// <param name="map"></param>
+		/// <returns></returns>
+		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, int pxCol, int pxWidth, GameMap* map)
 		{
+			unsigned char facing = getFacing(rayAngle);
+		
+
 			float rowIntersectDistance = 10000000.f;
 			float colIntersectDistance = 10000000.f;
 			float distance = 10000000.f;
@@ -157,14 +171,14 @@ namespace game
 				ret.color.r = 0;
 				ret.color.g = 0;
 				ret.color.b = 0;
-				ret.color.a = (Uint8)std::max(0, (int)rowIntersectDistance - 32); // distance fade
+				ret.color.a = (Uint8)std::max(0, (int)rowIntersectDistance); // distance fade
 			}
 			else
 			{
 				ret.color.r = 0;
 				ret.color.g = 0;
 				ret.color.b = 0;
-				ret.color.a = (Uint8)std::max(0, (int)colIntersectDistance - 32); // distance fade
+				ret.color.a = (Uint8)std::max(0, (int)colIntersectDistance); // distance fade
 			}
 			return ret;
 		}
