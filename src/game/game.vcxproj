@@ -49,6 +49,7 @@
     <ClInclude Include="src\game\raycaster\Map.h" />
     <ClInclude Include="src\game\raycaster\Player.h" />
     <ClInclude Include="src\game\raycaster\RaycastEngine.h" />
+    <ClInclude Include="src\game\raycaster\RaycasterConstants.h" />
     <ClInclude Include="src\game\scenes\GameSceneAABBCollision.h" />
     <ClInclude Include="src\game\scenes\GameSceneMain.h" />
     <ClInclude Include="src\game\scenes\GameSceneMath.h" />

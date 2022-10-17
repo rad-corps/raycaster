@@ -10,6 +10,7 @@
 #include "RaycastEngine.h"
 #include "Map.h"
 #include "Texture.h"
+#include "RaycasterConstants.h"
 
 // typedef std::chrono::high_resolution_clock Clock;
 
@@ -20,10 +21,7 @@ using std::endl;
 
 namespace
 {
-	constexpr float FOV = PI / 3.f; // 60 degrees
-	constexpr int X_PX_STEP = 1;
-	constexpr int COLUMNS = SCREEN_WIDTH / X_PX_STEP;
-	constexpr float START_ANGLE = 0.f;
+
 
 	game::GameMap map =
 	{
@@ -169,7 +167,7 @@ namespace game
 				const float finalAngle = m_impl->player.sumAngle(angle);
 
 				// cast the rays and render to screen
-				crd = raycast_engine::doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, xPx, X_PX_STEP, &map);
+				crd = raycast_engine::doRayTest(m_impl->player.x, m_impl->player.y, finalAngle, m_impl->player.angle, xPx, &map);
 
 				// TODO: meaningful 2nd parameter for the distance along the wall texture
 				m_impl->PopulateVertPixelData(crd, 0);

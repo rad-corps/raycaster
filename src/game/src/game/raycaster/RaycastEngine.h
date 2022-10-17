@@ -38,6 +38,6 @@ namespace game
 	{
 		int toMapIndex(float x, float y);
 		
-		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, int pxCol, int pxWidth, std::array<int, game::MAP_SZ>* map);
+		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, int pxCol, GameMap* map);
 	};
 }

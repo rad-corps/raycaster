@@ -1,6 +1,7 @@
 #include "RaycastEngine.h"
 #include <iostream>
 #include <algorithm>
+#include "RaycasterConstants.h"
 
 namespace game
 {
@@ -38,13 +39,13 @@ namespace game
 		/// </summary>
 		/// <param name="x">player x position</param>
 		/// <param name="y">player y position</param>
-		/// <param name="rayAngle">individual ray angle</param>
-		/// <param name="playerAngle"></param>
+		/// <param name="rayAngle">individual ray angle (0 - 2*PI)</param>
+		/// <param name="playerAngle">player angle (0 - 2*PI)</param>
 		/// <param name="pxCol"></param>
 		/// <param name="pxWidth"></param>
 		/// <param name="map"></param>
 		/// <returns></returns>
-		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, int pxCol, int pxWidth, GameMap* map)
+		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, int pxCol, GameMap* map)
 		{
 			unsigned char facing = getFacing(rayAngle);
 		
@@ -160,7 +161,7 @@ namespace game
 			const float angleDifference = rayAngle - playerAngle;
 
 			ret.rect.x = pxCol;
-			ret.rect.w = pxWidth;
+			ret.rect.w = X_PX_STEP;
 			ret.rect.h = (int)((SCREEN_HEIGHT * 10) / (distance * cos(angleDifference)));
 			ret.rect.y = (SCREEN_HEIGHT - ret.rect.h) / 2;
 
