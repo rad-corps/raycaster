@@ -45,11 +45,14 @@ namespace game
 		/// <param name="pxWidth"></param>
 		/// <param name="map"></param>
 		/// <returns></returns>
-		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, int pxCol, GameMap* map)
+		ColumnRenderData doRayTest(const Transform& transform, float rayAngle, int pxCol, GameMap* map)
 		{
+			const float& x = transform.x;
+			const float& y = transform.y;
+			const float& playerAngle = transform.angle;
+
 			unsigned char facing = getFacing(rayAngle);
 		
-
 			float rowIntersectDistance = 10000000.f;
 			float colIntersectDistance = 10000000.f;
 			float distance = 10000000.f;

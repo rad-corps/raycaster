@@ -2,6 +2,8 @@
 
 #include "Globals.h"
 #include "Map.h"
+#include "RaycasterConstants.h"
+
 namespace game
 {
 	class Player
@@ -21,8 +23,6 @@ namespace game
 		void rotate(RotateDirection dir);
 		void move(bool forward, GameMap* map);
 
-		float x;
-		float y;
-		float angle;
+		Transform transform;
 	};
 }

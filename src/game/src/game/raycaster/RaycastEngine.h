@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include <array>
 #include "Map.h"
+#include "RaycasterConstants.h"
 
 namespace game
 {
@@ -38,6 +39,6 @@ namespace game
 	{
 		int toMapIndex(float x, float y);
 		
-		ColumnRenderData doRayTest(float x, float y, float rayAngle, float playerAngle, int pxCol, GameMap* map);
+		ColumnRenderData doRayTest(const Transform& transform, float rayAngle, int pxCol, GameMap* map);
 	};
 }
