@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include "RaycasterConstants.h"
+#include <cmath> // std::fmod
 
 namespace game
 {
@@ -58,7 +59,7 @@ namespace game
 			float distance = 10000000.f;
 			float xIntersect = 10000000.f;
 			float yIntersect = 10000000.f;
-			float alignedAngle = 0.f;
+			float positionAlongWall = 0; // between 0-1
 
 			// check horizontals
 			// TODO: collapse LEFT and RIGHT branches together
@@ -81,7 +82,9 @@ namespace game
 				distance = colIntersectDistance;
 				xIntersect = checkX;
 				yIntersect = checkY;
-				alignedAngle = tempAngle;
+				
+				positionAlongWall = std::fmodf(yIntersect, (float)MAP_CELL_PX);
+				positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
 			}
 			else if (facing & Facing::LEFT)
 			{
@@ -102,7 +105,9 @@ namespace game
 				distance = colIntersectDistance;
 				xIntersect = checkX;
 				yIntersect = checkY;
-				alignedAngle = tempAngle;
+
+				positionAlongWall = std::fmodf(yIntersect, (float)MAP_CELL_PX);
+				positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
 			}
 
 			// check verticals
@@ -127,7 +132,9 @@ namespace game
 					distance = rowIntersectDistance;
 					xIntersect = checkX;
 					yIntersect = checkY;
-					alignedAngle = tempAngle;
+
+					positionAlongWall = std::fmodf(xIntersect, (float)MAP_CELL_PX);
+					positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
 				}
 			}
 			else if (facing & Facing::DOWN)
@@ -150,17 +157,21 @@ namespace game
 					distance = rowIntersectDistance;
 					xIntersect = checkX;
 					yIntersect = checkY;
-					alignedAngle = tempAngle;
+
+					positionAlongWall = std::fmodf(xIntersect, (float)MAP_CELL_PX);
+					positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
 				}
 			}
 
 			ColumnRenderData ret;
 
+			ret.textureXPos = (int)positionAlongWall;
 			ret.ray.start.x = (int)x;
 			ret.ray.start.y = (int)y;
 			ret.ray.end.x = (int)xIntersect;
 			ret.ray.end.y = (int)yIntersect;
 
+			// need this for the fisheye correction
 			const float angleDifference = rayAngle - playerAngle;
 
 			ret.rect.x = pxCol;

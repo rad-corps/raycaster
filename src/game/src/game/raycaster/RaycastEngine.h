@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Globals.h"
+#include "RaycasterConstants.h"
 #include <array>
 #include "Map.h"
-#include "RaycasterConstants.h"
+
 
 namespace game
 {
@@ -29,10 +29,11 @@ namespace game
 
 	struct ColumnRenderData
 	{
+		int textureXPos;
 		SDL_Rect rect;
 		Color color;
 		Line ray;
-		RenderableTexturePixel verticalPixelArray[16]; // TODO: move texture height magic number somewhere sensible
+		RenderableTexturePixel verticalPixelArray[WALL_TEXTURE_SZ];
 	};
 
 	namespace raycast_engine

@@ -47,6 +47,9 @@ int main(int argc, char* args[])
 
 	std::chrono::steady_clock::time_point time1 = std::chrono::high_resolution_clock::now();
 	std::chrono::steady_clock::time_point time2 = std::chrono::high_resolution_clock::now();
+
+	SimplePerfCounter perfCounter;
+	std::string renderTime;
 	
 
 
@@ -80,6 +83,7 @@ int main(int argc, char* args[])
 		SDL_SetRenderDrawColor(global::instance.getRenderer(), 0x00, 0x00, 0x20, 0xFF);
 		SDL_RenderClear(global::instance.getRenderer());
 
+		gameState->sendData(renderTime);
 		gameState->update();
 		if (gameState->hasPendingState())
 		{
@@ -91,7 +95,9 @@ int main(int argc, char* args[])
 		}
 
 		//Update screen
+		perfCounter.Start();
 		SDL_RenderPresent(global::instance.getRenderer());
+		renderTime = perfCounter.Stop();
 
 		time2 = std::chrono::high_resolution_clock::now();
 		deltaTimeMs += std::chrono::duration_cast<std::chrono::microseconds>(time2 - time1).count() / 1000.0;

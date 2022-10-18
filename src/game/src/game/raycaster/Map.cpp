@@ -15,6 +15,7 @@ namespace game
 		// just agree to return -1
 		if (mapIndex < 0 || MAP_SZ <= mapIndex)
 		{
+			//assert(false);
 			return -1;
 		}
 		return mapIndex;

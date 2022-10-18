@@ -13,6 +13,7 @@ namespace rcgf
 
 		// return nullptr on no change. 
 		virtual void fixedUpdate() = 0;
+		virtual void sendData(const std::string& data) { data; };
 		virtual void update() = 0;
 		virtual void render() = 0;
 		virtual void keyDown(SDL_Keycode) = 0;

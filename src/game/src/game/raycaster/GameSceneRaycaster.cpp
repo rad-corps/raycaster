@@ -3,7 +3,7 @@
 #include "Globals.h"
 #include <iostream>
 #include <bitset>
-#include <chrono>
+
 #include <sstream>
 #include <iomanip> //std::setprecision
 #include "Player.h"
@@ -21,7 +21,7 @@ using std::endl;
 
 namespace
 {
-
+	SimplePerfCounter perfCounter;
 
 	game::GameMap map =
 	{
@@ -59,21 +59,7 @@ namespace
 		1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 	};
 
-	struct SimplePerfCounter
-	{
-		void Start()
-		{
-			start = std::chrono::high_resolution_clock::now();
-		}
-		std::string Stop()
-		{
-			double result = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000.0;
-			std::stringstream ss;
-			ss << std::fixed << std::setprecision(1) << result;
-			return ss.str();
-		}
-		std::chrono::steady_clock::time_point start;
-	} perfCounter;
+
 
 	
 }
@@ -85,8 +71,9 @@ namespace game
 		Player player;
 		bool showTopDown = false;
 		bool show3D = true;
-		rcgf::Texture wallTexture{ "./img/16x16_wall_01.png" };
+		rcgf::Texture wallTexture{ "./img/wall_64.png" };
 		Color testColor;
+		std::string renderTime;
 		std::map<SDL_Keycode, bool> keyStates= {
 			{SDLK_w, false},
 			{SDLK_a, false},
@@ -104,14 +91,14 @@ namespace game
 		void PopulateVertPixelData(ColumnRenderData& crd, const int wallXPos)
 		{
 			const int wallHeight = crd.rect.h;
-			const int textureSz = 16;
+			
 
 			// divide the wall height by the texture size to find how high to make each pixel from the texture
-			const float renderedPxHeight = wallHeight / (float)textureSz;
+			const float renderedPxHeight = wallHeight / (float)WALL_TEXTURE_SZ;
 
 			// work top to bottom, and keep track of the last pixel
 			
-			for (int yTexturePx = 0; yTexturePx < textureSz; ++yTexturePx)
+			for (int yTexturePx = 0; yTexturePx < WALL_TEXTURE_SZ; ++yTexturePx)
 			{
 				crd.verticalPixelArray[yTexturePx].color = wallTexture.getPixelColor(wallXPos, yTexturePx);
 				const int yScreenPos = (int)(crd.rect.y + yTexturePx * renderedPxHeight);
@@ -131,6 +118,11 @@ namespace game
 	void GameSceneRaycaster::update()
 	{
 
+	}
+
+	void GameSceneRaycaster::sendData(const std::string& data)
+	{
+		m_impl->renderTime = data;
 	}
 
 	void GameSceneRaycaster::fixedUpdate()
@@ -170,7 +162,7 @@ namespace game
 				crd = raycast_engine::doRayTest(m_impl->player.transform, finalAngle, xPx, &map);
 
 				// TODO: meaningful 2nd parameter for the distance along the wall texture
-				m_impl->PopulateVertPixelData(crd, 0);
+				m_impl->PopulateVertPixelData(crd, crd.textureXPos);
 			}
 
 #ifdef RENDER_DEBUG_VALUES
@@ -203,8 +195,9 @@ namespace game
 			
 #ifdef RENDER_DEBUG_VALUES
 			const std::string strRenderTime = perfCounter.Stop();
-			global::instance.renderMonospaceText("Ray:" + strRayTime + " ms", SCREEN_WIDTH - 200, 0);
-			global::instance.renderMonospaceText("Ren:" + strRenderTime + " ms", SCREEN_WIDTH - 200, 15);
+			global::instance.renderMonospaceText("ray:" + strRayTime + " ms", SCREEN_WIDTH - 200, 0);
+			global::instance.renderMonospaceText("drw:" + strRenderTime + " ms", SCREEN_WIDTH - 200, 15);
+			global::instance.renderMonospaceText("ren:" + m_impl->renderTime + " ms", SCREEN_WIDTH - 200, 30);
 #endif
 		}
 
@@ -231,13 +224,6 @@ namespace game
 
 			m_impl->player.render();
 		}
-
-		// draw the test color
-		m_impl->wallTexture.render(0, 0);
-		const SDL_Rect rect{ SCREEN_WIDTH - 100, 0, 100, 100};
-		const Color& c = m_impl->testColor;
-		SDL_SetRenderDrawColor(global::instance.getRenderer(), c.r, c.g, c.b, c.a);
-		SDL_RenderFillRect(global::instance.getRenderer(), &rect);
 	}
 	
 	void GameSceneRaycaster::mouseDown(int button, int x, int y)
