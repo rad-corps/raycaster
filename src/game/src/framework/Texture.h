@@ -38,6 +38,7 @@ namespace rcgf
 
 		//Renders texture at given point
 		void render(int x, int y, SDL_Rect* clip = NULL, float scale = 1.0f, double angle = 0.0, SDL_RendererFlip flip = SDL_FLIP_NONE, bool drawFromCenter = false);
+		void render2(const SDL_Rect* textureClip, const SDL_Rect* outputClip);
 
 		Color getPixelColor(int col, int row);
 

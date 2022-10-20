@@ -167,8 +167,7 @@ namespace game
 				// cast the rays and render to screen
 				crd = raycast_engine::doRayTest(m_impl->player.transform, finalAngle, xPx, &map);
 
-				// TODO: meaningful 2nd parameter for the distance along the wall texture
-				m_impl->PopulateVertPixelData(crd, crd.textureXPos);
+				// m_impl->PopulateVertPixelData(crd, crd.textureXPos);
 			}
 
 #ifdef RENDER_DEBUG_VALUES
@@ -182,24 +181,27 @@ namespace game
 				
 				for (const ColumnRenderData& col : m_impl->columnRenderDataArray)
 				{
-					int prevY = -1;
-					for (const RenderableTexturePixel& rtp : col.verticalPixelArray)
-					{
-						// don't bother drawing off screen
-						if (rtp.rect.y >= 0 && rtp.rect.y <= SCREEN_HEIGHT)
-						{
-							// no point overwriting previous data in the column
-							if (rtp.rect.y > prevY)
-							{
-								SDL_SetRenderDrawColor(global::instance.getRenderer(), rtp.color.r, rtp.color.g, rtp.color.b, rtp.color.a);
-								SDL_RenderFillRect(global::instance.getRenderer(), &rtp.rect);
-								prevY = rtp.rect.y;
-								++numPixelsDrawn;
-							}
-						}
-					}
+					//int prevY = -1;
+					//for (const RenderableTexturePixel& rtp : col.verticalPixelArray)
+					//{
+					//	// don't bother drawing off screen
+					//	if (rtp.rect.y >= 0 && rtp.rect.y <= SCREEN_HEIGHT)
+					//	{
+					//		// no point overwriting previous data in the column
+					//		if (rtp.rect.y > prevY)
+					//		{
+					//			SDL_SetRenderDrawColor(global::instance.getRenderer(), rtp.color.r, rtp.color.g, rtp.color.b, rtp.color.a);
+					//			SDL_RenderFillRect(global::instance.getRenderer(), &rtp.rect);
+					//			prevY = rtp.rect.y;
+					//			++numPixelsDrawn;
+					//		}
+					//	}
+					//}
 
-					// draw distance shadow
+					const SDL_Rect textureClip{ col.textureXPos,0,1,WALL_TEXTURE_SZ };
+					m_impl->wallTexture.render2(&textureClip, &col.rect);
+
+					//// draw distance shadow
 					SDL_SetRenderDrawColor(global::instance.getRenderer(), col.color.r, col.color.g, col.color.b, col.color.a);
 					SDL_RenderFillRect(global::instance.getRenderer(), &col.rect);
 
@@ -248,6 +250,13 @@ namespace game
 			}
 
 			m_impl->player.render();
+		}
+
+		{
+			//SDL_Rect textureClip{ 0,0,32,64 };
+			//SDL_Rect output{ 0,0,500,1000 };
+			//m_impl->wallTexture.render2(&textureClip, &output);
+
 		}
 	}
 	

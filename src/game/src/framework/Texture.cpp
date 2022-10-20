@@ -142,6 +142,11 @@ namespace rcgf
 		//Render to screen
 		SDL_RenderCopyEx(global::instance.getRenderer(), m_texture.get(), clip, &renderQuad, angle, NULL, flip);
 	}
+	
+	void Texture::render2(const SDL_Rect* textureClip, const SDL_Rect* outputClip)
+	{
+		SDL_RenderCopyEx(global::instance.getRenderer(), m_texture.get(), textureClip, outputClip, 0.0, NULL, SDL_RendererFlip::SDL_FLIP_NONE);
+	}
 
 	int Texture::getWidth()
 	{
