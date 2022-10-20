@@ -60,12 +60,24 @@ struct SimplePerfCounter
 	{
 		start = std::chrono::high_resolution_clock::now();
 	}
+	double StopMs()
+	{
+		return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000.0;
+	}
+	std::string StopFPS()
+	{
+		double fps = 1000.0 / StopMs();
+		std::stringstream ss;
+		ss << std::fixed << std::setprecision(1) << fps;
+		return ss.str();
+	}
 	std::string Stop()
 	{
-		double result = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000.0;
+		double result = StopMs();
 		std::stringstream ss;
 		ss << std::fixed << std::setprecision(1) << result;
 		return ss.str();
 	}
+
 	std::chrono::steady_clock::time_point start;
 };

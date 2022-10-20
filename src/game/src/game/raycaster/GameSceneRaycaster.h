@@ -17,7 +17,7 @@ namespace game
 		void keyDown(SDL_Keycode) override;
 		void keyUp(SDL_Keycode) override;
 		void mouseDown(int button, int x, int y) override;
-		void sendData(const std::string& data) override;
+		void sendData(const std::string& data, const std::string& fps) override;
 
 	private:
 		struct Pimpl;

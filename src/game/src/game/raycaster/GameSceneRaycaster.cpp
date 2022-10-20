@@ -73,7 +73,11 @@ namespace game
 		bool show3D = true;
 		rcgf::Texture wallTexture{ "./img/wall_64.png" };
 		Color testColor;
+		
+		// diagnostic output
 		std::string renderTime;
+		std::string fps;
+		
 		ColumnRenderData columnRenderDataArray[COLUMNS];
 		std::map<SDL_Keycode, bool> keyStates= {
 			{SDLK_w, false},
@@ -121,9 +125,10 @@ namespace game
 
 	}
 
-	void GameSceneRaycaster::sendData(const std::string& data)
+	void GameSceneRaycaster::sendData(const std::string& renderTime, const std::string& fps)
 	{
-		m_impl->renderTime = data;
+		m_impl->renderTime = renderTime;
+		m_impl->fps = fps;
 	}
 
 	void GameSceneRaycaster::fixedUpdate()
@@ -207,11 +212,17 @@ namespace game
 			}
 			
 #ifdef RENDER_DEBUG_VALUES
-			const std::string strRenderTime = perfCounter.Stop();
-			global::instance.renderMonospaceText("ray:" + strRayTime + " ms", SCREEN_WIDTH - 200, 0);
-			global::instance.renderMonospaceText("drw:" + strRenderTime + " ms", SCREEN_WIDTH - 200, 15);
-			global::instance.renderMonospaceText("ren:" + m_impl->renderTime + " ms", SCREEN_WIDTH - 200, 30);
-			global::instance.renderMonospaceText("pix:" + std::to_string(numPixelsDrawn), SCREEN_WIDTH - 200, 45);
+			{
+				int yOffset = 0;
+				const std::string strRenderTime = perfCounter.Stop();
+
+				global::instance.renderMonospaceText("ray:" + strRayTime + " ms", SCREEN_WIDTH - 200, yOffset);
+				global::instance.renderMonospaceText("drw:" + strRenderTime + " ms", SCREEN_WIDTH - 200, yOffset += 15);
+				global::instance.renderMonospaceText("ren:" + m_impl->renderTime + " ms", SCREEN_WIDTH - 200, yOffset += 15);
+				global::instance.renderMonospaceText("pix:" + std::to_string(numPixelsDrawn), SCREEN_WIDTH - 200, yOffset += 15);
+				global::instance.renderMonospaceText("fps:" + m_impl->fps, SCREEN_WIDTH - 200, yOffset += 15);
+			}
+			
 #endif
 		}
 

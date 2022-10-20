@@ -48,14 +48,16 @@ int main(int argc, char* args[])
 	std::chrono::steady_clock::time_point time1 = std::chrono::high_resolution_clock::now();
 	std::chrono::steady_clock::time_point time2 = std::chrono::high_resolution_clock::now();
 
-	SimplePerfCounter perfCounter;
+	SimplePerfCounter renderPerfCounter;
+	SimplePerfCounter fpsPerfCounter;
 	std::string renderTime;
-	
-
+	std::string fps;
 
 	//While application is running
 	while (!quit)
 	{
+		fpsPerfCounter.Start();
+
 		time1 = std::chrono::high_resolution_clock::now();
 		// handle events on queue
 		while (SDL_PollEvent(&e) != 0)
@@ -83,7 +85,7 @@ int main(int argc, char* args[])
 		SDL_SetRenderDrawColor(global::instance.getRenderer(), 0x00, 0x00, 0x20, 0xFF);
 		SDL_RenderClear(global::instance.getRenderer());
 
-		gameState->sendData(renderTime);
+		gameState->sendData(renderTime, fps);
 		gameState->update();
 		if (gameState->hasPendingState())
 		{
@@ -95,9 +97,9 @@ int main(int argc, char* args[])
 		}
 
 		//Update screen
-		perfCounter.Start();
+		renderPerfCounter.Start();
 		SDL_RenderPresent(global::instance.getRenderer());
-		renderTime = perfCounter.Stop();
+		renderTime = renderPerfCounter.Stop();
 
 		time2 = std::chrono::high_resolution_clock::now();
 		deltaTimeMs += std::chrono::duration_cast<std::chrono::microseconds>(time2 - time1).count() / 1000.0;
@@ -107,6 +109,8 @@ int main(int argc, char* args[])
 			deltaTimeMs -= FIXED_UPDATE;
 			gameState->fixedUpdate();
 		}
+
+		fps = fpsPerfCounter.StopFPS();
 	}
 
 	return 0;
