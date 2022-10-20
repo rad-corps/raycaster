@@ -64,4 +64,33 @@ namespace game
 			transform.x -= xDelta;
 		}
 	}
+
+	void Player::strafe(bool right, GameMap* map)
+	{
+		float movementAngle = transform.angle;
+		if (right)
+		{
+			movementAngle += PI / 2;
+			if (movementAngle > PI * 2) movementAngle -= PI * 2;
+		}
+		else
+		{
+			movementAngle -= PI / 2;
+			if (movementAngle < 0) movementAngle += PI * 2;
+		}
+
+		const float yDelta = sin(movementAngle) * MOVEMENT_SPEED;
+		transform.y += yDelta;
+		if (isWall(transform.x, transform.y, map))
+		{
+			transform.y -= yDelta;
+		}
+
+		const float xDelta = cos(movementAngle) * MOVEMENT_SPEED;
+		transform.x += xDelta;
+		if (isWall(transform.x, transform.y, map))
+		{
+			transform.x -= xDelta;
+		}
+	}
 }

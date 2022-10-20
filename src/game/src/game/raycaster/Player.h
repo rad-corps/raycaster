@@ -22,6 +22,7 @@ namespace game
 
 		void rotate(RotateDirection dir);
 		void move(bool forward, GameMap* map);
+		void strafe(bool right, GameMap* map);
 
 		Transform transform;
 	};

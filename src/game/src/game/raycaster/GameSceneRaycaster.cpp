@@ -88,6 +88,7 @@ namespace game
 			{SDLK_RIGHT, false},
 			{SDLK_UP, false},
 			{SDLK_DOWN, false},
+			{SDLK_LCTRL, false},
 		};
 		Pimpl()
 		{
@@ -133,8 +134,17 @@ namespace game
 
 	void GameSceneRaycaster::fixedUpdate()
 	{
-		if (m_impl->keyStates[SDLK_d] || m_impl->keyStates[SDLK_RIGHT]) m_impl->player.rotate(Player::RotateDirection::Clockwise);
-		if (m_impl->keyStates[SDLK_a] || m_impl->keyStates[SDLK_LEFT])  m_impl->player.rotate(Player::RotateDirection::Anticlockwise);
+		if (!m_impl->keyStates[SDLK_LCTRL])
+		{
+			if (m_impl->keyStates[SDLK_d] || m_impl->keyStates[SDLK_RIGHT]) m_impl->player.rotate(Player::RotateDirection::Clockwise);
+			if (m_impl->keyStates[SDLK_a] || m_impl->keyStates[SDLK_LEFT])  m_impl->player.rotate(Player::RotateDirection::Anticlockwise);
+		}
+		else
+		{
+			if (m_impl->keyStates[SDLK_d] || m_impl->keyStates[SDLK_RIGHT]) m_impl->player.strafe(true, &map);
+			if (m_impl->keyStates[SDLK_a] || m_impl->keyStates[SDLK_LEFT])  m_impl->player.strafe(false, &map);
+		}
+		
 		if (m_impl->keyStates[SDLK_w] || m_impl->keyStates[SDLK_UP])    m_impl->player.move(true, &map);
 		if (m_impl->keyStates[SDLK_s] || m_impl->keyStates[SDLK_DOWN])  m_impl->player.move(false, &map);
 	}
@@ -167,7 +177,7 @@ namespace game
 				// cast the rays and render to screen
 				crd = raycast_engine::doRayTest(m_impl->player.transform, finalAngle, xPx, &map);
 
-				// m_impl->PopulateVertPixelData(crd, crd.textureXPos);
+				m_impl->PopulateVertPixelData(crd, crd.textureXPos);
 			}
 
 #ifdef RENDER_DEBUG_VALUES
@@ -181,6 +191,8 @@ namespace game
 				
 				for (const ColumnRenderData& col : m_impl->columnRenderDataArray)
 				{
+					 // PAINT EVERY TEXTURE PIXEL
+					 //////////////////////////////
 					//int prevY = -1;
 					//for (const RenderableTexturePixel& rtp : col.verticalPixelArray)
 					//{
@@ -198,12 +210,14 @@ namespace game
 					//	}
 					//}
 
+
+					// PAINT ONLY COLUMNS
 					const SDL_Rect textureClip{ col.textureXPos,0,1,WALL_TEXTURE_SZ };
 					m_impl->wallTexture.render2(&textureClip, &col.rect);
 
-					//// draw distance shadow
-					SDL_SetRenderDrawColor(global::instance.getRenderer(), col.color.r, col.color.g, col.color.b, col.color.a);
-					SDL_RenderFillRect(global::instance.getRenderer(), &col.rect);
+					//// DRAW DISTANCE SHADOW
+					//SDL_SetRenderDrawColor(global::instance.getRenderer(), col.color.r, col.color.g, col.color.b, col.color.a);
+					//SDL_RenderFillRect(global::instance.getRenderer(), &col.rect);
 
 					if (m_impl->showTopDown)
 					{
