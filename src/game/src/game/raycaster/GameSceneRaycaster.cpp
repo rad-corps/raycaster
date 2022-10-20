@@ -74,6 +74,7 @@ namespace game
 		rcgf::Texture wallTexture{ "./img/wall_64.png" };
 		Color testColor;
 		std::string renderTime;
+		ColumnRenderData columnRenderDataArray[COLUMNS];
 		std::map<SDL_Keycode, bool> keyStates= {
 			{SDLK_w, false},
 			{SDLK_a, false},
@@ -140,11 +141,11 @@ namespace game
 #ifdef RENDER_DEBUG_VALUES
 			perfCounter.Start();
 #endif
-			ColumnRenderData columnRenderDataArray[COLUMNS];
+			
 			constexpr float FOV_OFFSET = -(FOV / 2);
 
 			int xPx = 0;
-			for (ColumnRenderData& crd : columnRenderDataArray)
+			for (ColumnRenderData& crd : m_impl->columnRenderDataArray)
 			{
 				// which x position pixel (column number in pixels)?
 				xPx += X_PX_STEP;
@@ -169,19 +170,31 @@ namespace game
 			const std::string strRayTime = perfCounter.Stop();
 			perfCounter.Start();
 #endif
-
+			int numPixelsDrawn = 0;
 			// draw the 3d scene
 			if (m_impl->show3D)
 			{
-				for (const ColumnRenderData& col : columnRenderDataArray)
+				
+				for (const ColumnRenderData& col : m_impl->columnRenderDataArray)
 				{
-					//ColumnRenderData& col = columnRenderData[column];
+					int prevY = -1;
 					for (const RenderableTexturePixel& rtp : col.verticalPixelArray)
 					{
-						SDL_SetRenderDrawColor(global::instance.getRenderer(), rtp.color.r, rtp.color.g, rtp.color.b, rtp.color.a);
-						SDL_RenderFillRect(global::instance.getRenderer(), &rtp.rect);
+						// don't bother drawing off screen
+						if (rtp.rect.y >= 0 && rtp.rect.y <= SCREEN_HEIGHT)
+						{
+							// no point overwriting previous data in the column
+							if (rtp.rect.y > prevY)
+							{
+								SDL_SetRenderDrawColor(global::instance.getRenderer(), rtp.color.r, rtp.color.g, rtp.color.b, rtp.color.a);
+								SDL_RenderFillRect(global::instance.getRenderer(), &rtp.rect);
+								prevY = rtp.rect.y;
+								++numPixelsDrawn;
+							}
+						}
 					}
 
+					// draw distance shadow
 					SDL_SetRenderDrawColor(global::instance.getRenderer(), col.color.r, col.color.g, col.color.b, col.color.a);
 					SDL_RenderFillRect(global::instance.getRenderer(), &col.rect);
 
@@ -198,6 +211,7 @@ namespace game
 			global::instance.renderMonospaceText("ray:" + strRayTime + " ms", SCREEN_WIDTH - 200, 0);
 			global::instance.renderMonospaceText("drw:" + strRenderTime + " ms", SCREEN_WIDTH - 200, 15);
 			global::instance.renderMonospaceText("ren:" + m_impl->renderTime + " ms", SCREEN_WIDTH - 200, 30);
+			global::instance.renderMonospaceText("pix:" + std::to_string(numPixelsDrawn), SCREEN_WIDTH - 200, 45);
 #endif
 		}
 
