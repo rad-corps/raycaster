@@ -94,26 +94,6 @@ namespace game
 		{
 			wallTexture.printDebugInfo();
 		}
-		void PopulateVertPixelData(ColumnRenderData& crd, const int wallXPos)
-		{
-			const int wallHeight = crd.rect.h;
-			
-
-			// divide the wall height by the texture size to find how high to make each pixel from the texture
-			const float renderedPxHeight = wallHeight / (float)WALL_TEXTURE_SZ;
-
-			// work top to bottom, and keep track of the last pixel
-			
-			for (int yTexturePx = 0; yTexturePx < WALL_TEXTURE_SZ; ++yTexturePx)
-			{
-				crd.verticalPixelArray[yTexturePx].color = wallTexture.getPixelColor(wallXPos, yTexturePx);
-				const int yScreenPos = (int)(crd.rect.y + yTexturePx * renderedPxHeight);
-				crd.verticalPixelArray[yTexturePx].rect.y = yScreenPos;
-				crd.verticalPixelArray[yTexturePx].rect.h = (int)renderedPxHeight + 1;
-				crd.verticalPixelArray[yTexturePx].rect.x = crd.rect.x;
-				crd.verticalPixelArray[yTexturePx].rect.w = crd.rect.w;
-			}
-		}
 	};
 
 
@@ -179,8 +159,6 @@ namespace game
 
 				// cast the rays and render to screen
 				crd = raycast_engine::doRayTest(m_impl->player.transform, finalAngle, xPx, &map);
-
-				m_impl->PopulateVertPixelData(crd, crd.textureXPos);
 			}
 
 #ifdef RENDER_DEBUG_VALUES

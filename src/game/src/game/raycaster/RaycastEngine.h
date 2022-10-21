@@ -21,19 +21,12 @@ namespace game
 	bool facingLeft(float angle_);
 	unsigned char getFacing(float angle_);
 
-	struct RenderableTexturePixel
-	{
-		Color color;
-		SDL_Rect rect;
-	};
-
 	struct ColumnRenderData
 	{
 		int textureXPos;
 		SDL_Rect rect;
 		Color color;
 		Line ray;
-		RenderableTexturePixel verticalPixelArray[WALL_TEXTURE_SZ];
 	};
 
 	namespace raycast_engine
