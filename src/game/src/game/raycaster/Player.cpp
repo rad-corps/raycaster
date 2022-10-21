@@ -10,12 +10,19 @@ namespace
 	constexpr float Y_START_POS = 20.f;
 	constexpr float MOVEMENT_SPEED = 1.f;
 	constexpr float ROTATION_SPEED = 0.03f;
+	constexpr int HALF_WALL_COLLISION_BOX_SZ = 3;
 }
 
 namespace game
 {
 	Player::Player()
 		: transform{ X_START_POS, Y_START_POS, 0.f }
+		, wallCollisionBox{ 
+			static_cast<int>(X_START_POS) - HALF_WALL_COLLISION_BOX_SZ,
+			static_cast<int>(Y_START_POS) - HALF_WALL_COLLISION_BOX_SZ,
+			HALF_WALL_COLLISION_BOX_SZ * 2,
+			HALF_WALL_COLLISION_BOX_SZ * 2
+		}
 	{}
 
 	float Player::sumAngle(float add) const
@@ -33,6 +40,8 @@ namespace game
 		const SDL_Rect r{ (int)transform.x - playerDiameter,(int)transform.y - playerDiameter,playerDiameter * 2,playerDiameter * 2 };
 		SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 200, 0, 0xFF);
 		SDL_RenderFillRect(global::instance.getRenderer(), &r);
+
+		SDL_RenderDrawRect(global::instance.getRenderer(), &wallCollisionBox);
 	}
 
 	void Player::rotate(RotateDirection dir)
@@ -43,7 +52,7 @@ namespace game
 		else if (2 * PI < transform.angle) transform.angle -= PI * 2;
 	}
 
-	void Player::move(bool forward, GameMap* map)
+	void Player::move(bool forward, const GameMap* map)
 	{
 		float movementAngle = transform.angle;
 		if (!forward)
@@ -52,20 +61,24 @@ namespace game
 		}
 		const float yDelta = sin(movementAngle) * MOVEMENT_SPEED;
 		transform.y += yDelta;
-		if (isWall(transform.x, transform.y, map))
+		wallCollisionBox.y = static_cast<int>(transform.y) - HALF_WALL_COLLISION_BOX_SZ;
+		if (isInWall(&wallCollisionBox, map))
 		{
 			transform.y -= yDelta;
+			wallCollisionBox.y = static_cast<int>(transform.y) - HALF_WALL_COLLISION_BOX_SZ;
 		}
 
 		const float xDelta = cos(movementAngle) * MOVEMENT_SPEED;
 		transform.x += xDelta;
-		if (isWall(transform.x, transform.y, map))
+		wallCollisionBox.x = static_cast<int>(transform.x) - HALF_WALL_COLLISION_BOX_SZ;
+		if (isInWall(&wallCollisionBox, map))
 		{
 			transform.x -= xDelta;
+			wallCollisionBox.x = static_cast<int>(transform.x) - HALF_WALL_COLLISION_BOX_SZ;
 		}
 	}
 
-	void Player::strafe(bool right, GameMap* map)
+	void Player::strafe(bool right, const GameMap* map)
 	{
 		float movementAngle = transform.angle;
 		if (right)
@@ -92,5 +105,8 @@ namespace game
 		{
 			transform.x -= xDelta;
 		}
+
+		wallCollisionBox.x = static_cast<int>(transform.x) - HALF_WALL_COLLISION_BOX_SZ;
+		wallCollisionBox.y = static_cast<int>(transform.y) - HALF_WALL_COLLISION_BOX_SZ;
 	}
 }

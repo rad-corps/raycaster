@@ -21,9 +21,10 @@ namespace game
 		void render();
 
 		void rotate(RotateDirection dir);
-		void move(bool forward, GameMap* map);
-		void strafe(bool right, GameMap* map);
+		void move(bool forward, const GameMap* map);
+		void strafe(bool right, const GameMap* map);
 
 		Transform transform;
+		SDL_Rect wallCollisionBox;
 	};
 }

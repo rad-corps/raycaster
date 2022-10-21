@@ -8,5 +8,8 @@ namespace game
 	using GameMap = std::array<int, MAP_SZ>;
 
 	int toMapIndex(float x, float y);
-	bool isWall(float x, float y, GameMap* map);
+	int toMapIndex(int x, int y);
+	bool isWall(float x, float y, const GameMap* map);
+	bool isWall(int x, int y, const GameMap* map);
+	bool isInWall(const SDL_Rect* playerVolume, const GameMap* map);
 }
