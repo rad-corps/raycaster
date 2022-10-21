@@ -52,13 +52,12 @@ namespace game
 		else if (2 * PI < transform.angle) transform.angle -= PI * 2;
 	}
 
-	void Player::move(bool forward, const GameMap* map)
+	void Player::move(float relativeAngle, const GameMap* map)
 	{
-		float movementAngle = transform.angle;
-		if (!forward)
-		{
-			PI < movementAngle ? movementAngle -= PI : movementAngle += PI;
-		}
+		float movementAngle = transform.angle + relativeAngle;
+		if (movementAngle > PI * 2) movementAngle -= PI * 2;
+		if (movementAngle < 0.f) movementAngle += PI * 2;
+
 		const float yDelta = sin(movementAngle) * MOVEMENT_SPEED;
 		transform.y += yDelta;
 		wallCollisionBox.y = static_cast<int>(transform.y) - HALF_WALL_COLLISION_BOX_SZ;
@@ -78,35 +77,35 @@ namespace game
 		}
 	}
 
-	void Player::strafe(bool right, const GameMap* map)
-	{
-		float movementAngle = transform.angle;
-		if (right)
-		{
-			movementAngle += PI / 2;
-			if (movementAngle > PI * 2) movementAngle -= PI * 2;
-		}
-		else
-		{
-			movementAngle -= PI / 2;
-			if (movementAngle < 0) movementAngle += PI * 2;
-		}
+	//void Player::strafe(bool right, const GameMap* map)
+	//{
+	//	float movementAngle = transform.angle;
+	//	if (right)
+	//	{
+	//		movementAngle += PI / 2;
+	//		if (movementAngle > PI * 2) movementAngle -= PI * 2;
+	//	}
+	//	else
+	//	{
+	//		movementAngle -= PI / 2;
+	//		if (movementAngle < 0) movementAngle += PI * 2;
+	//	}
 
-		const float yDelta = sin(movementAngle) * MOVEMENT_SPEED;
-		transform.y += yDelta;
-		if (isWall(transform.x, transform.y, map))
-		{
-			transform.y -= yDelta;
-		}
+	//	const float yDelta = sin(movementAngle) * MOVEMENT_SPEED;
+	//	transform.y += yDelta;
+	//	if (isWall(transform.x, transform.y, map))
+	//	{
+	//		transform.y -= yDelta;
+	//	}
 
-		const float xDelta = cos(movementAngle) * MOVEMENT_SPEED;
-		transform.x += xDelta;
-		if (isWall(transform.x, transform.y, map))
-		{
-			transform.x -= xDelta;
-		}
+	//	const float xDelta = cos(movementAngle) * MOVEMENT_SPEED;
+	//	transform.x += xDelta;
+	//	if (isWall(transform.x, transform.y, map))
+	//	{
+	//		transform.x -= xDelta;
+	//	}
 
-		wallCollisionBox.x = static_cast<int>(transform.x) - HALF_WALL_COLLISION_BOX_SZ;
-		wallCollisionBox.y = static_cast<int>(transform.y) - HALF_WALL_COLLISION_BOX_SZ;
-	}
+	//	wallCollisionBox.x = static_cast<int>(transform.x) - HALF_WALL_COLLISION_BOX_SZ;
+	//	wallCollisionBox.y = static_cast<int>(transform.y) - HALF_WALL_COLLISION_BOX_SZ;
+	//}
 }
