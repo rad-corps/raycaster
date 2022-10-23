@@ -227,20 +227,20 @@ namespace game
 			// draw wireframe
 			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 			std::array<SDL_Point, 5> points{};
-			int lastWallIndex = -1;
+			WallMapFace lastMapFace;
 			for(int crdIndex = 0; crdIndex < COLUMNS - 1; ++crdIndex)
 			{
 				const ColumnRenderData& crd = m_impl->columnRenderDataArray[crdIndex];
 				const ColumnRenderData& nextCrd = m_impl->columnRenderDataArray[crdIndex+1];
 				
-				if (crd.wallMapIndex != lastWallIndex)
+				if (crd.wallMapFace != lastMapFace)
 				{
 					// this is the start of a new wall.
 					points[0] = SDL_Point{ crd.rect.x, crd.rect.y };
 					points[4] = points[0];
 					points[3] = SDL_Point{ crd.rect.x, crd.rect.y + crd.rect.h };
 				}
-				if (nextCrd.wallMapIndex != crd.wallMapIndex)
+				if (nextCrd.wallMapFace != crd.wallMapFace)
 				{
 					points[1] = SDL_Point{ crd.rect.x, crd.rect.y };
 					points[2] = SDL_Point{ crd.rect.x, crd.rect.y + crd.rect.h };
@@ -251,10 +251,8 @@ namespace game
 					SDL_RenderDrawLine(global::instance.getRenderer(), points[2].x, points[2].y, points[3].x, points[3].y);
 					SDL_RenderDrawLine(global::instance.getRenderer(), points[3].x, points[3].y, points[4].x, points[4].y);
 				}
-				lastWallIndex = crd.wallMapIndex;
-
+				lastMapFace = crd.wallMapFace;
 			}
-
 		}
 	}
 	

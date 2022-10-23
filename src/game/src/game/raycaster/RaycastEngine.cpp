@@ -3,9 +3,22 @@
 #include <algorithm>
 #include "RaycasterConstants.h"
 #include <cmath> // std::fmod
+#include <limits> // std::numeric_limits
 
 namespace game
 {
+	bool operator==(const WallMapFace& lhs, const WallMapFace& rhs)
+	{
+		return
+			lhs.mapIndex == rhs.mapIndex
+			&& lhs.facing == rhs.facing;
+	}
+
+	bool operator!=(const WallMapFace& lhs, const WallMapFace& rhs)
+	{
+		return !(lhs == rhs);
+	}
+
 	bool facingDown(float angle_)
 	{
 		return 0 < angle_ && angle_ < PI;
@@ -60,6 +73,7 @@ namespace game
 			float xIntersect = 10000000.f;
 			float yIntersect = 10000000.f;
 			float positionAlongWall = 0; // between 0-1
+			char faceDirection = std::numeric_limits<char>::max();
 
 			// check horizontals
 			// TODO: collapse LEFT and RIGHT branches together
@@ -86,6 +100,7 @@ namespace game
 				
 				positionAlongWall = std::fmodf(yIntersect, (float)MAP_CELL_PX);
 				positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
+				faceDirection = Facing::RIGHT;
 			}
 			else if (facing & Facing::LEFT)
 			{
@@ -109,6 +124,7 @@ namespace game
 
 				positionAlongWall = std::fmodf(yIntersect, (float)MAP_CELL_PX);
 				positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
+				faceDirection = Facing::LEFT;
 			}
 			// check verticals
 			// TODO: collapse UP and DOWN branches together
@@ -135,6 +151,7 @@ namespace game
 
 					positionAlongWall = std::fmodf(xIntersect, (float)MAP_CELL_PX);
 					positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
+					faceDirection = Facing::UP;
 				}
 			}
 			else if (facing & Facing::DOWN)
@@ -160,12 +177,14 @@ namespace game
 
 					positionAlongWall = std::fmodf(xIntersect, (float)MAP_CELL_PX);
 					positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
+					faceDirection = Facing::DOWN;
 				}
 			}
 
 			ColumnRenderData ret;
 
-			ret.wallMapIndex = game::toMapIndex(xIntersect, yIntersect);
+			ret.wallMapFace.mapIndex = game::toMapIndex(xIntersect, yIntersect);
+			ret.wallMapFace.facing = faceDirection;
 			ret.textureXPos = (int)positionAlongWall;
 			ret.ray.start.x = (int)x;
 			ret.ray.start.y = (int)y;
