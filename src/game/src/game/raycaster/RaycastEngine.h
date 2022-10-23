@@ -23,6 +23,7 @@ namespace game
 
 	struct ColumnRenderData
 	{
+		int wallMapIndex;
 		int textureXPos;
 		SDL_Rect rect;
 		Color color;

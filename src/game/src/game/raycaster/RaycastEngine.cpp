@@ -73,6 +73,7 @@ namespace game
 				const float yOffset = tan(tempAngle) * MAP_CELL_PX;
 				float checkX = (float)firstColIntersect;
 				float checkY = oppLen + y;
+				
 
 				while (!isWall(checkX, checkY, map))
 				{
@@ -109,7 +110,6 @@ namespace game
 				positionAlongWall = std::fmodf(yIntersect, (float)MAP_CELL_PX);
 				positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
 			}
-
 			// check verticals
 			// TODO: collapse UP and DOWN branches together
 			if (facing & Facing::UP)
@@ -165,6 +165,7 @@ namespace game
 
 			ColumnRenderData ret;
 
+			ret.wallMapIndex = game::toMapIndex(xIntersect, yIntersect);
 			ret.textureXPos = (int)positionAlongWall;
 			ret.ray.start.x = (int)x;
 			ret.ray.start.y = (int)y;
@@ -178,8 +179,6 @@ namespace game
 			ret.rect.w = X_PX_STEP;
 			ret.rect.h = (int)((SCREEN_HEIGHT * 10) / (distance * cos(angleDifference)));
 			ret.rect.y = (SCREEN_HEIGHT - ret.rect.h) / 2;
-
-			
 
 			if (rowIntersectDistance < colIntersectDistance)
 			{
