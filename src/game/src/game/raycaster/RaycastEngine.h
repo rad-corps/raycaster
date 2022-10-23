@@ -42,12 +42,9 @@ namespace game
 		Line ray;
 	};
 
-
-
 	namespace raycast_engine
 	{
 		int toMapIndex(float x, float y);
-		
 		ColumnRenderData doRayTest(const Transform& transform, float rayAngle, int pxCol, GameMap* map);
 	};
 }

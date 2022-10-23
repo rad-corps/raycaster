@@ -240,7 +240,7 @@ namespace game
 					points[4] = points[0];
 					points[3] = SDL_Point{ crd.rect.x, crd.rect.y + crd.rect.h };
 				}
-				if (nextCrd.wallMapFace != crd.wallMapFace)
+				if (nextCrd.wallMapFace != crd.wallMapFace || crdIndex == COLUMNS - 2)
 				{
 					points[1] = SDL_Point{ crd.rect.x, crd.rect.y };
 					points[2] = SDL_Point{ crd.rect.x, crd.rect.y + crd.rect.h };
