@@ -87,6 +87,11 @@ namespace rcgf
 		SDL_UnlockSurface(m_surface.get());
 	}
 
+	SDL_Texture* Texture::get()
+	{
+		return m_texture.get();
+	}
+
 	void Texture::setColor(Uint8 red, Uint8 green, Uint8 blue)
 	{
 		//Modulate texture rgb

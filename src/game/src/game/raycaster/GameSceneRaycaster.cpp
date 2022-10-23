@@ -11,6 +11,7 @@
 #include "Map.h"
 #include "Texture.h"
 #include "RaycasterConstants.h"
+#include <vector>
 
 // typedef std::chrono::high_resolution_clock Clock;
 
@@ -165,20 +166,19 @@ namespace game
 			const std::string strRayTime = perfCounter.Stop();
 			perfCounter.Start();
 #endif
-			int numPixelsDrawn = 0;
 			// draw the 3d scene
+			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 200, 0, 0xFF);
 			if (m_impl->show3D)
 			{
 				
 				for (const ColumnRenderData& col : m_impl->columnRenderDataArray)
 				{
-					// PAINT ONLY COLUMNS
-					const SDL_Rect textureClip{ col.textureXPos,0,1,WALL_TEXTURE_SZ };
-					m_impl->wallTexture.render2(&textureClip, &col.rect);
+					//// PAINT ONLY COLUMNS
+					//const SDL_Rect textureClip{ col.textureXPos,0,1,WALL_TEXTURE_SZ };
+					//m_impl->wallTexture.render2(&textureClip, &col.rect);
 
 					if (m_impl->showTopDown)
 					{
-						SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 200, 0, 0xFF);
 						SDL_RenderDrawLine(global::instance.getRenderer(), col.ray.start.x, col.ray.start.y, col.ray.end.x, col.ray.end.y);
 					}
 				}
@@ -192,7 +192,6 @@ namespace game
 				global::instance.renderMonospaceText("ray:" + strRayTime + " ms", SCREEN_WIDTH - 200, yOffset);
 				global::instance.renderMonospaceText("drw:" + strRenderTime + " ms", SCREEN_WIDTH - 200, yOffset += 15);
 				global::instance.renderMonospaceText("ren:" + m_impl->renderTime + " ms", SCREEN_WIDTH - 200, yOffset += 15);
-				global::instance.renderMonospaceText("pix:" + std::to_string(numPixelsDrawn), SCREEN_WIDTH - 200, yOffset += 15);
 				global::instance.renderMonospaceText("fps:" + m_impl->fps, SCREEN_WIDTH - 200, yOffset += 15);
 			}
 			
@@ -242,14 +241,28 @@ namespace game
 				}
 				if (nextCrd.wallMapFace != crd.wallMapFace || crdIndex == COLUMNS - 2)
 				{
+					// either 
+					//  1. we are about to start a new wall 
+					//  2. this is the very last ColumnRenderData 
+					// if either is the case we need to gather the RHS points and draw the poly
 					points[1] = SDL_Point{ crd.rect.x, crd.rect.y };
 					points[2] = SDL_Point{ crd.rect.x, crd.rect.y + crd.rect.h };
 
-					// perform the draw here
-					SDL_RenderDrawLine(global::instance.getRenderer(), points[0].x, points[0].y, points[1].x, points[1].y);
-					SDL_RenderDrawLine(global::instance.getRenderer(), points[1].x, points[1].y, points[2].x, points[2].y);
-					SDL_RenderDrawLine(global::instance.getRenderer(), points[2].x, points[2].y, points[3].x, points[3].y);
-					SDL_RenderDrawLine(global::instance.getRenderer(), points[3].x, points[3].y, points[4].x, points[4].y);
+					SDL_Color col{ 0xff,0xff,0xff,0xff };
+					std::vector<SDL_Vertex> verticies{
+						{{(float)points[0].x,(float)points[0].y},	col,	{0.0f,0.0f}},
+						{{(float)points[1].x,(float)points[1].y},	col,	{1.0f,0.0f}},
+						{{(float)points[2].x,(float)points[2].y},	col,	{1.0f,1.0f}},
+						{{(float)points[3].x,(float)points[3].y},	col,	{0.0f,1.0f}},
+					};
+					std::array<int, 6> indexList = { 0,1,2,2,3,0 };
+					SDL_RenderGeometry(global::instance.getRenderer(), m_impl->wallTexture.get(), verticies.data(), (int)verticies.size(), indexList.data(), (int)indexList.size());
+
+					// Draw the outlines
+					//SDL_RenderDrawLine(global::instance.getRenderer(), points[0].x, points[0].y, points[1].x, points[1].y);
+					//SDL_RenderDrawLine(global::instance.getRenderer(), points[1].x, points[1].y, points[2].x, points[2].y);
+					//SDL_RenderDrawLine(global::instance.getRenderer(), points[2].x, points[2].y, points[3].x, points[3].y);
+					//SDL_RenderDrawLine(global::instance.getRenderer(), points[3].x, points[3].y, points[4].x, points[4].y);
 				}
 				lastMapFace = crd.wallMapFace;
 			}
