@@ -170,17 +170,11 @@ namespace game
 			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 200, 0, 0xFF);
 			if (m_impl->show3D)
 			{
-				
 				for (const ColumnRenderData& col : m_impl->columnRenderDataArray)
 				{
-					//// PAINT ONLY COLUMNS
-					//const SDL_Rect textureClip{ col.textureXPos,0,1,WALL_TEXTURE_SZ };
-					//m_impl->wallTexture.render2(&textureClip, &col.rect);
-
-					if (m_impl->showTopDown)
-					{
-						SDL_RenderDrawLine(global::instance.getRenderer(), col.ray.start.x, col.ray.start.y, col.ray.end.x, col.ray.end.y);
-					}
+					// PAINT ONLY COLUMNS
+					const SDL_Rect textureClip{ col.textureXPos,0,1,WALL_TEXTURE_SZ };
+					m_impl->wallTexture.render2(&textureClip, &col.rect);
 				}
 			}
 			
@@ -194,36 +188,12 @@ namespace game
 				global::instance.renderMonospaceText("ren:" + m_impl->renderTime + " ms", SCREEN_WIDTH - 200, yOffset += 15);
 				global::instance.renderMonospaceText("fps:" + m_impl->fps, SCREEN_WIDTH - 200, yOffset += 15);
 			}
-			
 #endif
 		}
 
-		// draw the map
-		if (m_impl->showTopDown)
+		if (m_impl->show3D)
 		{
-			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 0, 200, 0xFF);
-			for (int row = 0; row < MAP_ROWS; ++row)
-			{
-				for (int col = 0; col < MAP_COLS; ++col)
-				{
-					// calc rect position and dimension
-					SDL_Rect rect{ col * MAP_CELL_PX, row * MAP_CELL_PX, MAP_CELL_PX, MAP_CELL_PX };
-					if (map[col + row * MAP_COLS] > 0)
-					{
-						SDL_RenderFillRect(global::instance.getRenderer(), &rect);
-					}
-					else
-					{
-						SDL_RenderDrawRect(global::instance.getRenderer(), &rect);
-					}
-				}
-			}
-
-			m_impl->player.render();
-		}
-
-		{
-			// draw wireframe
+			// draw wireframe/wall textures
 			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 			std::array<SDL_Point, 5> points{};
 			WallMapFace lastMapFace;
@@ -265,6 +235,38 @@ namespace game
 					//SDL_RenderDrawLine(global::instance.getRenderer(), points[3].x, points[3].y, points[4].x, points[4].y);
 				}
 				lastMapFace = crd.wallMapFace;
+			}
+		}
+
+		// draw the map
+		if (m_impl->showTopDown)
+		{
+			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 0, 200, 0xFF);
+			for (int row = 0; row < MAP_ROWS; ++row)
+			{
+				for (int col = 0; col < MAP_COLS; ++col)
+				{
+					// calc rect position and dimension
+					SDL_Rect rect{ col * MAP_CELL_PX, row * MAP_CELL_PX, MAP_CELL_PX, MAP_CELL_PX };
+					if (map[col + row * MAP_COLS] > 0)
+					{
+						SDL_RenderFillRect(global::instance.getRenderer(), &rect);
+					}
+					else
+					{
+						SDL_RenderDrawRect(global::instance.getRenderer(), &rect);
+					}
+				}
+			}
+
+			m_impl->player.render();
+
+			for (const ColumnRenderData& col : m_impl->columnRenderDataArray)
+			{
+				if (m_impl->showTopDown)
+				{
+					SDL_RenderDrawLine(global::instance.getRenderer(), col.ray.start.x, col.ray.start.y, col.ray.end.x, col.ray.end.y);
+				}
 			}
 		}
 	}
