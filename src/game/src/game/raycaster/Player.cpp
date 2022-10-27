@@ -8,7 +8,7 @@ namespace
 {
 	constexpr float X_START_POS = 20.f;
 	constexpr float Y_START_POS = 20.f;
-	constexpr float MOVEMENT_SPEED = 1.f;
+	constexpr float MOVEMENT_SPEED = 0.25f;
 	constexpr float ROTATION_SPEED = 0.03f;
 	constexpr int HALF_WALL_COLLISION_BOX_SZ = 3;
 }

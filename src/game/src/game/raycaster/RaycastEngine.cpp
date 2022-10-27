@@ -7,17 +7,17 @@
 
 namespace game
 {
-	bool operator==(const WallMapFace& lhs, const WallMapFace& rhs)
-	{
-		return
-			lhs.mapIndex == rhs.mapIndex
-			&& lhs.facing == rhs.facing;
-	}
+	//bool operator==(const WallMapFace& lhs, const WallMapFace& rhs)
+	//{
+	//	return
+	//		lhs.mapIndex == rhs.mapIndex
+	//		&& lhs.facing == rhs.facing;
+	//}
 
-	bool operator!=(const WallMapFace& lhs, const WallMapFace& rhs)
-	{
-		return !(lhs == rhs);
-	}
+	//bool operator!=(const WallMapFace& lhs, const WallMapFace& rhs)
+	//{
+	//	return !(lhs == rhs);
+	//}
 
 	bool facingDown(float angle_)
 	{
@@ -183,8 +183,8 @@ namespace game
 
 			ColumnRenderData ret;
 
-			ret.wallMapFace.mapIndex = game::toMapIndex(xIntersect, yIntersect);
-			ret.wallMapFace.facing = faceDirection;
+			//ret.wallMapFace.mapIndex = game::toMapIndex(xIntersect, yIntersect);
+			//ret.wallMapFace.facing = faceDirection;
 			ret.textureXPos = (int)positionAlongWall;
 			ret.ray.start.x = (int)x;
 			ret.ray.start.y = (int)y;

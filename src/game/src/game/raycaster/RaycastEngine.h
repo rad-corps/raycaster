@@ -21,21 +21,21 @@ namespace game
 	bool facingLeft(float angle_);
 	unsigned char getFacing(float angle_);
 
-	struct WallMapFace
-	{
-		WallMapFace()
-			: mapIndex(INT_MAX)
-			, facing(CHAR_MAX)
-		{}
-		friend bool operator==(const WallMapFace& lhs, const WallMapFace& rhs);
-		friend bool operator!=(const WallMapFace& lhs, const WallMapFace& rhs);
-		int mapIndex;
-		char facing;
-	};
+	//struct WallMapFace
+	//{
+	//	WallMapFace()
+	//		: mapIndex(INT_MAX)
+	//		, facing(CHAR_MAX)
+	//	{}
+	//	friend bool operator==(const WallMapFace& lhs, const WallMapFace& rhs);
+	//	friend bool operator!=(const WallMapFace& lhs, const WallMapFace& rhs);
+	//	int mapIndex;
+	//	char facing;
+	//};
 
 	struct ColumnRenderData
 	{
-		WallMapFace wallMapFace;
+		// WallMapFace wallMapFace;
 		int textureXPos;
 		SDL_Rect rect;
 		Color color;

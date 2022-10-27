@@ -143,14 +143,14 @@ namespace game
 			
 			constexpr float FOV_OFFSET = -(FOV / 2);
 
-			int xPx = 0;
+			int screenColumnNumber = 0;
 			for (ColumnRenderData& crd : m_impl->columnRenderDataArray)
 			{
 				// which x position pixel (column number in pixels)?
-				xPx += X_PX_STEP;
+				screenColumnNumber += X_PX_STEP;
 
 				// px is what % across screen?
-				const float pxPerc = xPx / (float)SCREEN_WIDTH;
+				const float pxPerc = screenColumnNumber / (float)SCREEN_WIDTH;
 
 				// calculate the angle to raycast based on the x screen position
 				const float angle = pxPerc * FOV + FOV_OFFSET;
@@ -159,7 +159,7 @@ namespace game
 				const float finalAngle = m_impl->player.sumAngle(angle);
 
 				// cast the rays and render to screen
-				crd = raycast_engine::doRayTest(m_impl->player.transform, finalAngle, xPx, &map);
+				crd = raycast_engine::doRayTest(m_impl->player.transform, finalAngle, screenColumnNumber, &map);
 			}
 
 #ifdef RENDER_DEBUG_VALUES
@@ -167,7 +167,7 @@ namespace game
 			perfCounter.Start();
 #endif
 			// draw the 3d scene
-			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 200, 0, 0xFF);
+			//SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 200, 0, 0xFF);
 			if (m_impl->show3D)
 			{
 				for (const ColumnRenderData& col : m_impl->columnRenderDataArray)
@@ -191,57 +191,58 @@ namespace game
 #endif
 		}
 
-		if (m_impl->show3D)
-		{
-			// draw wireframe/wall textures
-			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-			std::array<SDL_Point, 5> points{};
-			WallMapFace lastMapFace;
-			for(int crdIndex = 0; crdIndex < COLUMNS - 1; ++crdIndex)
-			{
-				const ColumnRenderData& crd = m_impl->columnRenderDataArray[crdIndex];
-				const ColumnRenderData& nextCrd = m_impl->columnRenderDataArray[crdIndex+1];
-				
-				if (crd.wallMapFace != lastMapFace)
-				{
-					// this is the start of a new wall.
-					points[0] = SDL_Point{ crd.rect.x, crd.rect.y };
-					points[4] = points[0];
-					points[3] = SDL_Point{ crd.rect.x, crd.rect.y + crd.rect.h };
-				}
-				if (nextCrd.wallMapFace != crd.wallMapFace || crdIndex == COLUMNS - 2)
-				{
-					// either 
-					//  1. we are about to start a new wall 
-					//  2. this is the very last ColumnRenderData 
-					// if either is the case we need to gather the RHS points and draw the poly
-					points[1] = SDL_Point{ crd.rect.x, crd.rect.y };
-					points[2] = SDL_Point{ crd.rect.x, crd.rect.y + crd.rect.h };
+		// PAINT EACH WALL TILE AS A SINGLE TEXTURE
+		//if (m_impl->show3D)
+		//{
+		//	// draw wireframe/wall textures
+		//	SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+		//	std::array<SDL_Point, 5> points{};
+		//	WallMapFace lastMapFace;
+		//	for(int crdIndex = 0; crdIndex < COLUMNS - 1; ++crdIndex)
+		//	{
+		//		const ColumnRenderData& crd = m_impl->columnRenderDataArray[crdIndex];
+		//		const ColumnRenderData& nextCrd = m_impl->columnRenderDataArray[crdIndex+1];
+		//		
+		//		if (crd.wallMapFace != lastMapFace)
+		//		{
+		//			// this is the start of a new wall.
+		//			points[0] = SDL_Point{ crd.rect.x, crd.rect.y };
+		//			points[4] = points[0];
+		//			points[3] = SDL_Point{ crd.rect.x, crd.rect.y + crd.rect.h };
+		//		}
+		//		if (nextCrd.wallMapFace != crd.wallMapFace || crdIndex == COLUMNS - 2)
+		//		{
+		//			// either 
+		//			//  1. we are about to start a new wall 
+		//			//  2. this is the very last ColumnRenderData 
+		//			// if either is the case we need to gather the RHS points and draw the poly
+		//			points[1] = SDL_Point{ crd.rect.x, crd.rect.y };
+		//			points[2] = SDL_Point{ crd.rect.x, crd.rect.y + crd.rect.h };
 
-					SDL_Color col{ 0xff,0xff,0xff,0xff };
-					std::vector<SDL_Vertex> verticies{
-						{{(float)points[0].x,(float)points[0].y},	col,	{0.0f,0.0f}},
-						{{(float)points[1].x,(float)points[1].y},	col,	{1.0f,0.0f}},
-						{{(float)points[2].x,(float)points[2].y},	col,	{1.0f,1.0f}},
-						{{(float)points[3].x,(float)points[3].y},	col,	{0.0f,1.0f}},
-					};
-					std::array<int, 6> indexList = { 0,1,2,2,3,0 };
-					SDL_RenderGeometry(global::instance.getRenderer(), m_impl->wallTexture.get(), verticies.data(), (int)verticies.size(), indexList.data(), (int)indexList.size());
+		//			SDL_Color col{ 0xff,0xff,0xff,0xff };
+		//			std::vector<SDL_Vertex> verticies{
+		//				{{(float)points[0].x,(float)points[0].y},	col,	{0.0f,0.0f}},
+		//				{{(float)points[1].x,(float)points[1].y},	col,	{1.0f,0.0f}},
+		//				{{(float)points[2].x,(float)points[2].y},	col,	{1.0f,1.0f}},
+		//				{{(float)points[3].x,(float)points[3].y},	col,	{0.0f,1.0f}},
+		//			};
+		//			std::array<int, 6> indexList = { 0,1,2,2,3,0 };
+		//			SDL_RenderGeometry(global::instance.getRenderer(), m_impl->wallTexture.get(), verticies.data(), (int)verticies.size(), indexList.data(), (int)indexList.size());
 
-					// Draw the outlines
-					//SDL_RenderDrawLine(global::instance.getRenderer(), points[0].x, points[0].y, points[1].x, points[1].y);
-					//SDL_RenderDrawLine(global::instance.getRenderer(), points[1].x, points[1].y, points[2].x, points[2].y);
-					//SDL_RenderDrawLine(global::instance.getRenderer(), points[2].x, points[2].y, points[3].x, points[3].y);
-					//SDL_RenderDrawLine(global::instance.getRenderer(), points[3].x, points[3].y, points[4].x, points[4].y);
-				}
-				lastMapFace = crd.wallMapFace;
-			}
-		}
+		//			// Draw the outlines
+		//			//SDL_RenderDrawLine(global::instance.getRenderer(), points[0].x, points[0].y, points[1].x, points[1].y);
+		//			//SDL_RenderDrawLine(global::instance.getRenderer(), points[1].x, points[1].y, points[2].x, points[2].y);
+		//			//SDL_RenderDrawLine(global::instance.getRenderer(), points[2].x, points[2].y, points[3].x, points[3].y);
+		//			//SDL_RenderDrawLine(global::instance.getRenderer(), points[3].x, points[3].y, points[4].x, points[4].y);
+		//		}
+		//		lastMapFace = crd.wallMapFace;
+		//	}
+		//}
 
 		// draw the map
 		if (m_impl->showTopDown)
 		{
-			SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 0, 200, 0xFF);
+			SDL_SetRenderDrawColor(global::instance.getRenderer(), 150, 100, 0, 0xFF);
 			for (int row = 0; row < MAP_ROWS; ++row)
 			{
 				for (int col = 0; col < MAP_COLS; ++col)
@@ -274,13 +275,11 @@ namespace game
 	void GameSceneRaycaster::mouseDown(int button, int x, int y)
 	{
 		std::cout << "mouseDown: " << button << " " << x << " " << y << std::endl;
-
-		// is the click inside the surface?
-
-		if (x < m_impl->wallTexture.getWidth()
-			&& y < m_impl->wallTexture.getHeight())
+		if (y > CENTER_Y)
 		{
-			m_impl->testColor = m_impl->wallTexture.getPixelColor(x, y);
+			// formula rowDistance = cameraHeight (half the screen height) / (yPx - cameraHeight)
+			const int rowDistance = CENTER_Y / (y - CENTER_Y);
+			std::cout << rowDistance << std::endl;
 		}
 	}
 
