@@ -73,7 +73,6 @@ namespace game
 		bool showTopDown = false;
 		bool show3D = true;
 		rcgf::Texture wallTexture{ "./img/wall_64.png" };
-		Color testColor;
 		
 		// diagnostic output
 		std::string renderTime;
@@ -140,7 +139,7 @@ namespace game
 #ifdef RENDER_DEBUG_VALUES
 			perfCounter.Start();
 #endif
-			
+
 			constexpr float FOV_OFFSET = -(FOV / 2);
 
 			int screenColumnNumber = 0;
@@ -166,6 +165,86 @@ namespace game
 			const std::string strRayTime = perfCounter.Stop();
 			perfCounter.Start();
 #endif
+
+			// draw floors
+			{
+
+				//for (int y = SCREEN_HEIGHT / 2 + 1; y < SCREEN_HEIGHT; y += X_PX_STEP)
+				for (int y = SCREEN_HEIGHT / 2 + 1; y < SCREEN_HEIGHT; y++)
+				{
+					// get direction vector from player
+					const Vec2 playerAngle = angleToVec(m_impl->player.transform.angle);
+					const float& dirX = playerAngle.x;
+					const float& dirY = playerAngle.y;
+					const float& planeX = m_impl->player.plane.x;
+					const float& planeY = m_impl->player.plane.y;
+					const float& posX = m_impl->player.transform.x;
+					const float& posY = m_impl->player.transform.y;
+
+					float rayDirX0 = dirX - planeX;
+					float rayDirY0 = dirY - planeY;
+					float rayDirX1 = dirX + planeX;
+					float rayDirY1 = dirY + planeY;
+
+					// Vertical position of the camera.
+					// NOTE: with 0.5, it's exactly in the center between floor and ceiling,
+					// matching also how the walls are being raycasted. For different values
+					// than 0.5, a separate loop must be done for ceiling and floor since
+					// they're no longer symmetrical.
+					const float posZ = 0.5 * SCREEN_HEIGHT;
+
+					// Current y position compared to the center of the screen (the horizon)
+					const int p = y - SCREEN_HEIGHT / 2;
+
+					// Horizontal distance from the camera to the floor for the current row.
+					// 0.5 is the z position exactly in the middle between floor and ceiling.
+					// NOTE: this is affine texture mapping, which is not perspective correct
+					// except for perfectly horizontal and vertical surfaces like the floor.
+					// NOTE: this formula is explained as follows: The camera ray goes through
+					// the following two points: the camera itself, which is at a certain
+					// height (posZ), and a point in front of the camera (through an imagined
+					// vertical plane containing the screen pixels) with horizontal distance
+					// 1 from the camera, and vertical position p lower than posZ (posZ - p). When going
+					// through that point, the line has vertically traveled by p units and
+					// horizontally by 1 unit. To hit the floor, it instead needs to travel by
+					// posZ units. It will travel the same ratio horizontally. The ratio was
+					// 1 / p for going through the camera plane, so to go posZ times farther
+					// to reach the floor, we get that the total horizontal distance is posZ / p.
+					const float rowDistance = posZ / p;
+
+					// calculate the real world step vector we have to add for each x (parallel to camera plane)
+					// adding step by step avoids multiplications with a weight in the inner loop
+					float floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_WIDTH;
+					float floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_WIDTH;
+
+					// real world coordinates of the leftmost column. This will be updated as we step to the right.
+					float floorX = posX + rowDistance * rayDirX0;
+					float floorY = posY + rowDistance * rayDirY0;
+
+					//for (int x = 0; x < SCREEN_WIDTH; x += X_PX_STEP)
+					for (int x = 0; x < SCREEN_WIDTH; x ++)
+					{
+						// the cell coord is simply got from the integer parts of floorX and floorY
+						const int cellX = (int)(floorX / WALL_TEXTURE_SZ);
+						const int cellY = (int)(floorY / WALL_TEXTURE_SZ);
+
+						// get the texture coordinate from the fractional part
+						int tx = (int)(WALL_TEXTURE_W * (floorX - cellX)) & (WALL_TEXTURE_W - 1);
+						int ty = (int)(WALL_TEXTURE_H * (floorY - cellY)) & (WALL_TEXTURE_H - 1);
+
+						floorX += floorStepX;
+						floorY += floorStepY;
+
+						// floor
+						Color color = m_impl->wallTexture.getPixelColor(ty, tx);
+						SDL_SetRenderDrawColor(global::instance.getRenderer(), color.r, color.g, color.b, 0xFF);
+						SDL_Rect r{ x,y,X_PX_STEP,X_PX_STEP };
+						SDL_RenderFillRect(global::instance.getRenderer(), &r);
+					}
+				}
+
+			} // end draw floors
+
 			// draw the 3d scene
 			//SDL_SetRenderDrawColor(global::instance.getRenderer(), 0, 200, 0, 0xFF);
 			if (m_impl->show3D)
@@ -177,7 +256,7 @@ namespace game
 					m_impl->wallTexture.render2(&textureClip, &col.rect);
 				}
 			}
-			
+
 #ifdef RENDER_DEBUG_VALUES
 			{
 				int yOffset = 0;
@@ -190,54 +269,6 @@ namespace game
 			}
 #endif
 		}
-
-		// PAINT EACH WALL TILE AS A SINGLE TEXTURE
-		//if (m_impl->show3D)
-		//{
-		//	// draw wireframe/wall textures
-		//	SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-		//	std::array<SDL_Point, 5> points{};
-		//	WallMapFace lastMapFace;
-		//	for(int crdIndex = 0; crdIndex < COLUMNS - 1; ++crdIndex)
-		//	{
-		//		const ColumnRenderData& crd = m_impl->columnRenderDataArray[crdIndex];
-		//		const ColumnRenderData& nextCrd = m_impl->columnRenderDataArray[crdIndex+1];
-		//		
-		//		if (crd.wallMapFace != lastMapFace)
-		//		{
-		//			// this is the start of a new wall.
-		//			points[0] = SDL_Point{ crd.rect.x, crd.rect.y };
-		//			points[4] = points[0];
-		//			points[3] = SDL_Point{ crd.rect.x, crd.rect.y + crd.rect.h };
-		//		}
-		//		if (nextCrd.wallMapFace != crd.wallMapFace || crdIndex == COLUMNS - 2)
-		//		{
-		//			// either 
-		//			//  1. we are about to start a new wall 
-		//			//  2. this is the very last ColumnRenderData 
-		//			// if either is the case we need to gather the RHS points and draw the poly
-		//			points[1] = SDL_Point{ crd.rect.x, crd.rect.y };
-		//			points[2] = SDL_Point{ crd.rect.x, crd.rect.y + crd.rect.h };
-
-		//			SDL_Color col{ 0xff,0xff,0xff,0xff };
-		//			std::vector<SDL_Vertex> verticies{
-		//				{{(float)points[0].x,(float)points[0].y},	col,	{0.0f,0.0f}},
-		//				{{(float)points[1].x,(float)points[1].y},	col,	{1.0f,0.0f}},
-		//				{{(float)points[2].x,(float)points[2].y},	col,	{1.0f,1.0f}},
-		//				{{(float)points[3].x,(float)points[3].y},	col,	{0.0f,1.0f}},
-		//			};
-		//			std::array<int, 6> indexList = { 0,1,2,2,3,0 };
-		//			SDL_RenderGeometry(global::instance.getRenderer(), m_impl->wallTexture.get(), verticies.data(), (int)verticies.size(), indexList.data(), (int)indexList.size());
-
-		//			// Draw the outlines
-		//			//SDL_RenderDrawLine(global::instance.getRenderer(), points[0].x, points[0].y, points[1].x, points[1].y);
-		//			//SDL_RenderDrawLine(global::instance.getRenderer(), points[1].x, points[1].y, points[2].x, points[2].y);
-		//			//SDL_RenderDrawLine(global::instance.getRenderer(), points[2].x, points[2].y, points[3].x, points[3].y);
-		//			//SDL_RenderDrawLine(global::instance.getRenderer(), points[3].x, points[3].y, points[4].x, points[4].y);
-		//		}
-		//		lastMapFace = crd.wallMapFace;
-		//	}
-		//}
 
 		// draw the map
 		if (m_impl->showTopDown)

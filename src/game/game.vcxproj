@@ -28,6 +28,7 @@
     <ClCompile Include="src\game\raycaster\Map.cpp" />
     <ClCompile Include="src\game\raycaster\Player.cpp" />
     <ClCompile Include="src\game\raycaster\RaycastEngine.cpp" />
+    <ClCompile Include="src\game\raycaster\RaycasterConstants.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneAABBCollision.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMain.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMath.cpp" />

@@ -26,5 +26,7 @@ namespace game
 
 		Transform transform;
 		SDL_Rect wallCollisionBox;
+
+		Vec2 plane;
 	};
 }

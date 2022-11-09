@@ -23,7 +23,9 @@ namespace game
 			HALF_WALL_COLLISION_BOX_SZ * 2,
 			HALF_WALL_COLLISION_BOX_SZ * 2
 		}
-	{}
+		, plane{0.f, 0.66f}
+	{
+	}
 
 	float Player::sumAngle(float add) const
 	{
@@ -46,10 +48,32 @@ namespace game
 
 	void Player::rotate(RotateDirection dir)
 	{
-		if (dir == RotateDirection::Clockwise) transform.angle += ROTATION_SPEED;
-		else transform.angle -= ROTATION_SPEED;
-		if (transform.angle < 0) transform.angle += PI * 2;
-		else if (2 * PI < transform.angle) transform.angle -= PI * 2;
+		if (dir == RotateDirection::Clockwise)
+		{
+			transform.angle += ROTATION_SPEED;
+			//Vec2 playerAngle = angleToVec(transform.angle);
+			Vec2 oldPlane = plane;
+			plane.x = plane.x * cos(ROTATION_SPEED) - plane.y * sin(ROTATION_SPEED);
+			plane.y = oldPlane.x * sin(ROTATION_SPEED) + plane.y * cos(ROTATION_SPEED);
+		}
+		else
+		{
+			transform.angle -= ROTATION_SPEED;
+			Vec2 oldPlane = plane;
+			
+
+			plane.x = plane.x * cos(-ROTATION_SPEED) - plane.y * sin(-ROTATION_SPEED);
+			plane.y = oldPlane.x * sin(-ROTATION_SPEED) + plane.y * cos(-ROTATION_SPEED);
+		}
+		if (transform.angle < 0)
+		{
+			transform.angle += PI * 2;
+		}
+		else if (2 * PI < transform.angle)
+		{
+			transform.angle -= PI * 2;
+		}
+		std::cout << "plane x " << plane.x << "\ty " << plane.y << "\tplayer angle " << transform.angle << "\n";
 	}
 
 	void Player::move(float relativeAngle, const GameMap* map)
