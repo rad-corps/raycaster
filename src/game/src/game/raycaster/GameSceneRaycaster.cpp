@@ -251,7 +251,15 @@ namespace game
 	}
 	
 	void GameSceneRaycaster::mouseDown(int button, int x, int y)
-	{}
+	{
+		std::cout << "mouseDown: " << button << " " << x << " " << y << std::endl;
+		if (y > CENTER_Y)
+		{
+			// formula rowDistance = cameraHeight (half the screen height) / (yPx - cameraHeight)
+			const int rowDistance = CENTER_Y / (y - CENTER_Y);
+			std::cout << rowDistance << std::endl;
+		}
+	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
 	{
