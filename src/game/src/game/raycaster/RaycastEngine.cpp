@@ -191,12 +191,17 @@ namespace game
 			ret.ray.end.x = (int)xIntersect;
 			ret.ray.end.y = (int)yIntersect;
 
-			// need this for the fisheye correction
-			const float angleDifference = rayAngle - playerAngle;
+			// fisheye correction https://permadi.com/1996/05/ray-casting-tutorial-8/
+			{
+				const float angleDifference = rayAngle - playerAngle;
+				distance = distance * cos(angleDifference);
+			}
 
 			ret.rect.x = pxCol;
 			ret.rect.w = X_PX_STEP;
-			ret.rect.h = (int)((SCREEN_HEIGHT * 10) / (distance * cos(angleDifference)));
+
+			// wall height https://permadi.com/1996/05/ray-casting-tutorial-9/
+			ret.rect.h = static_cast<int>(MAP_CELL_PX / distance * DIST_PROJECTION_PLANE);
 			ret.rect.y = (SCREEN_HEIGHT - ret.rect.h) / 2;
 
 			if (rowIntersectDistance < colIntersectDistance)

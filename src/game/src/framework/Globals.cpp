@@ -54,7 +54,7 @@ namespace global
 			printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
 		}
 
-		auto window = SDL_CreateWindow(
+		SDL_Window* window = SDL_CreateWindow(
 			"SDL Game",
 			SDL_WINDOWPOS_UNDEFINED,
 			SDL_WINDOWPOS_UNDEFINED,
@@ -71,6 +71,10 @@ namespace global
 				SDL_RENDERER_ACCELERATED
 			)
 		);
+
+		// SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);       // changes video mode
+		// SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP); // fake full screen
+		
 
 		SDL_SetRenderDrawBlendMode(getRenderer(), SDL_BlendMode::SDL_BLENDMODE_BLEND);
 
