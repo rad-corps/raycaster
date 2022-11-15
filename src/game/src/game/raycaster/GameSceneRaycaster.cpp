@@ -77,7 +77,6 @@ namespace game
 		std::string renderTime;
 		std::string fps;
 		
-		ColumnRenderData columnRenderDataArray[COLUMNS] = {};
 		std::map<SDL_Keycode, bool> keyStates= {
 			{SDLK_w, false},
 			{SDLK_a, false},
@@ -142,7 +141,8 @@ namespace game
 			constexpr float FOV_OFFSET = -(FOV / 2);
 
 			int screenColumnNumber = 0;
-			for (ColumnRenderData& crd : m_impl->columnRenderDataArray)
+
+			for (int column = 0; column < COLUMNS; ++column)
 			{
 				// which x position pixel (column number in pixels)?
 				screenColumnNumber += X_PX_STEP;
@@ -157,14 +157,14 @@ namespace game
 				const float finalAngle = m_impl->player.sumAngle(angle);
 
 				// cast the ray to calculate wall height for this column
-				crd = raycast_engine::doRayTest(m_impl->player.transform, finalAngle, screenColumnNumber, &map);
+				ColumnRenderData crd = raycast_engine::doRayTest(m_impl->player.transform, finalAngle, screenColumnNumber, &map);
 
 				// draw the 3d scene
 				// draw walls
 				const SDL_Rect textureClip{ crd.textureXPos,0,1,WALL_TEXTURE_SZ };
 				m_impl->wallTexture.render2(&textureClip, &crd.rect);
 
-				// draw floors
+				// draw floors https://github.com/permadi-com/ray-cast/blob/master/demo/4/sample4.js
 				// 1. start from the bottom of the wall
 				for (int y = crd.rect.y + crd.rect.h; y < SCREEN_HEIGHT; ++y)
 				{
@@ -172,16 +172,13 @@ namespace game
 					//const float ratio = 
 
 					const int px = y - CENTER_Y;
-					const int DIST_PROJECTION_PLANEb = static_cast<int>((SCREEN_WIDTH / 2) / tan(FOV / 2));
-					//const float straightDistancePlayerToFloorIntersect = (float)CENTER_Y / (float)px * DIST_PROJECTION_PLANEb;
 					const int playerHeight = MAP_CELL_PX / 2;
 					const float ratio = (float)playerHeight / (float)px;
 					const float angleDifference = finalAngle - m_impl->player.transform.angle;
-					const float diagonalDistance = DIST_PROJECTION_PLANEb * ratio * cos(angleDifference);
-					float xEnd = diagonalDistance * cos(finalAngle);
-					float yEnd = diagonalDistance * sin(finalAngle);
-					xEnd += m_impl->player.transform.x;
-					yEnd += m_impl->player.transform.y;
+					const float straightDistance = DIST_PROJECTION_PLANE * ratio;
+					const float diagonalDistance = straightDistance * (1 / cos(angleDifference));
+					const float xEnd = diagonalDistance * cos(finalAngle) + m_impl->player.transform.x;
+					const float yEnd = diagonalDistance * sin(finalAngle) + m_impl->player.transform.y;
 
 					// get the texture coordinate from worldPos
 					float txCoordX = std::fmodf(xEnd, (float)MAP_CELL_PX);
@@ -190,11 +187,7 @@ namespace game
 					txCoordY *= WALL_TEXTURE_SZ / MAP_CELL_PX;
 
 					const Color color = m_impl->wallTexture.getPixelColor((int)txCoordX, (int)txCoordY);
-					SDL_Rect rect;
-					rect.x = screenColumnNumber;
-					rect.y = y;
-					rect.w = X_PX_STEP;
-					rect.h = X_PX_STEP;
+					SDL_Rect rect{ screenColumnNumber,y,X_PX_STEP,X_PX_STEP };
 					SDL_SetRenderDrawColor(global::instance.getRenderer(), color.r, color.g, color.b, color.a);
 					SDL_RenderFillRect(global::instance.getRenderer(), &rect);
 				}
@@ -245,26 +238,20 @@ namespace game
 
 			m_impl->player.render();
 
-			for (const ColumnRenderData& col : m_impl->columnRenderDataArray)
-			{
-				if (m_impl->showTopDown)
-				{
-					SDL_RenderDrawLine(global::instance.getRenderer(), col.ray.start.x, col.ray.start.y, col.ray.end.x, col.ray.end.y);
-				}
-			}
+			// TODO: now that we have removed columnRenderDataArray from the heap:
+			// fix displaying the player rays
+			//for (const ColumnRenderData& col : m_impl->columnRenderDataArray)
+			//{
+			//	if (m_impl->showTopDown)
+			//	{
+			//		SDL_RenderDrawLine(global::instance.getRenderer(), col.ray.start.x, col.ray.start.y, col.ray.end.x, col.ray.end.y);
+			//	}
+			//}
 		}
 	}
 	
 	void GameSceneRaycaster::mouseDown(int button, int x, int y)
-	{
-		std::cout << "mouseDown: " << button << " " << x << " " << y << std::endl;
-		if (y > CENTER_Y)
-		{
-			// formula rowDistance = cameraHeight (half the screen height) / (yPx - cameraHeight)
-			const int rowDistance = CENTER_Y / (y - CENTER_Y);
-			std::cout << rowDistance << std::endl;
-		}
-	}
+	{}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
 	{
