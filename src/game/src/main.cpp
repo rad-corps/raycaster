@@ -82,7 +82,7 @@ int main(int argc, char* args[])
 		}
 
 		// clear screen
-		SDL_SetRenderDrawColor(global::instance.getRenderer(), 0x00, 0x00, 0x20, 0xFF);
+		SDL_SetRenderDrawColor(global::instance.getRenderer(), 60, 60, 72, 0xFF);
 		SDL_RenderClear(global::instance.getRenderer());
 
 		gameState->sendData(renderTime, fps);

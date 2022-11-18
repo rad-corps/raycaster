@@ -2,9 +2,12 @@
 
 #include "Globals.h"
 
+// #define RENDER_FLOORS
+
 namespace game
 {
 	constexpr int MAP_CELL_PX = 8;
+	constexpr int PLAYER_HEIGHT = MAP_CELL_PX / 2;
 	constexpr int WALL_TEXTURE_SZ = 64;
 	constexpr int WALL_TEXTURE_W = WALL_TEXTURE_SZ;
 	constexpr int WALL_TEXTURE_H = WALL_TEXTURE_SZ;
@@ -15,9 +18,7 @@ namespace game
 	constexpr int MAP_COLS = 32;
 	constexpr int MAP_ROWS = 32;
 	constexpr int MAP_SZ = MAP_COLS * MAP_ROWS;
-
-	
-	constexpr int X_PX_STEP = 3;
+	constexpr int X_PX_STEP = 1;
 	constexpr int COLUMNS = SCREEN_WIDTH / X_PX_STEP;
 	constexpr float START_ANGLE = 0.f;
 

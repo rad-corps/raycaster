@@ -220,6 +220,41 @@ namespace game
 			}
 			return ret;
 		}
+
+		void drawFloorColumn(const Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx)
+		{
+			// draw floors https://github.com/permadi-com/ray-cast/blob/master/demo/4/sample4.js
+			// 1. start from the bottom of the wall
+			for (int y = crd.rect.y + crd.rect.h; y < SCREEN_HEIGHT; ++y)
+			{
+				// straight distance from players feet to ground point          PLAYER_HEIGHT          
+				// --------------------------------------------------- = ------------------------------
+				//               DIST_PROJECTION_PLANE                     screen y pixel - CENTER_Y   
+
+
+				const int px = y - CENTER_Y;
+				const float straightDistance = DIST_PROJECTION_PLANE * (PLAYER_HEIGHT / (float)px);
+				const float diagonalDistance = straightDistance * (1 / cos(rayAngle - playerTransform.angle));
+				const float xEnd = diagonalDistance * cos(rayAngle) + playerTransform.x;
+				const float yEnd = diagonalDistance * sin(rayAngle) + playerTransform.y;
+
+				// get the texture coordinate from worldPos
+				float txCoordX = std::fmodf(xEnd, (float)MAP_CELL_PX) * (WALL_TEXTURE_SZ / MAP_CELL_PX);
+				float txCoordY = std::fmodf(yEnd, (float)MAP_CELL_PX) * (WALL_TEXTURE_SZ / MAP_CELL_PX);
+
+				const Color color = tx->getPixelColor((int)txCoordX, (int)txCoordY);
+				SDL_Rect rect{ screenColumnNumber,y,X_PX_STEP,X_PX_STEP };
+				SDL_SetRenderDrawColor(global::instance.getRenderer(), color.r, color.g, color.b, color.a);
+				SDL_RenderFillRect(global::instance.getRenderer(), &rect);
+			}
+		}
+
+		SDL_Point worldSpaceToScreenSpace(int x, int y)
+		{
+			SDL_Point ret{};
+			std::cout << x << y << std::endl;
+			return ret;
+		}
 	}
 }
 

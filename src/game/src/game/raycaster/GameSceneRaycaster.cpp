@@ -13,11 +13,6 @@
 #include "RaycasterConstants.h"
 #include <vector>
 
-// typedef std::chrono::high_resolution_clock Clock;
-
-using std::cout;
-using std::endl;
-
 #define RENDER_DEBUG_VALUES
 
 namespace
@@ -61,7 +56,7 @@ namespace
 	};
 
 
-
+	const SDL_Point enemyPosition{ 58,64};
 	
 }
 
@@ -72,6 +67,7 @@ namespace game
 		Player player;
 		bool showTopDown = false;
 		rcgf::Texture wallTexture{ "./img/wall_64.png" };
+		rcgf::Texture enemyTexture{ "./img/enemy_01.png" };
 		
 		// diagnostic output
 		std::string renderTime;
@@ -154,43 +150,25 @@ namespace game
 				const float angle = pxPerc * FOV + FOV_OFFSET;
 
 				// sum with the player's current angle to get the angle to send to the engine
-				const float finalAngle = m_impl->player.sumAngle(angle);
+				const float rayAngle = m_impl->player.sumAngle(angle);
 
 				// cast the ray to calculate wall height for this column
-				ColumnRenderData crd = raycast_engine::doRayTest(m_impl->player.transform, finalAngle, screenColumnNumber, &map);
+				ColumnRenderData crd = raycast_engine::doRayTest(m_impl->player.transform, rayAngle, screenColumnNumber, &map);
 
-				// draw the 3d scene
+				// hack, draw the ray line here since we stopped caching the ColumnRenderData				
+				if (m_impl->showTopDown)
+				{
+					SDL_SetRenderDrawColor(global::instance.getRenderer(), 200, 0, 200, 0xFF);
+					SDL_RenderDrawLine(global::instance.getRenderer(), crd.ray.start.x, crd.ray.start.y, crd.ray.end.x, crd.ray.end.y);
+				}
+
 				// draw walls
 				const SDL_Rect textureClip{ crd.textureXPos,0,1,WALL_TEXTURE_SZ };
 				m_impl->wallTexture.render2(&textureClip, &crd.rect);
 
-				// draw floors https://github.com/permadi-com/ray-cast/blob/master/demo/4/sample4.js
-				// 1. start from the bottom of the wall
-				for (int y = crd.rect.y + crd.rect.h; y < SCREEN_HEIGHT; ++y)
-				{
-					//// playerHeight / 
-					//const float ratio = 
-
-					const int px = y - CENTER_Y;
-					const int playerHeight = MAP_CELL_PX / 2;
-					const float ratio = (float)playerHeight / (float)px;
-					const float angleDifference = finalAngle - m_impl->player.transform.angle;
-					const float straightDistance = DIST_PROJECTION_PLANE * ratio;
-					const float diagonalDistance = straightDistance * (1 / cos(angleDifference));
-					const float xEnd = diagonalDistance * cos(finalAngle) + m_impl->player.transform.x;
-					const float yEnd = diagonalDistance * sin(finalAngle) + m_impl->player.transform.y;
-
-					// get the texture coordinate from worldPos
-					float txCoordX = std::fmodf(xEnd, (float)MAP_CELL_PX);
-					txCoordX *= WALL_TEXTURE_SZ / MAP_CELL_PX;
-					float txCoordY = std::fmodf(yEnd, (float)MAP_CELL_PX);
-					txCoordY *= WALL_TEXTURE_SZ / MAP_CELL_PX;
-
-					const Color color = m_impl->wallTexture.getPixelColor((int)txCoordX, (int)txCoordY);
-					SDL_Rect rect{ screenColumnNumber,y,X_PX_STEP,X_PX_STEP };
-					SDL_SetRenderDrawColor(global::instance.getRenderer(), color.r, color.g, color.b, color.a);
-					SDL_RenderFillRect(global::instance.getRenderer(), &rect);
-				}
+#ifdef RENDER_FLOORS
+				raycast_engine::drawFloorColumn(m_impl->player.transform, crd, screenColumnNumber, rayAngle, &m_impl->wallTexture);
+#endif
 			}
 
 #ifdef RENDER_DEBUG_VALUES
@@ -238,6 +216,14 @@ namespace game
 
 			m_impl->player.render();
 
+			SDL_Rect enemyRect{
+				enemyPosition.x - 2,
+				enemyPosition.y - 2,
+				4, 4
+			};
+			SDL_SetRenderDrawColor(global::instance.getRenderer(), 255, 0, 100, 0xFF);
+			SDL_RenderFillRect(global::instance.getRenderer(), &enemyRect);
+
 			// TODO: now that we have removed columnRenderDataArray from the heap:
 			// fix displaying the player rays
 			//for (const ColumnRenderData& col : m_impl->columnRenderDataArray)
@@ -248,6 +234,7 @@ namespace game
 			//	}
 			//}
 		}
+		m_impl->enemyTexture.render(SCREEN_WIDTH - 64, SCREEN_HEIGHT - 64);
 	}
 	
 	void GameSceneRaycaster::mouseDown(int button, int x, int y)

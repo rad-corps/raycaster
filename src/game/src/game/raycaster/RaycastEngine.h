@@ -3,6 +3,7 @@
 #include "RaycasterConstants.h"
 #include <array>
 #include "Map.h"
+#include "Texture.h"
 
 
 namespace game
@@ -46,5 +47,7 @@ namespace game
 	{
 		int toMapIndex(float x, float y);
 		ColumnRenderData doRayTest(const Transform& transform, float rayAngle, int pxCol, GameMap* map);
+		void drawFloorColumn(const Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx);
+		SDL_Point worldSpaceToScreenSpace(const Transform& playerTransform, int x, int y);
 	};
 }

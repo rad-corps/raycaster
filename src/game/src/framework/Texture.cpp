@@ -113,14 +113,12 @@ namespace rcgf
 	Color Texture::getPixelColor(int x, int y)
 	{
 		Color ret;
-		SDL_PixelFormat* fmt = m_surface->format;
-		int bytesperpixel = (int)fmt->BytesPerPixel;
 
-		//TODO: understand this.
-		Uint8* pixel = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bytesperpixel;
+		// pitch is the length of a row of pixels in bytes
+		Uint8* pixel = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * m_surface->format->BytesPerPixel;
 		Uint32* px32 = (Uint32*)pixel;
 
-		SDL_GetRGBA(*px32, fmt, &ret.r, &ret.g, &ret.b, &ret.a);
+		SDL_GetRGBA(*px32, m_surface->format, &ret.r, &ret.g, &ret.b, &ret.a);
 
 		return ret;
 	}
