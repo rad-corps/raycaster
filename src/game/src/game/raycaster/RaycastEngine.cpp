@@ -221,7 +221,7 @@ namespace game
 			return ret;
 		}
 
-		void drawFloorColumn(const Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx)
+		void drawFloorColumn(SDL_Renderer* renderer, const Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx)
 		{
 			// draw floors https://github.com/permadi-com/ray-cast/blob/master/demo/4/sample4.js
 			// 1. start from the bottom of the wall
@@ -244,8 +244,8 @@ namespace game
 
 				const Color color = tx->getPixelColor((int)txCoordX, (int)txCoordY);
 				SDL_Rect rect{ screenColumnNumber,y,X_PX_STEP,X_PX_STEP };
-				SDL_SetRenderDrawColor(global::instance.getRenderer(), color.r, color.g, color.b, color.a);
-				SDL_RenderFillRect(global::instance.getRenderer(), &rect);
+				SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+				SDL_RenderFillRect(renderer, &rect);
 			}
 		}
 

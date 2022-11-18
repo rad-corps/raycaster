@@ -44,25 +44,26 @@ namespace game
 		glm::vec2 pos;
 		glm::vec2 velocity;
 
-		Pimpl() 
+		Pimpl(SDL_Renderer* renderer, TTF_Font* font)
 			: optionsStrings{"0: Back", "W: Up", "A: Left", "S: Down", "D: Right" }
-			, movingTex{std::make_unique<rcgf::Texture>("img/dice.png")}
+			, movingTex{std::make_unique<rcgf::Texture>(renderer, "img/dice.png")}
 			, pos{0.f,0.f}
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
 			{
 				texArr[i] = std::make_unique<rcgf::Texture>(
-					global::instance.getFont(), 
+					renderer,
+					font, 
 					optionsStrings[i].c_str()
 				);
 			}
 
-			animation = std::make_unique<rcgf::Animation>(std::make_unique<rcgf::Texture>("img/chicken_2.png"), SPRITE_W, SPRITE_H, 4, 4);
+			animation = std::make_unique<rcgf::Animation>(std::make_unique<rcgf::Texture>(renderer, "img/chicken_2.png"), SPRITE_W, SPRITE_H, 4, 4);
 		}
 	};
 
-	GameSceneUserInput::GameSceneUserInput()
-		: m_impl{ std::make_unique<Pimpl>() }
+	GameSceneUserInput::GameSceneUserInput(SDL_Renderer* renderer, TTF_Font* font)
+		: m_impl{ std::make_unique<Pimpl>(renderer, font) }
 	{}
 
 	void GameSceneUserInput::update()
@@ -81,15 +82,18 @@ namespace game
 		m_impl->pos += m_impl->velocity;
 	}
 
-	void GameSceneUserInput::render()
+	void GameSceneUserInput::render(SDL_Renderer* renderer)
 	{
+		// 4100
+		renderer;
+
 		// get mouse position
 		{
 			int x, y;
 			SDL_GetMouseState(&x, &y);
 			std::stringstream ss;
 			ss << "x:" << x << " y:" << y;
-			global::instance.renderMonospaceText(ss.str(), x, y);
+			global::Global::renderMonospaceText(ss.str(), x, y);
 		}
 
 		for (int i = 0; i < NUM_OPTIONS; ++i)
@@ -117,7 +121,7 @@ namespace game
 		case SDLK_KP_0:
 		case SDLK_ESCAPE:
 			printf("switching to game state main from user input\n"); 
-			pushPendingState(std::make_unique<GameSceneMain>());
+			pushPendingState(std::make_unique<GameSceneMain>(m_renderer, m_font));
 			break;
 		case SDLK_w:
 			m_impl->velocity.y = -VELOCITY;

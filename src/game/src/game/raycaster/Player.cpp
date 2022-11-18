@@ -42,15 +42,15 @@ namespace game
 		return add;
 	}
 
-	void Player::render()
+	void Player::render(SDL_Renderer* renderer)
 	{
 		// draw the player
 		constexpr int playerDiameter = 2;
 		const SDL_Rect r{ (int)transform.x - playerDiameter,(int)transform.y - playerDiameter,playerDiameter * 2,playerDiameter * 2 };
-		SDL_SetRenderDrawColor(global::instance.getRenderer(), 100, 200, 0, 0xFF);
-		SDL_RenderFillRect(global::instance.getRenderer(), &r);
+		SDL_SetRenderDrawColor(renderer, 100, 200, 0, 0xFF);
+		SDL_RenderFillRect(renderer, &r);
 
-		SDL_RenderDrawRect(global::instance.getRenderer(), &wallCollisionBox);
+		SDL_RenderDrawRect(renderer, &wallCollisionBox);
 	}
 
 	void Player::rotate(RotateDirection dir)

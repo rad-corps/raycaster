@@ -16,7 +16,7 @@ namespace rcgf
 		virtual void fixedUpdate() = 0;
 		virtual void sendData(const std::string& renderTime, const std::string& fps) { renderTime; fps; };
 		virtual void update() = 0;
-		virtual void render() = 0;
+		virtual void render(SDL_Renderer* renderer) = 0;
 		virtual void keyDown(SDL_Keycode) = 0;
 		virtual void keyUp(SDL_Keycode) = 0;
 		virtual void mouseDown(int button, int x, int y) = 0;

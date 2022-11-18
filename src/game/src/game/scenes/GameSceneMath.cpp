@@ -12,8 +12,10 @@ namespace game
 		}
 	};
 
-	GameSceneMath::GameSceneMath()
+	GameSceneMath::GameSceneMath(SDL_Renderer* renderer, TTF_Font* font)
 		: m_impl{std::make_unique<Pimpl>()}
+		, m_renderer{renderer}
+		, m_font{font}
 	{}
 
 	void GameSceneMath::update()
@@ -21,13 +23,16 @@ namespace game
 		
 	}
 
-	void GameSceneMath::render()
+	void GameSceneMath::render(SDL_Renderer* renderer)
 	{
-		SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+		// 4100
+		renderer;
+
+		SDL_SetRenderDrawColor(m_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		// render coordinate system
 
 		// draw x axis
-		SDL_RenderDrawLine(global::instance.getRenderer(),
+		SDL_RenderDrawLine(m_renderer,
 			0,
 			CENTER_Y,
 			SCREEN_WIDTH,
@@ -35,7 +40,7 @@ namespace game
 		);
 
 		// draw y axis
-		SDL_RenderDrawLine(global::instance.getRenderer(),
+		SDL_RenderDrawLine(m_renderer,
 			CENTER_X,
 			0,
 			CENTER_X,
@@ -47,7 +52,7 @@ namespace game
 		SDL_GetMouseState(&mouseX, &mouseY);
 
 		// draw vector
-		SDL_RenderDrawLine(global::instance.getRenderer(),
+		SDL_RenderDrawLine(m_renderer,
 			CENTER_X,
 			CENTER_Y,
 			mouseX,
@@ -61,9 +66,9 @@ namespace game
 		vecCoords << "x" << mouseVec.x << "y" << mouseVec.y;
 		float angle = glm::angle(glm::normalize(mouseVec), glm::normalize(referenceVec));
 		float dot = glm::dot(mouseVec, referenceVec);
-		global::instance.renderMonospaceText(vecCoords.str(), mouseX + 20, mouseY);
-		global::instance.renderMonospaceText("angle:" + std::to_string(angle), CENTER_X, CENTER_Y);
-		global::instance.renderMonospaceText("dot  :" + std::to_string(dot), CENTER_X, CENTER_Y + 20);
+		global::Global::renderMonospaceText(vecCoords.str(), mouseX + 20, mouseY);
+		global::Global::renderMonospaceText("angle:" + std::to_string(angle), CENTER_X, CENTER_Y);
+		global::Global::renderMonospaceText("dot  :" + std::to_string(dot), CENTER_X, CENTER_Y + 20);
 	}
 
 	void GameSceneMath::keyDown(SDL_Keycode keycode)
@@ -73,7 +78,7 @@ namespace game
 		case SDLK_0:
 		case SDLK_KP_0:
 		case SDLK_ESCAPE:
-			pushPendingState(std::make_unique<GameSceneMain>());
+			pushPendingState(std::make_unique<GameSceneMain>(m_renderer, m_font));
 			break;
 		}
 	}

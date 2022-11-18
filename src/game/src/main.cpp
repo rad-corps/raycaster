@@ -12,11 +12,6 @@
 namespace
 {
 	constexpr double FIXED_UPDATE = 1000 / 60.0;
-
-	void init()
-	{
-		global::instance.init();
-	}
 }
 
 int main(int argc, char* args[])
@@ -28,13 +23,15 @@ int main(int argc, char* args[])
 	}
 
 	// initialise SDL and other systems such as font and PNG loading
-	init();
+	global::SDL_Global sdlGlobal = global::Global::init();
+	SDL_Renderer* renderer = sdlGlobal.renderer;
+	TTF_Font* font = sdlGlobal.font;
 
 	printf("SDL Initialisation complete\n");
 
 	
 	
-	std::unique_ptr<rcgf::IGameScene> gameState = std::make_unique<game::GameSceneMain>();
+	std::unique_ptr<rcgf::IGameScene> gameState = std::make_unique<game::GameSceneMain>(renderer, font);
 
 	//Main loop flag
 	bool quit = false;
@@ -82,8 +79,8 @@ int main(int argc, char* args[])
 		}
 
 		// clear screen
-		SDL_SetRenderDrawColor(global::instance.getRenderer(), 60, 60, 72, 0xFF);
-		SDL_RenderClear(global::instance.getRenderer());
+		SDL_SetRenderDrawColor(renderer, 60, 60, 72, 0xFF);
+		SDL_RenderClear(renderer);
 
 		gameState->sendData(renderTime, fps);
 		gameState->update();
@@ -93,17 +90,19 @@ int main(int argc, char* args[])
 		}
 		else
 		{
-			gameState->render();
+			gameState->render(renderer);
 		}
 
 		//Update screen
 		renderPerfCounter.Start();
-		SDL_RenderPresent(global::instance.getRenderer());
+		SDL_RenderPresent(renderer);
 		renderTime = renderPerfCounter.Stop();
 
 		time2 = std::chrono::high_resolution_clock::now();
 		deltaTimeMs += std::chrono::duration_cast<std::chrono::microseconds>(time2 - time1).count() / 1000.0;
 
+		// TODO: there is a bug where this update will attempt to catch up if we have not been hitting our target FPS
+		// to reproduce, turn on the slow floor rendering, then look directly at a wall while rotating. 
 		if (deltaTimeMs > FIXED_UPDATE)
 		{
 			deltaTimeMs -= FIXED_UPDATE;

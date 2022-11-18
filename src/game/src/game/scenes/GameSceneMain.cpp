@@ -19,22 +19,27 @@ namespace game
 		std::array<std::unique_ptr<rcgf::Texture>, NUM_OPTIONS> texArr;
 		std::unique_ptr<rcgf::Texture> bgTex;
 
-		Pimpl()
+		Pimpl(SDL_Renderer* renderer, TTF_Font* font)
 			: optionsStrings{"0: Transform", "1: User Input", "2: AABB Collision", "3: Polygon", "4: Math", "5: Raycasting"},
-			  bgTex{std::make_unique<rcgf::Texture>("img/dice.png")}
+			  bgTex{std::make_unique<rcgf::Texture>(renderer, "img/dice.png")}
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
 			{
 				texArr[i] = std::make_unique<rcgf::Texture>(
-					global::instance.getFont(), 
+					renderer,
+					font, 
 					optionsStrings[i].c_str()
 				);
 			}
 		}
+
+		Pimpl() = delete;
 	};
 
-	GameSceneMain::GameSceneMain()
-		: m_impl{std::make_unique<Pimpl>()}
+	GameSceneMain::GameSceneMain(SDL_Renderer* renderer, TTF_Font* font)
+		: m_impl{std::make_unique<Pimpl>(renderer, font)}
+		, m_renderer{renderer}
+		, m_font{font}
 	{}
 
 	void GameSceneMain::update()
@@ -42,8 +47,11 @@ namespace game
 		
 	}
 
-	void GameSceneMain::render()
+	void GameSceneMain::render(SDL_Renderer* renderer)
 	{
+		// 4100 warning
+		renderer;
+
 		//Render current frame
 		m_impl->bgTex->render(
 			(SCREEN_WIDTH - m_impl->bgTex->getWidth()) / 2,
@@ -62,27 +70,27 @@ namespace game
 		{
 		case SDLK_0:
 		case SDLK_KP_0:
-			pushPendingState(std::make_unique<GameSceneTransform>());
+			pushPendingState(std::make_unique<GameSceneTransform>(m_renderer, m_font));
 			break;
 		case SDLK_1:
 		case SDLK_KP_1:
-			pushPendingState(std::make_unique<GameSceneUserInput>());
+			pushPendingState(std::make_unique<GameSceneUserInput>(m_renderer, m_font));
 			break;
 		case SDLK_2:
 		case SDLK_KP_2:
-			pushPendingState(std::make_unique<GameSceneAABBCollision>());
+			pushPendingState(std::make_unique<GameSceneAABBCollision>(m_renderer, m_font));
 			break;
 		case SDLK_3:
 		case SDLK_KP_3:
-			pushPendingState(std::make_unique<GameScenePolygon>());
+			pushPendingState(std::make_unique<GameScenePolygon>(m_renderer, m_font));
 			break;
 		case SDLK_4:
 		case SDLK_KP_4:
-			pushPendingState(std::make_unique<GameSceneMath>());
+			pushPendingState(std::make_unique<GameSceneMath>(m_renderer, m_font));
 			break;
 		case SDLK_5:
 		case SDLK_KP_5:
-			pushPendingState(std::make_unique<GameSceneRaycaster>());
+			pushPendingState(std::make_unique<GameSceneRaycaster>(m_renderer, m_font));
 			break;
 		}
 	}

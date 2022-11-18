@@ -13,22 +13,27 @@ namespace game
 	struct GameScenePolygon::Pimpl
 	{
 		std::unique_ptr<rcgf::Square> square;
-		Pimpl() 
-			: square{std::make_unique<rcgf::Square>(100)}
+		Pimpl(SDL_Renderer* renderer) 
+			: square{std::make_unique<rcgf::Square>(renderer, 100)}
 		{
 		}
 	};
 
-	GameScenePolygon::GameScenePolygon()
-		: m_impl{ std::make_unique<Pimpl>() }
+	GameScenePolygon::GameScenePolygon(SDL_Renderer* renderer, TTF_Font* font)
+		: m_impl{ std::make_unique<Pimpl>(renderer) }
+		, m_renderer{renderer}
+		, m_font{ font }
 	{}
 
 	void GameScenePolygon::update()
 	{
 	}
 
-	void GameScenePolygon::render()
+	void GameScenePolygon::render(SDL_Renderer* renderer)
 	{
+		// 4100 
+		renderer;
+
 		SDL_Point points[5];
 		points[0].x = 10;
 		points[0].y = 10;
@@ -40,10 +45,10 @@ namespace game
 		points[3].y = 110;
 		points[4].x = 10;
 		points[4].y = 10;
-		SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderDrawLines(global::instance.getRenderer(), points, 5);
+		SDL_SetRenderDrawColor(m_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderDrawLines(m_renderer, points, 5);
 
-		global::instance.renderMonospaceText("HELLO WORLD 0123456789!", 100, 100);
+		global::Global::renderMonospaceText("HELLO WORLD 0123456789!", 100, 100);
 
 		m_impl->square->render(glm::vec2(200,220));
 	}
@@ -56,7 +61,7 @@ namespace game
 		case SDLK_KP_0:
 		case SDLK_ESCAPE:
 			printf("switching to game state main\n"); 
-			pushPendingState(std::make_unique<GameSceneMain>());
+			pushPendingState(std::make_unique<GameSceneMain>(m_renderer, m_font));
 			break;
 		}
 

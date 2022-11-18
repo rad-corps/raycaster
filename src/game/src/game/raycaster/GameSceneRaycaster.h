@@ -10,10 +10,11 @@ namespace game
 	class GameSceneRaycaster: public rcgf::IGameScene
 	{
 	public:
-		GameSceneRaycaster();
+		GameSceneRaycaster(SDL_Renderer* renderer, TTF_Font* font);
+		GameSceneRaycaster() = delete;
 		void update() override;
 		void fixedUpdate() override;
-		void render() override;
+		void render(SDL_Renderer* renderer) override;
 		void keyDown(SDL_Keycode) override;
 		void keyUp(SDL_Keycode) override;
 		void mouseDown(int button, int x, int y) override;
@@ -22,5 +23,7 @@ namespace game
 	private:
 		struct Pimpl;
 		std::unique_ptr<Pimpl> m_impl;
+		SDL_Renderer* m_renderer;
+		TTF_Font* m_font;
 	};
 }

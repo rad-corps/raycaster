@@ -15,21 +15,22 @@ namespace
 		return ret;
 	}
 
-	void setRenderer(SDL_Renderer* renderer_)
-	{
-		renderer = renderer_;
-	}
-	void setFont(TTF_Font* font_)
-	{
-		font = font_;
-	}
+	//void setRenderer(SDL_Renderer* renderer_)
+	//{
+	//	renderer = renderer_;
+	//}
+	//void setFont(TTF_Font* font_)
+	//{
+	//	font = font_;
+	//}
 }
 
 namespace global
 {
 	Global instance;
-	void Global::init()
+	SDL_Global Global::init()
 	{
+		SDL_Global ret{};
 		//Initialize SDL
 		if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		{
@@ -54,7 +55,7 @@ namespace global
 			printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
 		}
 
-		SDL_Window* window = SDL_CreateWindow(
+		ret.window = SDL_CreateWindow(
 			"SDL Game",
 			SDL_WINDOWPOS_UNDEFINED,
 			SDL_WINDOWPOS_UNDEFINED,
@@ -63,33 +64,34 @@ namespace global
 			SDL_WINDOW_SHOWN
 		);
 
-		setRenderer(
-			SDL_CreateRenderer(
-				window,
-				-1, // index of the rendering driver to init. -1 for first available 
-				//SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-				SDL_RENDERER_ACCELERATED
-			)
+		
+		ret.renderer = SDL_CreateRenderer(
+			ret.window,
+			-1, // index of the rendering driver to init. -1 for first available 
+			//SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+			SDL_RENDERER_ACCELERATED
 		);
+		
 
 		// SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);       // changes video mode
 		// SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP); // fake full screen
 		
 
-		SDL_SetRenderDrawBlendMode(getRenderer(), SDL_BlendMode::SDL_BLENDMODE_BLEND);
+		SDL_SetRenderDrawBlendMode(renderer, SDL_BlendMode::SDL_BLENDMODE_BLEND);
 
 		// load fonts and textures
-		setFont(loadFont("font/PTC55F.ttf", 28));
+		ret.font = loadFont("font/PTC55F.ttf", 28);
 
 
 		// works but its too big
 		monoText = std::make_unique<rcgf::Animation>(
-			std::make_unique<rcgf::Texture>("img/mono_font.png"), 
+			std::make_unique<rcgf::Texture>(renderer, "img/mono_font.png"), 
 			20, // sprite width
 			20, // sprite height
 			8,  // rows
 			15  // cols
 		);
+		return ret;
 	}
 
 	void Global::renderMonospaceText(const std::string& inp, int x, int y)
@@ -101,13 +103,13 @@ namespace global
 		}
 	}
 
-	TTF_Font* Global::getFont()
-	{
-		return font;
-	}
+	//TTF_Font* Global::getFont()
+	//{
+	//	return font;
+	//}
 
-	SDL_Renderer* Global::getRenderer()
-	{
-		return renderer;
-	}
+	//SDL_Renderer* Global::getRenderer()
+	//{
+	//	return renderer;
+	//}
 }

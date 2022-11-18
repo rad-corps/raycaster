@@ -66,8 +66,8 @@ namespace game
 	{
 		Player player;
 		bool showTopDown = false;
-		rcgf::Texture wallTexture{ "./img/wall_64.png" };
-		rcgf::Texture enemyTexture{ "./img/enemy_01.png" };
+		rcgf::Texture wallTexture;
+		rcgf::Texture enemyTexture;
 		
 		// diagnostic output
 		std::string renderTime;
@@ -84,15 +84,20 @@ namespace game
 			{SDLK_DOWN, false},
 			{SDLK_LCTRL, false},
 		};
-		Pimpl()
+		Pimpl(SDL_Renderer* renderer)
+			: wallTexture{ renderer, "./img/wall_64.png" },
+			enemyTexture{ renderer, "./img/enemy_01.png" }
 		{
 			wallTexture.printDebugInfo();
 		}
+		Pimpl() = delete;
 	};
 
 
-	GameSceneRaycaster::GameSceneRaycaster()
-		: m_impl{ std::make_unique<Pimpl>() }
+	GameSceneRaycaster::GameSceneRaycaster(SDL_Renderer* renderer, TTF_Font* font)
+		: m_impl{ std::make_unique<Pimpl>(renderer) }
+		, m_renderer{renderer}
+		, m_font{font}
 	{}
 
 	void GameSceneRaycaster::update()
@@ -126,8 +131,10 @@ namespace game
 		if (m_impl->keyStates[SDLK_s] || m_impl->keyStates[SDLK_DOWN])  m_impl->player.move(PI, &map);
 	}
 
-	void GameSceneRaycaster::render()
+	void GameSceneRaycaster::render(SDL_Renderer* renderer)
 	{
+		// 4100
+		renderer;
 		// render the 3D world from the player perspective
 		{
 #ifdef RENDER_DEBUG_VALUES
@@ -158,8 +165,8 @@ namespace game
 				// hack, draw the ray line here since we stopped caching the ColumnRenderData				
 				if (m_impl->showTopDown)
 				{
-					SDL_SetRenderDrawColor(global::instance.getRenderer(), 200, 0, 200, 0xFF);
-					SDL_RenderDrawLine(global::instance.getRenderer(), crd.ray.start.x, crd.ray.start.y, crd.ray.end.x, crd.ray.end.y);
+					SDL_SetRenderDrawColor(m_renderer, 200, 0, 200, 0xFF);
+					SDL_RenderDrawLine(m_renderer, crd.ray.start.x, crd.ray.start.y, crd.ray.end.x, crd.ray.end.y);
 				}
 
 				// draw walls
@@ -184,10 +191,10 @@ namespace game
 				int yOffset = 0;
 				const std::string strRenderTime = perfCounter.Stop();
 				constexpr int textXPos = SCREEN_WIDTH - 120;
-				global::instance.renderMonospaceText("ray:" + strRayTime + " ms", textXPos, yOffset);
-				global::instance.renderMonospaceText("drw:" + strRenderTime + " ms", textXPos, yOffset += 15);
-				global::instance.renderMonospaceText("ren:" + m_impl->renderTime + " ms", textXPos, yOffset += 15);
-				global::instance.renderMonospaceText("fps:" + m_impl->fps, textXPos, yOffset += 15);
+				global::Global::renderMonospaceText("ray:" + strRayTime + " ms", textXPos, yOffset);
+				global::Global::renderMonospaceText("drw:" + strRenderTime + " ms", textXPos, yOffset += 15);
+				global::Global::renderMonospaceText("ren:" + m_impl->renderTime + " ms", textXPos, yOffset += 15);
+				global::Global::renderMonospaceText("fps:" + m_impl->fps, textXPos, yOffset += 15);
 				
 			}
 #endif
@@ -196,7 +203,7 @@ namespace game
 		// draw the map
 		if (m_impl->showTopDown)
 		{
-			SDL_SetRenderDrawColor(global::instance.getRenderer(), 150, 100, 0, 0xFF);
+			SDL_SetRenderDrawColor(m_renderer, 150, 100, 0, 0xFF);
 			for (int row = 0; row < MAP_ROWS; ++row)
 			{
 				for (int col = 0; col < MAP_COLS; ++col)
@@ -205,24 +212,24 @@ namespace game
 					SDL_Rect rect{ col * MAP_CELL_PX, row * MAP_CELL_PX, MAP_CELL_PX, MAP_CELL_PX };
 					if (map[col + row * MAP_COLS] > 0)
 					{
-						SDL_RenderFillRect(global::instance.getRenderer(), &rect);
+						SDL_RenderFillRect(m_renderer, &rect);
 					}
 					else
 					{
-						SDL_RenderDrawRect(global::instance.getRenderer(), &rect);
+						SDL_RenderDrawRect(m_renderer, &rect);
 					}
 				}
 			}
 
-			m_impl->player.render();
+			m_impl->player.render(m_renderer);
 
 			SDL_Rect enemyRect{
 				enemyPosition.x - 2,
 				enemyPosition.y - 2,
 				4, 4
 			};
-			SDL_SetRenderDrawColor(global::instance.getRenderer(), 255, 0, 100, 0xFF);
-			SDL_RenderFillRect(global::instance.getRenderer(), &enemyRect);
+			SDL_SetRenderDrawColor(m_renderer, 255, 0, 100, 0xFF);
+			SDL_RenderFillRect(m_renderer, &enemyRect);
 
 			// TODO: now that we have removed columnRenderDataArray from the heap:
 			// fix displaying the player rays
@@ -272,7 +279,7 @@ namespace game
 		case SDLK_KP_0:
 		case SDLK_ESCAPE:
 			printf("switching to game state main\n");
-			pushPendingState(std::make_unique<GameSceneMain>());
+			pushPendingState(std::make_unique<GameSceneMain>(m_renderer, m_font));
 			break;
 		case SDLK_TAB:
 			m_impl->showTopDown = !m_impl->showTopDown;

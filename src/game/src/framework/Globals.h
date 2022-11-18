@@ -27,16 +27,22 @@ constexpr float PI = 3.14159265359f;
 
 namespace global
 {
+	struct SDL_Global
+	{
+		SDL_Renderer* renderer;
+		SDL_Window* window;
+		TTF_Font* font;
+	};
 	class Global
 	{
 	public: 
-		void init();
-		TTF_Font* getFont();
-		SDL_Renderer* getRenderer();
-		void renderMonospaceText(const std::string& inp, int x, int y);
+		static SDL_Global init();
+		//TTF_Font* getFont();
+		//SDL_Renderer* getRenderer();
+		static void renderMonospaceText(const std::string& inp, int x, int y);
 	};
 
-	extern Global instance;
+	// extern Global instance;
 
 }
 

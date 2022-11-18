@@ -17,18 +17,20 @@ namespace game
 		std::unique_ptr<rcgf::Texture> texCollision;
 		bool collisionFlag;
 		
-		Pimpl() 
+		Pimpl(SDL_Renderer* renderer, TTF_Font* font) 
 			: r1{100, 100, 100, 100}
 			, r2{220, 220, 100, 100}
-			, texNoCollision{std::make_unique<rcgf::Texture>(global::instance.getFont(), "No Collision")}
-			, texCollision{ std::make_unique<rcgf::Texture>(global::instance.getFont(), "Collision Detected") }
+			, texNoCollision{std::make_unique<rcgf::Texture>(renderer, font, "No Collision")}
+			, texCollision{ std::make_unique<rcgf::Texture>(renderer, font, "Collision Detected") }
 			, collisionFlag{false}
 		{
 		}
 	};
 
-	GameSceneAABBCollision::GameSceneAABBCollision()
-		: m_impl{ std::make_unique<Pimpl>() }
+	GameSceneAABBCollision::GameSceneAABBCollision(SDL_Renderer* renderer, TTF_Font* font)
+		: m_impl{ std::make_unique<Pimpl>(renderer, font) }
+		, m_renderer{renderer}
+		, m_font{font}
 	{}
 
 	void GameSceneAABBCollision::update()
@@ -37,13 +39,11 @@ namespace game
 		m_impl->collisionFlag = rcgf::collision::aabb(m_impl->r1, m_impl->r2);
 	}
 
-	void GameSceneAABBCollision::render()
+	void GameSceneAABBCollision::render(SDL_Renderer* renderer)
 	{
-		SDL_SetRenderDrawColor(global::instance.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderDrawRect(global::instance.getRenderer(),
-			&m_impl->r1);
-		SDL_RenderDrawRect(global::instance.getRenderer(),
-			&m_impl->r2);
+		SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderDrawRect(renderer, &m_impl->r1);
+		SDL_RenderDrawRect(renderer, &m_impl->r2);
 
 		if ( m_impl->collisionFlag )
 			m_impl->texCollision->render(1000, 600);
@@ -59,7 +59,7 @@ namespace game
 		case SDLK_KP_0:
 		case SDLK_ESCAPE:
 			printf("switching to game state main\n"); 
-			pushPendingState(std::make_unique<GameSceneMain>());
+			pushPendingState(std::make_unique<GameSceneMain>(m_renderer, m_font));
 			break;
 		case SDLK_UP:
 			m_impl->r1.y -= 1;

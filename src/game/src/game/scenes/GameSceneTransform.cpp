@@ -142,9 +142,9 @@ namespace game
 		bool flipH = false;
 		bool flipV = false;
 
-		Pimpl() 
+		Pimpl(SDL_Renderer* renderer, TTF_Font* font) 
 			: optionsStrings{"0: Back", "1: Scaling", "2: Rotation", "3: Translate", "4: Flip Horizontal", "5: Flip Vertical"}
-			, movingTex{std::make_unique<rcgf::Texture>("img/dice.png")}
+			, movingTex{std::make_unique<rcgf::Texture>(renderer, "img/dice.png")}
 			, translator(
 				glm::vec2(
 					static_cast<float>(SCREEN_WIDTH / 2),
@@ -155,15 +155,19 @@ namespace game
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
 			{
 				texArr[i] = std::make_unique<rcgf::Texture>(
-					global::instance.getFont(), 
+					renderer,
+					font, 
 					optionsStrings[i].c_str()
 				);
 			}
 		}
+		Pimpl() = delete;
 	};
 
-	GameSceneTransform::GameSceneTransform()
-		: m_impl{ std::make_unique<Pimpl>() }
+	GameSceneTransform::GameSceneTransform(SDL_Renderer* renderer, TTF_Font* font)
+		: m_impl{ std::make_unique<Pimpl>(renderer, font) }
+		, m_renderer{renderer}
+		, m_font{font}
 	{}
 
 	void GameSceneTransform::update()
@@ -173,8 +177,11 @@ namespace game
 		m_impl->translator.update();
 	}
 
-	void GameSceneTransform::render()
+	void GameSceneTransform::render(SDL_Renderer* renderer)
 	{
+		// 4100
+		renderer;
+
 		for (int i = 0; i < NUM_OPTIONS; ++i)
 		{
 			m_impl->texArr[i]->render(30, 30 + 30 * i);
@@ -206,7 +213,7 @@ namespace game
 		case SDLK_0:
 		case SDLK_KP_0:
 			printf("switching to game state main\n"); 
-			pushPendingState(std::make_unique<GameSceneMain>());
+			pushPendingState(std::make_unique<GameSceneMain>(m_renderer, m_font));
 			break;
 		case SDLK_KP_1:
 		case SDLK_1:

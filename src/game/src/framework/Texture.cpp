@@ -4,8 +4,8 @@
 
 namespace rcgf
 {
-	Texture::Texture(const char* pngPath)
-		: m_width{ 0 }, m_height{ 0 }, m_texture(nullptr, SDL_DestroyTexture), m_surface(nullptr, SDL_FreeSurface), m_name{pngPath}
+	Texture::Texture(SDL_Renderer* renderer, const char* pngPath)
+		: m_renderer{renderer}, m_width{ 0 }, m_height{ 0 }, m_texture(nullptr, SDL_DestroyTexture), m_surface(nullptr, SDL_FreeSurface), m_name{ pngPath }
 	{
 		//The final texture
 		SDL_Texture* newTexture = NULL;
@@ -18,7 +18,7 @@ namespace rcgf
 		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
 		// create texture from surface pixels
-		newTexture = SDL_CreateTextureFromSurface(global::instance.getRenderer(), loadedSurface);
+		newTexture = SDL_CreateTextureFromSurface(m_renderer, loadedSurface);
 		if (newTexture == NULL)
 		{
 			printf("Unable to create texture from %s! SDL Error: %s\n", m_name.c_str(), SDL_GetError());
@@ -37,8 +37,8 @@ namespace rcgf
 		assert(m_texture != nullptr);
 	}
 
-	Texture::Texture(TTF_Font* font, const char* text)
-		: m_width{ 0 }, m_height{ 0 }, m_texture(nullptr, SDL_DestroyTexture), m_surface(nullptr, SDL_FreeSurface), m_name{text}
+	Texture::Texture(SDL_Renderer* renderer, TTF_Font* font, const char* text)
+		: m_renderer{ renderer }, m_width{ 0 }, m_height{ 0 }, m_texture(nullptr, SDL_DestroyTexture), m_surface(nullptr, SDL_FreeSurface), m_name{text}
 	{
 		SDL_Color textColor{ 0xFF, 0xFF, 0xFF };
 		SDL_Surface* textSurface = TTF_RenderText_Solid(font, m_name.c_str(), textColor);
@@ -46,7 +46,7 @@ namespace rcgf
 		m_surface.reset(textSurface);
 		
 		// create texture from surface pixels
-		m_texture.reset(SDL_CreateTextureFromSurface(global::instance.getRenderer(), textSurface));
+		m_texture.reset(SDL_CreateTextureFromSurface(m_renderer, textSurface));
 		if (m_texture == nullptr)
 		{
 			printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
@@ -143,12 +143,12 @@ namespace rcgf
 		}
 
 		//Render to screen
-		SDL_RenderCopyEx(global::instance.getRenderer(), m_texture.get(), clip, &renderQuad, angle, NULL, flip);
+		SDL_RenderCopyEx(m_renderer, m_texture.get(), clip, &renderQuad, angle, NULL, flip);
 	}
 	
 	void Texture::render2(const SDL_Rect* textureClip, const SDL_Rect* outputClip)
 	{
-		SDL_RenderCopyEx(global::instance.getRenderer(), m_texture.get(), textureClip, outputClip, 0.0, NULL, SDL_RendererFlip::SDL_FLIP_NONE);
+		SDL_RenderCopyEx(m_renderer, m_texture.get(), textureClip, outputClip, 0.0, NULL, SDL_RendererFlip::SDL_FLIP_NONE);
 	}
 
 	int Texture::getWidth()

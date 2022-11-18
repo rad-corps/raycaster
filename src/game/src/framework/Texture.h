@@ -22,10 +22,10 @@ namespace rcgf
 		Texture& operator=(Texture&&) = default;
 
 		// create a texture from a .PNG file
-		Texture(const char* pngPath);
+		Texture(SDL_Renderer* renderer, const char* pngPath);
 
 		// create a texture from a string with a given font
-		Texture(TTF_Font* font, const char* text);
+		Texture(SDL_Renderer* renderer, TTF_Font* font, const char* text);
 
 		//Set color modulation
 		void setColor(Uint8 red, Uint8 green, Uint8 blue);
@@ -36,9 +36,10 @@ namespace rcgf
 		//Set alpha modulation
 		void setAlpha(Uint8 alpha);
 
+		// TODO: can we comment this out so no clients have access to the raw pointer?
 		SDL_Texture* get();
 
-		//Renders texture at given point
+		// TODO: better names for these two render functions
 		void render(int x, int y, SDL_Rect* clip = NULL, float scale = 1.0f, double angle = 0.0, SDL_RendererFlip flip = SDL_FLIP_NONE, bool drawFromCenter = false);
 		void render2(const SDL_Rect* textureClip, const SDL_Rect* outputClip);
 		
@@ -55,6 +56,7 @@ namespace rcgf
 
 		std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> m_texture;
 		std::unique_ptr<SDL_Surface, decltype(&SDL_FreeSurface)> m_surface;
+		SDL_Renderer* m_renderer;
 		std::string m_name;
 	
 		//Image dimensions
