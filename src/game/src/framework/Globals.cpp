@@ -4,8 +4,8 @@
 
 namespace
 {
-	TTF_Font* font;
-	SDL_Renderer* renderer;
+	//TTF_Font* font;
+	//SDL_Renderer* renderer;
 	std::unique_ptr<rcgf::Animation> monoText;
 
 	TTF_Font* loadFont(const char* font_, int fontSz)
@@ -35,24 +35,28 @@ namespace global
 		if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		{
 			printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+			assert(false);
 		}
 
 		//Set texture filtering to linear
 		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0"))
 		{
 			printf("Warning: Nearest pixel filtering not enabled!");
+			assert(false);
 		}
 
 		//Initialize PNG loading
 		if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
 		{
 			printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+			assert(false);
 		}
 
 		//Initialize SDL_ttf
 		if (TTF_Init() == -1)
 		{
 			printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+			assert(false);
 		}
 
 		ret.window = SDL_CreateWindow(
@@ -64,6 +68,11 @@ namespace global
 			SDL_WINDOW_SHOWN
 		);
 
+		if (!ret.window)
+		{
+			assert(false);
+		}
+
 		
 		ret.renderer = SDL_CreateRenderer(
 			ret.window,
@@ -71,13 +80,18 @@ namespace global
 			//SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
 			SDL_RENDERER_ACCELERATED
 		);
+
+		if (!ret.renderer)
+		{
+			assert(false);
+		}
 		
 
 		// SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);       // changes video mode
 		// SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP); // fake full screen
 		
 
-		SDL_SetRenderDrawBlendMode(renderer, SDL_BlendMode::SDL_BLENDMODE_BLEND);
+		SDL_SetRenderDrawBlendMode(ret.renderer, SDL_BlendMode::SDL_BLENDMODE_BLEND);
 
 		// load fonts and textures
 		ret.font = loadFont("font/PTC55F.ttf", 28);
@@ -85,7 +99,7 @@ namespace global
 
 		// works but its too big
 		monoText = std::make_unique<rcgf::Animation>(
-			std::make_unique<rcgf::Texture>(renderer, "img/mono_font.png"), 
+			std::make_unique<rcgf::Texture>(ret.renderer, "img/mono_font.png"), 
 			20, // sprite width
 			20, // sprite height
 			8,  // rows
@@ -102,14 +116,4 @@ namespace global
 			x += 12;
 		}
 	}
-
-	//TTF_Font* Global::getFont()
-	//{
-	//	return font;
-	//}
-
-	//SDL_Renderer* Global::getRenderer()
-	//{
-	//	return renderer;
-	//}
 }
