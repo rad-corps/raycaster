@@ -9,8 +9,6 @@
 #include "SDL_mouse.h"
 #include "SDL_ttf.h"
 #include "SDL_image.h"
-#include "glm/vec2.hpp"
-#include "glm/gtx/vector_angle.hpp"
 #include <string>
 
 #include <chrono>

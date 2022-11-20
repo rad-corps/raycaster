@@ -1,5 +1,6 @@
 #include "Globals.h"
 #include <cstdio>
+#include <cassert>
 #include "Animation.h"
 
 namespace

@@ -50,7 +50,7 @@ namespace game
 
 		global::Global::renderMonospaceText("HELLO WORLD 0123456789!", 100, 100);
 
-		m_impl->square->render(glm::vec2(200,220));
+		m_impl->square->render(math::Vec2f(200,220));
 	}
 
 	void GameScenePolygon::keyDown(SDL_Keycode keycode)

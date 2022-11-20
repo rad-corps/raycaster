@@ -1,5 +1,6 @@
 #include "GameSceneTransform.h"
 #include "GameSceneMain.h"
+#include "RCGFMath.h"
 
 namespace
 {
@@ -22,17 +23,17 @@ namespace
 
 		const float VELOCITY = 4.f;
 		
-		glm::vec2 pos;
+		math::Vec2f pos;
 		bool active = false;
 
 	public:
-		Translator(glm::vec2 startingPos)
+		Translator(math::Vec2f startingPos)
 			: directionH{DirectionH::RIGHT}
 			, directionV{DirectionV::DOWN}
 			, pos{startingPos}
 		{}
 		
-		const glm::vec2& getPos()
+		const math::Vec2f& getPos()
 		{
 			return pos;
 		}
@@ -146,7 +147,7 @@ namespace game
 			: optionsStrings{"0: Back", "1: Scaling", "2: Rotation", "3: Translate", "4: Flip Horizontal", "5: Flip Vertical"}
 			, movingTex{std::make_unique<rcgf::Texture>(renderer, "img/dice.png")}
 			, translator(
-				glm::vec2(
+				math::Vec2f(
 					static_cast<float>(SCREEN_WIDTH / 2),
 					static_cast<float>(SCREEN_HEIGHT / 2)
 				)
@@ -188,7 +189,7 @@ namespace game
 		}
 		const float scale = m_impl->scaler.getScale();
 		const double angle = m_impl->rotator.getRotation();
-		const glm::vec2& pos = m_impl->translator.getPos();
+		const math::Vec2f& pos = m_impl->translator.getPos();
 
 		
 		int flip = SDL_FLIP_NONE;

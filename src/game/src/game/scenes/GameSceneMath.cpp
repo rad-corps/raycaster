@@ -2,6 +2,7 @@
 #include "GameSceneMain.h"
 #include <iostream>
 #include <sstream>
+#include "RCGFMath.h"
 
 namespace game
 {
@@ -61,11 +62,11 @@ namespace game
 
 		// treat the center of the screen as 0, 0
 		std::stringstream vecCoords;
-		glm::vec2 mouseVec{ static_cast<float>(mouseX - CENTER_X), static_cast<float>(mouseY - CENTER_Y) };
-		glm::vec2 referenceVec{ 100.f, 0.f };
+		math::Vec2f mouseVec{ static_cast<float>(mouseX - CENTER_X), static_cast<float>(mouseY - CENTER_Y) };
+		math::Vec2f referenceVec{ 100.f, 0.f };
 		vecCoords << "x" << mouseVec.x << "y" << mouseVec.y;
-		float angle = glm::angle(glm::normalize(mouseVec), glm::normalize(referenceVec));
-		float dot = glm::dot(mouseVec, referenceVec);
+		float angle = math::angle(mouseVec, referenceVec);
+		float dot = math::dot(mouseVec, referenceVec);
 		global::Global::renderMonospaceText(vecCoords.str(), mouseX + 20, mouseY);
 		global::Global::renderMonospaceText("angle:" + std::to_string(angle), CENTER_X, CENTER_Y);
 		global::Global::renderMonospaceText("dot  :" + std::to_string(dot), CENTER_X, CENTER_Y + 20);

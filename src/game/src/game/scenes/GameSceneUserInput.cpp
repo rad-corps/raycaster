@@ -2,6 +2,7 @@
 #include "GameSceneMain.h"
 #include "Animation.h"
 #include <sstream>
+#include "RCGFMath.h"
 
 
 namespace
@@ -41,8 +42,8 @@ namespace game
 		int animIdx = 0;
 		int animCounter = 0;
 		Scaler scaler;
-		glm::vec2 pos;
-		glm::vec2 velocity;
+		math::Vec2f pos;
+		math::Vec2f velocity;
 
 		Pimpl(SDL_Renderer* renderer, TTF_Font* font)
 			: optionsStrings{"0: Back", "W: Up", "A: Left", "S: Down", "D: Right" }
@@ -63,7 +64,7 @@ namespace game
 	};
 
 	GameSceneUserInput::GameSceneUserInput(SDL_Renderer* renderer, TTF_Font* font)
-		: m_impl{ std::make_unique<Pimpl>(renderer, font) }
+		: m_impl{ std::make_unique<Pimpl>(renderer, font) }, m_renderer{renderer}, m_font{font}
 	{}
 
 	void GameSceneUserInput::update()
