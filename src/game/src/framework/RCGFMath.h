@@ -24,4 +24,5 @@ namespace math
 	float magnitude(const Vec2& vec);
 	Mat2 invert(const Mat2& mat);
 	Mat2 scale(const Mat2& mat, float scalar);
+	Vec2 angle_to_vec(float);
 }

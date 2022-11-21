@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Map.h"
 #include "RaycasterConstants.h"
+#include "RCGFMath.h"
 
 namespace game
 {
@@ -17,7 +18,7 @@ namespace game
 			Anticlockwise
 		};
 
-		Vec2 getOffset(float angle, float distance) const;
+		math::Vec2 getOffset(float angle, float distance) const;
 		float sumAngle(float add) const;
 		void render(SDL_Renderer* renderer);
 

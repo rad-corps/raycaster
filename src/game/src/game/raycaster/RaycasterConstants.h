@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Globals.h"
+#include "RCGFMath.h"
 
 // #define RENDER_FLOORS
 
@@ -24,16 +25,8 @@ namespace game
 
 	struct Transform
 	{
-		float x;
-		float y;
+		math::Vec2 pos;
 		float angle;
+		Transform(math::Vec2 pos, float angle) : pos{ pos }, angle{ angle }{}
 	};
-
-	struct Vec2
-	{
-		float x;
-		float y;
-	};
-
-	game::Vec2 angleToVec(float angle);
 }

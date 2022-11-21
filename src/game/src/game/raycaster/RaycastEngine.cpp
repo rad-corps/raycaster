@@ -61,8 +61,8 @@ namespace game
 		/// <returns></returns>
 		ColumnRenderData doRayTest(const Transform& transform, float rayAngle, int pxCol, GameMap* map)
 		{
-			const float& x = transform.x;
-			const float& y = transform.y;
+			const float& x = transform.pos.x;
+			const float& y = transform.pos.y;
 			const float& playerAngle = transform.angle;
 
 			unsigned char facing = getFacing(rayAngle);
@@ -235,8 +235,8 @@ namespace game
 				const int px = y - CENTER_Y;
 				const float straightDistance = DIST_PROJECTION_PLANE * (PLAYER_HEIGHT / (float)px);
 				const float diagonalDistance = straightDistance * (1 / cos(rayAngle - playerTransform.angle));
-				const float xEnd = diagonalDistance * cos(rayAngle) + playerTransform.x;
-				const float yEnd = diagonalDistance * sin(rayAngle) + playerTransform.y;
+				const float xEnd = diagonalDistance * cos(rayAngle) + playerTransform.pos.x;
+				const float yEnd = diagonalDistance * sin(rayAngle) + playerTransform.pos.y;
 
 				// get the texture coordinate from worldPos
 				float txCoordX = std::fmodf(xEnd, (float)MAP_CELL_PX) * (WALL_TEXTURE_SZ / MAP_CELL_PX);

@@ -29,7 +29,6 @@
     <ClCompile Include="src\game\raycaster\Map.cpp" />
     <ClCompile Include="src\game\raycaster\Player.cpp" />
     <ClCompile Include="src\game\raycaster\RaycastEngine.cpp" />
-    <ClCompile Include="src\game\raycaster\RaycasterConstants.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneAABBCollision.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMain.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMath.cpp" />
@@ -43,7 +42,6 @@
     <ClInclude Include="src\framework\Animation.h" />
     <ClInclude Include="src\framework\Collision.h" />
     <ClInclude Include="src\framework\Line.h" />
-    <ClInclude Include="src\framework\Mat2x2.h" />
     <ClInclude Include="src\framework\RCGFMath.h" />
     <ClInclude Include="src\framework\MeanTimer.h" />
     <ClInclude Include="src\framework\Polygon.h" />

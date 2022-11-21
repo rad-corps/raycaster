@@ -16,7 +16,7 @@ namespace
 namespace game
 {
 	Player::Player()
-		: transform{ X_START_POS, Y_START_POS, 0.f }
+		: transform{ math::Vec2{ X_START_POS, Y_START_POS}, 0.f }
 		, wallCollisionBox{ 
 			static_cast<int>(X_START_POS) - HALF_WALL_COLLISION_BOX_SZ,
 			static_cast<int>(Y_START_POS) - HALF_WALL_COLLISION_BOX_SZ,
@@ -26,12 +26,9 @@ namespace game
 	{
 	}
 
-	Vec2 Player::getOffset(float angle, float distance) const
+	math::Vec2 Player::getOffset(float angle, float distance) const
 	{
-		Vec2 ret;
-		ret.x = cos(angle) * distance;
-		ret.y = sin(angle) * distance;
-		return ret;
+		return math::Vec2{ cos(angle) * distance, sin(angle) * distance };
 	}
 
 	float Player::sumAngle(float add) const
@@ -44,9 +41,9 @@ namespace game
 
 	void Player::render(SDL_Renderer* renderer)
 	{
-		// draw the player
+		// draw the player (for the top down map)
 		constexpr int playerDiameter = 2;
-		const SDL_Rect r{ (int)transform.x - playerDiameter,(int)transform.y - playerDiameter,playerDiameter * 2,playerDiameter * 2 };
+		const SDL_Rect r{ (int)transform.pos.x - playerDiameter,(int)transform.pos.y - playerDiameter,playerDiameter * 2,playerDiameter * 2 };
 		SDL_SetRenderDrawColor(renderer, 100, 200, 0, 0xFF);
 		SDL_RenderFillRect(renderer, &r);
 
@@ -72,7 +69,10 @@ namespace game
 			transform.angle -= PI * 2;
 		}
 	}
-
+	// relativeAngle = 0             : move forward
+	// relativeAngle = PI            : move backward
+	// relativeAngle = PI / 2.f      : strafe right
+	// relativeAngle = PI + PI / 2.f : strafe left
 	void Player::move(float relativeAngle, const GameMap* map)
 	{
 		float movementAngle = transform.angle + relativeAngle;
@@ -80,21 +80,21 @@ namespace game
 		if (movementAngle < 0.f) movementAngle += PI * 2;
 
 		const float yDelta = sin(movementAngle) * MOVEMENT_SPEED;
-		transform.y += yDelta;
-		wallCollisionBox.y = static_cast<int>(transform.y) - HALF_WALL_COLLISION_BOX_SZ;
+		transform.pos.y += yDelta;
+		wallCollisionBox.y = static_cast<int>(transform.pos.y) - HALF_WALL_COLLISION_BOX_SZ;
 		if (isInWall(&wallCollisionBox, map))
 		{
-			transform.y -= yDelta;
-			wallCollisionBox.y = static_cast<int>(transform.y) - HALF_WALL_COLLISION_BOX_SZ;
+			transform.pos.y -= yDelta;
+			wallCollisionBox.y = static_cast<int>(transform.pos.y) - HALF_WALL_COLLISION_BOX_SZ;
 		}
 
 		const float xDelta = cos(movementAngle) * MOVEMENT_SPEED;
-		transform.x += xDelta;
-		wallCollisionBox.x = static_cast<int>(transform.x) - HALF_WALL_COLLISION_BOX_SZ;
+		transform.pos.x += xDelta;
+		wallCollisionBox.x = static_cast<int>(transform.pos.x) - HALF_WALL_COLLISION_BOX_SZ;
 		if (isInWall(&wallCollisionBox, map))
 		{
-			transform.x -= xDelta;
-			wallCollisionBox.x = static_cast<int>(transform.x) - HALF_WALL_COLLISION_BOX_SZ;
+			transform.pos.x -= xDelta;
+			wallCollisionBox.x = static_cast<int>(transform.pos.x) - HALF_WALL_COLLISION_BOX_SZ;
 		}
 	}
 }

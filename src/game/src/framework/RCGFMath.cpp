@@ -60,4 +60,9 @@ namespace math
 	{
 		return sqrt(vec.x * vec.x + vec.y * vec.y);
 	}
+
+	Vec2 angle_to_vec(float angle)
+	{
+		return Vec2{ cos(angle), sin(angle) };
+	}
 }
