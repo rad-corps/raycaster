@@ -7,10 +7,10 @@ namespace rcgf
 		: m_len{len}
 		, m_renderer{renderer}
 	{
-		m_points[0] = math::Vec2f{ 0.f, 0.f };
-		m_points[1] = math::Vec2f{ static_cast<float>(len), 0.f };
-		m_points[2] = math::Vec2f{ static_cast<float>(len), static_cast<float>(len) };
-		m_points[3] = math::Vec2f{ 0.f, static_cast<float>(len) };
+		m_points[0] = math::Vec2{ 0.f, 0.f };
+		m_points[1] = math::Vec2{ static_cast<float>(len), 0.f };
+		m_points[2] = math::Vec2{ static_cast<float>(len), static_cast<float>(len) };
+		m_points[3] = math::Vec2{ 0.f, static_cast<float>(len) };
 	}
 
 	//void Square::rotate(float rot)
@@ -18,9 +18,9 @@ namespace rcgf
 	//	
 	//}
 
-	void Square::render(math::Vec2f pos)
+	void Square::render(math::Vec2 pos)
 	{
-		std::array<math::Vec2f, 4> world = m_points;
+		std::array<math::Vec2, 4> world = m_points;
 		for (int i = 0; i < 4; ++i)
 		{
 			world[i] += pos;

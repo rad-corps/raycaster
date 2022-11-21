@@ -62,8 +62,8 @@ namespace game
 
 		// treat the center of the screen as 0, 0
 		std::stringstream vecCoords;
-		math::Vec2f mouseVec{ static_cast<float>(mouseX - CENTER_X), static_cast<float>(mouseY - CENTER_Y) };
-		math::Vec2f referenceVec{ 100.f, 0.f };
+		math::Vec2 mouseVec{ static_cast<float>(mouseX - CENTER_X), static_cast<float>(mouseY - CENTER_Y) };
+		math::Vec2 referenceVec{ 100.f, 0.f };
 		vecCoords << "x" << mouseVec.x << "y" << mouseVec.y;
 		float angle = math::angle(mouseVec, referenceVec);
 		float dot = math::dot(mouseVec, referenceVec);

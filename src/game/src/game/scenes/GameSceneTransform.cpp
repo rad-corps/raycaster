@@ -23,17 +23,17 @@ namespace
 
 		const float VELOCITY = 4.f;
 		
-		math::Vec2f pos;
+		math::Vec2 pos;
 		bool active = false;
 
 	public:
-		Translator(math::Vec2f startingPos)
+		Translator(math::Vec2 startingPos)
 			: directionH{DirectionH::RIGHT}
 			, directionV{DirectionV::DOWN}
 			, pos{startingPos}
 		{}
 		
-		const math::Vec2f& getPos()
+		const math::Vec2& getPos()
 		{
 			return pos;
 		}
@@ -147,7 +147,7 @@ namespace game
 			: optionsStrings{"0: Back", "1: Scaling", "2: Rotation", "3: Translate", "4: Flip Horizontal", "5: Flip Vertical"}
 			, movingTex{std::make_unique<rcgf::Texture>(renderer, "img/dice.png")}
 			, translator(
-				math::Vec2f(
+				math::Vec2(
 					static_cast<float>(SCREEN_WIDTH / 2),
 					static_cast<float>(SCREEN_HEIGHT / 2)
 				)
@@ -189,7 +189,7 @@ namespace game
 		}
 		const float scale = m_impl->scaler.getScale();
 		const double angle = m_impl->rotator.getRotation();
-		const math::Vec2f& pos = m_impl->translator.getPos();
+		const math::Vec2& pos = m_impl->translator.getPos();
 
 		
 		int flip = SDL_FLIP_NONE;

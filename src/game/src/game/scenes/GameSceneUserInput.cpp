@@ -42,8 +42,8 @@ namespace game
 		int animIdx = 0;
 		int animCounter = 0;
 		Scaler scaler;
-		math::Vec2f pos;
-		math::Vec2f velocity;
+		math::Vec2 pos;
+		math::Vec2 velocity;
 
 		Pimpl(SDL_Renderer* renderer, TTF_Font* font)
 			: optionsStrings{"0: Back", "W: Up", "A: Left", "S: Down", "D: Right" }

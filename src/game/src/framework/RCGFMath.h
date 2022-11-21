@@ -4,26 +4,24 @@
 
 namespace math
 {
-	struct Mat2f
+	struct Mat2
 	{
 		float elements[2][2];
-
-		Mat2f MultiplyScalar(float scalar);
-		
-		Mat2f Invert();
 	};
 
-	struct Vec2f
+	struct Vec2
 	{
 		float x = 0;
 		float y = 0;
-		Vec2f() = default;
-		Vec2f(float x, float y); 
+		Vec2() = default;
+		Vec2(float x, float y); 
 
-		void operator+=(const Vec2f& rhs);
+		void operator+=(const Vec2& rhs);
 	};
 
-	float dot(const Vec2f& vec1, const Vec2f& vec2);
-	float angle(const Vec2f& vec1, const Vec2f& vec2);
-	float magnitude(const Vec2f& vec);
+	float dot(const Vec2& vec1, const Vec2& Vec2);
+	float angle(const Vec2& vec1, const Vec2& Vec2);
+	float magnitude(const Vec2& vec);
+	Mat2 invert(const Mat2& mat);
+	Mat2 scale(const Mat2& mat, float scalar);
 }

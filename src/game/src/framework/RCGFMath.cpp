@@ -4,16 +4,16 @@
 namespace math
 {
 	
-	Mat2f Mat2f::MultiplyScalar(float scalar)
+	Mat2 scale(const Mat2& mat, float scalar)
 	{
-		Mat2f ret;
-		ret.elements[0][0] = elements[0][0] * scalar;
-		ret.elements[0][1] = elements[0][1] * scalar;
-		ret.elements[1][0] = elements[1][0] * scalar;
-		ret.elements[1][1] = elements[1][1] * scalar;
+		Mat2 ret;
+		ret.elements[0][0] = mat.elements[0][0] * scalar;
+		ret.elements[0][1] = mat.elements[0][1] * scalar;
+		ret.elements[1][0] = mat.elements[1][0] * scalar;
+		ret.elements[1][1] = mat.elements[1][1] * scalar;
 		return ret;
 	}
-	Mat2f Mat2f::Invert()
+	Mat2 invert(const Mat2& mat)
 	{
 		//transform sprite with the inverse camera matrix
 		// [ planeX   dirX ] -1                                       [ dirY      -dirX ]
@@ -23,39 +23,40 @@ namespace math
 		// [ 0,0   0,1 ] -1                                       [ 1,1     -0,1 ]
 		// [           ]       =  1/(planeX*dirY-dirX*planeY) *   [              ]
 		// [ 1,0   1,1 ]                                          [ -1,0  0,0 ]
-		Mat2f transposed;
-		transposed.elements[0][0] = elements[1][1];
-		transposed.elements[0][1] = -elements[0][1];
-		transposed.elements[1][0] = -elements[1][0];
-		transposed.elements[1][1] = elements[0][0];
+		Mat2 transposed;
+		transposed.elements[0][0] = mat.elements[1][1];
+		transposed.elements[0][1] = -mat.elements[0][1];
+		transposed.elements[1][0] = -mat.elements[1][0];
+		transposed.elements[1][1] = mat.elements[0][0];
 
-		float scalar = 1 / (elements[0][0] * elements[1][1] - elements[0][1] * elements[1][0]);
-		transposed = transposed.MultiplyScalar(scalar);
+		float scalar = 1 / (mat.elements[0][0] * mat.elements[1][1] - mat.elements[0][1] * mat.elements[1][0]);
+		transposed = scale(transposed, scalar);
 		return transposed;
 	}
 	
 
-	Vec2f::Vec2f(float x, float y) : x{ x }, y{ y }{}
+	Vec2::Vec2(float x, float y) : x{ x }, y{ y }{}
 
-	void Vec2f::operator+=(const Vec2f& rhs)
+	void Vec2::operator+=(const Vec2& rhs)
 	{
 		x += rhs.x;
 		y += rhs.y;
 	}
 
-	float dot(const Vec2f& vec1, const Vec2f& vec2)
+	float dot(const Vec2& vec1, const Vec2& Vec2)
 	{
-		return vec1.x * vec2.x + vec1.y * vec2.y;
+		return vec1.x * Vec2.x + vec1.y * Vec2.y;
 	}
-	float angle(const Vec2f& vec1, const Vec2f& vec2)
+	float angle(const Vec2& vec1, const Vec2& vec2)
 	{
-		//4100
-		vec1;
-		vec2;
-		return 0.f;
+		return acosf(
+			dot(vec1, vec2)
+			/
+			(magnitude(vec1) * magnitude(vec2))
+		);
 	}
 
-	float magnitude(const Vec2f& vec)
+	float magnitude(const Vec2& vec)
 	{
 		return sqrt(vec.x * vec.x + vec.y * vec.y);
 	}
