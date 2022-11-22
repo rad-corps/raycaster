@@ -10,6 +10,7 @@ namespace
 	constexpr float Y_START_POS = 64.f;
 	constexpr float MOVEMENT_SPEED = 0.25f;
 	constexpr float ROTATION_SPEED = 0.03f;
+	//constexpr float ROTATION_SPEED = 0.001f;
 	constexpr int HALF_WALL_COLLISION_BOX_SZ = 3;
 }
 
@@ -43,11 +44,11 @@ namespace game
 	{
 		// draw the player (for the top down map)
 		constexpr int playerDiameter = 2;
-		const SDL_Rect r{ (int)transform.pos.x - playerDiameter,(int)transform.pos.y - playerDiameter,playerDiameter * 2,playerDiameter * 2 };
+		const SDL_Rect r{ (int)transform.pos.x * 2 - playerDiameter,(int)transform.pos.y * 2 - playerDiameter,playerDiameter * 2,playerDiameter * 2 };
 		SDL_SetRenderDrawColor(renderer, 100, 200, 0, 0xFF);
 		SDL_RenderFillRect(renderer, &r);
 
-		SDL_RenderDrawRect(renderer, &wallCollisionBox);
+		//SDL_RenderDrawRect(renderer, &wallCollisionBox);
 	}
 
 	void Player::rotate(RotateDirection dir)

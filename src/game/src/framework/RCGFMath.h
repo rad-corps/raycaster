@@ -15,14 +15,22 @@ namespace math
 		float y = 0;
 		Vec2() = default;
 		Vec2(float x, float y); 
-
-		void operator+=(const Vec2& rhs);
+		
+		Vec2& operator+=(const Vec2& rhs);
+		Vec2& operator-=(const Vec2& rhs);
+		Vec2 operator+(const Vec2& vec1) const;
+		Vec2 operator-(const Vec2& vec1) const;
+		
 	};
 
+	
+	Vec2 scale(const Vec2& vec, float scale);
+	float cross(const Vec2& vec1, const Vec2& vec2);
 	float dot(const Vec2& vec1, const Vec2& Vec2);
 	float angle(const Vec2& vec1, const Vec2& Vec2);
 	float magnitude(const Vec2& vec);
 	Mat2 invert(const Mat2& mat);
 	Mat2 scale(const Mat2& mat, float scalar);
-	Vec2 angle_to_vec(float);
+	Vec2 angle_to_vec(float angle);
+	Vec2 normalize(const Vec2& vec);
 }

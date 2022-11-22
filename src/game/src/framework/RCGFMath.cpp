@@ -37,23 +37,49 @@ namespace math
 
 	Vec2::Vec2(float x, float y) : x{ x }, y{ y }{}
 
-	void Vec2::operator+=(const Vec2& rhs)
+	Vec2& Vec2::operator+=(const Vec2& rhs)
 	{
 		x += rhs.x;
 		y += rhs.y;
+		return *this;
 	}
 
-	float dot(const Vec2& vec1, const Vec2& Vec2)
+	Vec2& Vec2::operator-=(const Vec2& rhs)
 	{
-		return vec1.x * Vec2.x + vec1.y * Vec2.y;
+		x -= rhs.x;
+		y -= rhs.y;
+		return *this;
 	}
+
+	Vec2 Vec2::operator+(const Vec2& vec) const
+	{
+		Vec2 ret;
+		ret.x = x + vec.x;
+		ret.y = y + vec.y;
+		return ret;
+	}
+
+	Vec2 Vec2::operator-(const Vec2& vec) const
+	{
+		Vec2 ret;
+		ret.x = x - vec.x;
+		ret.y = y - vec.y;
+		return ret;
+	}
+
+	float dot(const Vec2& vec1, const Vec2& vec2)
+	{
+		return vec1.x * vec2.x + vec1.y * vec2.y;
+	}
+
 	float angle(const Vec2& vec1, const Vec2& vec2)
 	{
-		return acosf(
-			dot(vec1, vec2)
-			/
-			(magnitude(vec1) * magnitude(vec2))
-		);
+		return acosf(dot(vec1, vec2) / (magnitude(vec1) * magnitude(vec2)));
+	}
+
+	float cross(const Vec2& vec1, const Vec2& vec2)
+	{
+		return (vec1.x * vec2.y) - (vec1.y * vec2.x);
 	}
 
 	float magnitude(const Vec2& vec)
@@ -61,8 +87,20 @@ namespace math
 		return sqrt(vec.x * vec.x + vec.y * vec.y);
 	}
 
+	Vec2 scale(const Vec2& vec, float scale)
+	{
+		Vec2 ret{vec.x * scale, vec.y * scale};
+		return ret;
+	}
+
 	Vec2 angle_to_vec(float angle)
 	{
 		return Vec2{ cos(angle), sin(angle) };
+	}
+
+	Vec2 normalize(const Vec2& vec)
+	{
+		float mag = magnitude(vec);
+		return Vec2{ vec.x / mag, vec.y / mag };
 	}
 }

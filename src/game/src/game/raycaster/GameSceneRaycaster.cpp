@@ -56,7 +56,9 @@ namespace
 	};
 
 
-	const SDL_Point enemyPosition{ 58,64};
+	//const SDL_Point enemyPosition{ 58,64};
+
+	constexpr int TOP_DOWN_SCALE = 2;
 	
 }
 
@@ -66,8 +68,10 @@ namespace game
 	{
 		Player player;
 		bool showTopDown = false;
+		bool showRays = false;
 		rcgf::Texture wallTexture;
 		rcgf::Texture enemyTexture;
+		math::Vec2 enemyPos{ 50.f, 70.f };
 		
 		// diagnostic output
 		std::string renderTime;
@@ -113,22 +117,25 @@ namespace game
 
 	void GameSceneRaycaster::fixedUpdate()
 	{
-		if (!m_impl->keyStates[SDLK_LCTRL])
+		Player& player = m_impl->player;
+		auto& keyStates = m_impl->keyStates;
+
+		if (!keyStates[SDLK_LCTRL])
 		{
 			// rotate
-			if (m_impl->keyStates[SDLK_d] || m_impl->keyStates[SDLK_RIGHT]) m_impl->player.rotate(Player::RotateDirection::Clockwise);
-			if (m_impl->keyStates[SDLK_a] || m_impl->keyStates[SDLK_LEFT])  m_impl->player.rotate(Player::RotateDirection::Anticlockwise);
+			if (keyStates[SDLK_d] || keyStates[SDLK_RIGHT]) player.rotate(Player::RotateDirection::Clockwise);
+			if (keyStates[SDLK_a] || keyStates[SDLK_LEFT])  player.rotate(Player::RotateDirection::Anticlockwise);
 		}
 		else
 		{
 			// strafe
-			if (m_impl->keyStates[SDLK_d] || m_impl->keyStates[SDLK_RIGHT]) m_impl->player.move(PI / 2.f, &map);
-			if (m_impl->keyStates[SDLK_a] || m_impl->keyStates[SDLK_LEFT])  m_impl->player.move(PI + PI * 0.5f, &map);
+			if (keyStates[SDLK_d] || keyStates[SDLK_RIGHT]) player.move(PI / 2.f, &map);
+			if (keyStates[SDLK_a] || keyStates[SDLK_LEFT])  player.move(PI + PI * 0.5f, &map);
 		}
 		
 		// forward and backward movement
-		if (m_impl->keyStates[SDLK_w] || m_impl->keyStates[SDLK_UP])    m_impl->player.move(0.f, &map);
-		if (m_impl->keyStates[SDLK_s] || m_impl->keyStates[SDLK_DOWN])  m_impl->player.move(PI, &map);
+		if (keyStates[SDLK_w] || keyStates[SDLK_UP])    player.move(0.f, &map);
+		if (keyStates[SDLK_s] || keyStates[SDLK_DOWN])  player.move(PI, &map);
 	}
 
 	void GameSceneRaycaster::render(SDL_Renderer* renderer)
@@ -163,10 +170,10 @@ namespace game
 				ColumnRenderData crd = raycast_engine::doRayTest(m_impl->player.transform, rayAngle, screenColumnNumber, &map);
 
 				// hack, draw the ray line here since we stopped caching the ColumnRenderData				
-				if (m_impl->showTopDown)
+				if (m_impl->showRays)
 				{
-					SDL_SetRenderDrawColor(m_renderer, 200, 0, 200, 0xFF);
-					SDL_RenderDrawLine(m_renderer, crd.ray.start.x, crd.ray.start.y, crd.ray.end.x, crd.ray.end.y);
+					SDL_SetRenderDrawColor(m_renderer, 133, 133, 173, 255);
+					SDL_RenderDrawLine(m_renderer, crd.ray.start.x * TOP_DOWN_SCALE, crd.ray.start.y * TOP_DOWN_SCALE, crd.ray.end.x * TOP_DOWN_SCALE, crd.ray.end.y * TOP_DOWN_SCALE);
 				}
 
 				// draw walls
@@ -186,30 +193,19 @@ namespace game
 
 			
 
-#ifdef RENDER_DEBUG_VALUES
-			{
-				int yOffset = 0;
-				const std::string strRenderTime = perfCounter.Stop();
-				constexpr int textXPos = SCREEN_WIDTH - 120;
-				global::Global::renderMonospaceText("ray:" + strRayTime + " ms", textXPos, yOffset);
-				global::Global::renderMonospaceText("drw:" + strRenderTime + " ms", textXPos, yOffset += 15);
-				global::Global::renderMonospaceText("ren:" + m_impl->renderTime + " ms", textXPos, yOffset += 15);
-				global::Global::renderMonospaceText("fps:" + m_impl->fps, textXPos, yOffset += 15);
-				
-			}
-#endif
+
 		}
 
 		// draw the map
 		if (m_impl->showTopDown)
 		{
-			SDL_SetRenderDrawColor(m_renderer, 150, 100, 0, 0xFF);
+			SDL_SetRenderDrawColor(m_renderer, 0, 128, 0, 0xFF);
 			for (int row = 0; row < MAP_ROWS; ++row)
 			{
 				for (int col = 0; col < MAP_COLS; ++col)
 				{
 					// calc rect position and dimension
-					SDL_Rect rect{ col * MAP_CELL_PX, row * MAP_CELL_PX, MAP_CELL_PX, MAP_CELL_PX };
+					SDL_Rect rect{ col * MAP_CELL_PX * TOP_DOWN_SCALE, row * MAP_CELL_PX * TOP_DOWN_SCALE, MAP_CELL_PX * TOP_DOWN_SCALE, MAP_CELL_PX * TOP_DOWN_SCALE };
 					if (map[col + row * MAP_COLS] > 0)
 					{
 						SDL_RenderFillRect(m_renderer, &rect);
@@ -224,24 +220,57 @@ namespace game
 			m_impl->player.render(m_renderer);
 
 			SDL_Rect enemyRect{
-				enemyPosition.x - 2,
-				enemyPosition.y - 2,
+				(int)m_impl->enemyPos.x * TOP_DOWN_SCALE - 2,
+				(int)m_impl->enemyPos.y * TOP_DOWN_SCALE - 2,
 				4, 4
 			};
 			SDL_SetRenderDrawColor(m_renderer, 255, 0, 100, 0xFF);
 			SDL_RenderFillRect(m_renderer, &enemyRect);
-
-			// TODO: now that we have removed columnRenderDataArray from the heap:
-			// fix displaying the player rays
-			//for (const ColumnRenderData& col : m_impl->columnRenderDataArray)
-			//{
-			//	if (m_impl->showTopDown)
-			//	{
-			//		SDL_RenderDrawLine(global::instance.getRenderer(), col.ray.start.x, col.ray.start.y, col.ray.end.x, col.ray.end.y);
-			//	}
-			//}
 		}
-		m_impl->enemyTexture.render(SCREEN_WIDTH - 64, SCREEN_HEIGHT - 64);
+		
+
+		
+			// find angle from player to enemy
+			// 1. create two vectors
+			//  1.1 one for the forward direction of the player
+			const math::Vec2& playerPos = m_impl->player.transform.pos;
+			math::Vec2 playerForward = math::angle_to_vec(m_impl->player.transform.angle);
+
+			//  1.2 one for the direction from player to enemy
+			math::Vec2 playerToEnemy = m_impl->enemyPos - playerPos;
+			float angleToEnemy = math::angle(playerForward, playerToEnemy);
+			m_impl->enemyTexture.render(SCREEN_WIDTH - 64, SCREEN_HEIGHT - 64);
+
+			// draw the vectors on the map
+			if (m_impl->showTopDown)
+			{
+				// draw line from player to enemy
+				SDL_RenderDrawLine(m_renderer, (int)playerPos.x * TOP_DOWN_SCALE, (int)playerPos.y* TOP_DOWN_SCALE, (int)m_impl->enemyPos.x* TOP_DOWN_SCALE, (int)m_impl->enemyPos.y* TOP_DOWN_SCALE);
+				math::Vec2 scaledPlayerDir = math::scale(playerForward, 100.f);
+				SDL_SetRenderDrawColor(m_renderer, 255, 100, 0, 0xFF);
+				// draw player forward vector
+				SDL_RenderDrawLine(m_renderer, (int)playerPos.x* TOP_DOWN_SCALE, (int)playerPos.y* TOP_DOWN_SCALE, (int)(playerPos.x + scaledPlayerDir.x)* TOP_DOWN_SCALE, (int)(playerPos.y + scaledPlayerDir.y)* TOP_DOWN_SCALE);
+			}
+
+			printf("angle: %f, pang: %f, dist: %f, cross: %f\n", 
+				angleToEnemy, 
+				m_impl->player.transform.angle, 
+				math::magnitude(playerToEnemy), 
+				math::cross(math::normalize(playerToEnemy), math::normalize(playerForward))
+			);
+
+		
+
+#ifdef RENDER_DEBUG_VALUES
+		{
+			int yOffset = 0;
+			constexpr int textXPos = SCREEN_WIDTH - 200;
+			global::Global::renderMonospaceText("fps:   " + m_impl->fps, textXPos, yOffset += 15);
+			global::Global::renderMonospaceText("angle: -" + std::to_string(angleToEnemy), textXPos, yOffset += 15);
+
+		}
+#endif
+
 	}
 	
 	void GameSceneRaycaster::mouseDown(int button, int x, int y)
@@ -283,6 +312,13 @@ namespace game
 			break;
 		case SDLK_TAB:
 			m_impl->showTopDown = !m_impl->showTopDown;
+			m_impl->showRays = m_impl->showTopDown;
+			break;
+		case SDLK_BACKQUOTE:
+			if (m_impl->showTopDown)
+			{
+				m_impl->showRays = !m_impl->showRays;
+			}
 			break;
 		}
 
