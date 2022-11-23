@@ -204,20 +204,6 @@ namespace game
 			ret.rect.h = static_cast<int>(MAP_CELL_PX / distance * DIST_PROJECTION_PLANE);
 			ret.rect.y = (SCREEN_HEIGHT - ret.rect.h) / 2;
 
-			if (rowIntersectDistance < colIntersectDistance)
-			{
-				ret.color.r = 0;
-				ret.color.g = 0;
-				ret.color.b = 0;
-				ret.color.a = (Uint8)std::max(0, (int)rowIntersectDistance); // distance fade
-			}
-			else
-			{
-				ret.color.r = 0;
-				ret.color.g = 0;
-				ret.color.b = 0;
-				ret.color.a = (Uint8)std::max(0, (int)colIntersectDistance); // distance fade
-			}
 			return ret;
 		}
 

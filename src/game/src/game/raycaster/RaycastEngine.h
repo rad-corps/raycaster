@@ -36,10 +36,9 @@ namespace game
 
 	struct ColumnRenderData
 	{
-		// WallMapFace wallMapFace;
 		int textureXPos;
 		SDL_Rect rect;
-		Color color;
+		//Color color;
 		Line ray;
 	};
 

@@ -229,35 +229,56 @@ namespace game
 		}
 		
 
-		
-			// find angle from player to enemy
-			// 1. create two vectors
-			//  1.1 one for the forward direction of the player
-			const math::Vec2& playerPos = m_impl->player.transform.pos;
-			math::Vec2 playerForward = math::angle_to_vec(m_impl->player.transform.angle);
+		/// RENDER ENEMY TEST
 
-			//  1.2 one for the direction from player to enemy
-			math::Vec2 playerToEnemy = m_impl->enemyPos - playerPos;
-			float angleToEnemy = math::angle(playerForward, playerToEnemy);
-			m_impl->enemyTexture.render(SCREEN_WIDTH - 64, SCREEN_HEIGHT - 64);
+		// find angle from player to enemy
+		// 1. create two vectors
+		//  1.1 one for the forward direction of the player
+		const math::Vec2& playerPos = m_impl->player.transform.pos;
+		math::Vec2 playerForward = math::angle_to_vec(m_impl->player.transform.angle);
 
-			// draw the vectors on the map
-			if (m_impl->showTopDown)
+		//  1.2 one for the direction from player to enemy
+		math::Vec2 playerToEnemy = m_impl->enemyPos - playerPos;
+		float angleToEnemy = math::angle(playerForward, playerToEnemy);
+		m_impl->enemyTexture.render(SCREEN_WIDTH - 64, SCREEN_HEIGHT - 64);
+
+		// draw the vectors on the map
+		if (m_impl->showTopDown)
+		{
+			// draw line from player to enemy
+			SDL_RenderDrawLine(m_renderer, (int)playerPos.x * TOP_DOWN_SCALE, (int)playerPos.y* TOP_DOWN_SCALE, (int)m_impl->enemyPos.x* TOP_DOWN_SCALE, (int)m_impl->enemyPos.y* TOP_DOWN_SCALE);
+			math::Vec2 scaledPlayerDir = math::scale(playerForward, 100.f);
+			SDL_SetRenderDrawColor(m_renderer, 255, 100, 0, 0xFF);
+			// draw player forward vector
+			SDL_RenderDrawLine(m_renderer, (int)playerPos.x* TOP_DOWN_SCALE, (int)playerPos.y* TOP_DOWN_SCALE, (int)(playerPos.x + scaledPlayerDir.x)* TOP_DOWN_SCALE, (int)(playerPos.y + scaledPlayerDir.y)* TOP_DOWN_SCALE);
+		}
+		// if cross is < 0 then enemy is RHS of screen, else LHS of screen
+		if (angleToEnemy < FOV / 2)
+		{
+			if (math::cross(math::normalize(playerToEnemy), math::normalize(playerForward)) < 0)
 			{
-				// draw line from player to enemy
-				SDL_RenderDrawLine(m_renderer, (int)playerPos.x * TOP_DOWN_SCALE, (int)playerPos.y* TOP_DOWN_SCALE, (int)m_impl->enemyPos.x* TOP_DOWN_SCALE, (int)m_impl->enemyPos.y* TOP_DOWN_SCALE);
-				math::Vec2 scaledPlayerDir = math::scale(playerForward, 100.f);
-				SDL_SetRenderDrawColor(m_renderer, 255, 100, 0, 0xFF);
-				// draw player forward vector
-				SDL_RenderDrawLine(m_renderer, (int)playerPos.x* TOP_DOWN_SCALE, (int)playerPos.y* TOP_DOWN_SCALE, (int)(playerPos.x + scaledPlayerDir.x)* TOP_DOWN_SCALE, (int)(playerPos.y + scaledPlayerDir.y)* TOP_DOWN_SCALE);
+				// RHS of screen
+				// add half of FOV to angle
+				angleToEnemy += FOV / 2;
+			}
+			else
+			{
+				angleToEnemy = FOV / 2 - angleToEnemy;
 			}
 
-			printf("angle: %f, pang: %f, dist: %f, cross: %f\n", 
-				angleToEnemy, 
-				m_impl->player.transform.angle, 
-				math::magnitude(playerToEnemy), 
-				math::cross(math::normalize(playerToEnemy), math::normalize(playerForward))
-			);
+			// now we have an angle that is 0 at far left of FOV, and FOV at far right.
+			// convert angle to screen space
+			const float screenX = (angleToEnemy / FOV) * SCREEN_WIDTH;
+			m_impl->enemyTexture.render((int)screenX, SCREEN_HEIGHT - 64);
+		}
+			
+
+		printf("angle: %f, pang: %f, dist: %f, cross: %f\n", 
+			angleToEnemy, 
+			m_impl->player.transform.angle, 
+			math::magnitude(playerToEnemy), 
+			math::cross(math::normalize(playerToEnemy), math::normalize(playerForward))
+		);
 
 		
 
