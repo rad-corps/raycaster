@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "entry", "src\game\game.vcxproj", "{A6E3D550-DF03-42F1-B2BB-5082DC2BE6DF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "entry", "src\game.vcxproj", "{A6E3D550-DF03-42F1-B2BB-5082DC2BE6DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

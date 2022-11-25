@@ -123,15 +123,15 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\game-dev\sdl2-starter\src\SDL2-2.0.18\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>..\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\out\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\out\intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>..\..\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\out\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\out\intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -170,7 +170,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>..\..\include\SDL2-2.0.18;..\..\include\SDL_image-2.0.5;..\..\include\SDL2_ttf-2.0.15;..\..\include;.\src\framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include\SDL2-2.0.18;..\include\SDL_image-2.0.5;..\include\SDL2_ttf-2.0.15;..\include;.\src\framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -189,7 +189,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>..\..\include\SDL2-2.0.18;..\..\include\SDL_image-2.0.5;..\..\include\SDL2_ttf-2.0.15;..\..\include;.\src\framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include\SDL2-2.0.18;..\include\SDL_image-2.0.5;..\include\SDL2_ttf-2.0.15;..\include;.\src\framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -205,7 +205,7 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerWorkingDirectory>$(ProjectDir)/../../res</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)/../res</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>
