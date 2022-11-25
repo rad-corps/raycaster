@@ -56,9 +56,9 @@ namespace
 	};
 
 
-	//const SDL_Point enemyPosition{ 58,64};
-
 	constexpr int TOP_DOWN_SCALE = 2;
+
+	
 	
 }
 
@@ -72,6 +72,7 @@ namespace game
 		rcgf::Texture wallTexture;
 		rcgf::Texture enemyTexture;
 		math::Vec2 enemyPos{ 50.f, 70.f };
+		SDL_Renderer* m_renderer;
 		
 		// diagnostic output
 		std::string renderTime;
@@ -89,12 +90,72 @@ namespace game
 			{SDLK_LCTRL, false},
 		};
 		Pimpl(SDL_Renderer* renderer)
-			: wallTexture{ renderer, "./img/wall_64.png" },
-			enemyTexture{ renderer, "./img/enemy_01.png" }
+			: wallTexture{ renderer, "./img/wall_64.png" }
+			, enemyTexture{ renderer, "./img/cabron.png" }
+			, m_renderer{ renderer }
 		{
 			wallTexture.printDebugInfo();
 		}
 		Pimpl() = delete;
+
+		void render_enemy()
+		{
+			// find angle from player to enemy
+			// 1. create two vectors
+			//  1.1 one for the forward direction of the player
+			const math::Vec2& playerPos = player.transform.pos;
+			math::Vec2 playerForward = math::angle_to_vec(player.transform.angle);
+
+			//  1.2 one for the direction from player to enemy
+			const math::Vec2 playerToEnemy = enemyPos - playerPos;
+			const float playerForwardToEnemyAngle = math::angle(playerForward, playerToEnemy);
+			float frustumToEnemyAngle = -1.f;
+
+			// draw the vectors on the map
+			if (showTopDown)
+			{
+				// draw line from player to enemy
+				SDL_RenderDrawLine(m_renderer, (int)playerPos.x * TOP_DOWN_SCALE, (int)playerPos.y * TOP_DOWN_SCALE, (int)enemyPos.x * TOP_DOWN_SCALE, (int)enemyPos.y * TOP_DOWN_SCALE);
+				math::Vec2 scaledPlayerDir = math::scale(playerForward, 100.f);
+				SDL_SetRenderDrawColor(m_renderer, 255, 100, 0, 0xFF);
+				// draw player forward vector
+				SDL_RenderDrawLine(m_renderer, (int)playerPos.x * TOP_DOWN_SCALE, (int)playerPos.y * TOP_DOWN_SCALE, (int)(playerPos.x + scaledPlayerDir.x) * TOP_DOWN_SCALE, (int)(playerPos.y + scaledPlayerDir.y) * TOP_DOWN_SCALE);
+			}
+
+			
+
+			// if cross is < 0 then enemy is RHS of screen, else LHS of screen
+			if (playerForwardToEnemyAngle < FOV / 2)
+			{
+				if (math::cross(math::normalize(playerToEnemy), math::normalize(playerForward)) < 0)
+				{
+					// RHS of screen
+					// add half of FOV to angle
+					frustumToEnemyAngle = playerForwardToEnemyAngle + FOV / 2;
+				}
+				else
+				{
+					// LHS of screen
+					// angleToEnemy starts as the player forward vector, so lets subtr
+					frustumToEnemyAngle = FOV / 2 - playerForwardToEnemyAngle;
+				}
+
+				// now we have an angle that is 0 at far left of FOV, and FOV at far right.
+				// convert angle to screen space
+				const float screenX = (frustumToEnemyAngle / FOV) * SCREEN_WIDTH;
+
+				// calculate the screenY position
+				// ================================
+				// playerToEnemy.length()          PLAYER_HEIGHT
+				// ----------------------  =   ---------------------
+				// DIST_PROJECTION_PLANE         screenY - CENTER_Y
+
+				const float screenY = ((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / math::magnitude(playerToEnemy)) + CENTER_Y;
+
+				// draw
+				enemyTexture.render((int)screenX, (int)screenY - 64);
+			}
+		}
 	};
 
 
@@ -181,7 +242,7 @@ namespace game
 				m_impl->wallTexture.render2(&textureClip, &crd.rect);
 
 #ifdef RENDER_FLOORS
-				raycast_engine::drawFloorColumn(m_impl->player.transform, crd, screenColumnNumber, rayAngle, &m_impl->wallTexture);
+				raycast_engine::drawFloorColumn(m_renderer, m_impl->player.transform, crd, screenColumnNumber, rayAngle, &m_impl->wallTexture);
 #endif
 			}
 
@@ -189,11 +250,6 @@ namespace game
 			const std::string strRayTime = perfCounter.Stop();
 			perfCounter.Start();
 #endif
-
-
-			
-
-
 		}
 
 		// draw the map
@@ -227,68 +283,14 @@ namespace game
 			SDL_SetRenderDrawColor(m_renderer, 255, 0, 100, 0xFF);
 			SDL_RenderFillRect(m_renderer, &enemyRect);
 		}
+
+		m_impl->render_enemy();
 		
-
-		/// RENDER ENEMY TEST
-
-		// find angle from player to enemy
-		// 1. create two vectors
-		//  1.1 one for the forward direction of the player
-		const math::Vec2& playerPos = m_impl->player.transform.pos;
-		math::Vec2 playerForward = math::angle_to_vec(m_impl->player.transform.angle);
-
-		//  1.2 one for the direction from player to enemy
-		math::Vec2 playerToEnemy = m_impl->enemyPos - playerPos;
-		float angleToEnemy = math::angle(playerForward, playerToEnemy);
-		m_impl->enemyTexture.render(SCREEN_WIDTH - 64, SCREEN_HEIGHT - 64);
-
-		// draw the vectors on the map
-		if (m_impl->showTopDown)
-		{
-			// draw line from player to enemy
-			SDL_RenderDrawLine(m_renderer, (int)playerPos.x * TOP_DOWN_SCALE, (int)playerPos.y* TOP_DOWN_SCALE, (int)m_impl->enemyPos.x* TOP_DOWN_SCALE, (int)m_impl->enemyPos.y* TOP_DOWN_SCALE);
-			math::Vec2 scaledPlayerDir = math::scale(playerForward, 100.f);
-			SDL_SetRenderDrawColor(m_renderer, 255, 100, 0, 0xFF);
-			// draw player forward vector
-			SDL_RenderDrawLine(m_renderer, (int)playerPos.x* TOP_DOWN_SCALE, (int)playerPos.y* TOP_DOWN_SCALE, (int)(playerPos.x + scaledPlayerDir.x)* TOP_DOWN_SCALE, (int)(playerPos.y + scaledPlayerDir.y)* TOP_DOWN_SCALE);
-		}
-		// if cross is < 0 then enemy is RHS of screen, else LHS of screen
-		if (angleToEnemy < FOV / 2)
-		{
-			if (math::cross(math::normalize(playerToEnemy), math::normalize(playerForward)) < 0)
-			{
-				// RHS of screen
-				// add half of FOV to angle
-				angleToEnemy += FOV / 2;
-			}
-			else
-			{
-				angleToEnemy = FOV / 2 - angleToEnemy;
-			}
-
-			// now we have an angle that is 0 at far left of FOV, and FOV at far right.
-			// convert angle to screen space
-			const float screenX = (angleToEnemy / FOV) * SCREEN_WIDTH;
-			m_impl->enemyTexture.render((int)screenX, SCREEN_HEIGHT - 64);
-		}
-			
-
-		printf("angle: %f, pang: %f, dist: %f, cross: %f\n", 
-			angleToEnemy, 
-			m_impl->player.transform.angle, 
-			math::magnitude(playerToEnemy), 
-			math::cross(math::normalize(playerToEnemy), math::normalize(playerForward))
-		);
-
-		
-
 #ifdef RENDER_DEBUG_VALUES
 		{
 			int yOffset = 0;
 			constexpr int textXPos = SCREEN_WIDTH - 200;
 			global::Global::renderMonospaceText("fps:   " + m_impl->fps, textXPos, yOffset += 15);
-			global::Global::renderMonospaceText("angle: -" + std::to_string(angleToEnemy), textXPos, yOffset += 15);
-
 		}
 #endif
 
@@ -296,13 +298,7 @@ namespace game
 	
 	void GameSceneRaycaster::mouseDown(int button, int x, int y)
 	{
-		std::cout << "mouseDown: " << button << " " << x << " " << y << std::endl;
-		if (y > CENTER_Y)
-		{
-			// formula rowDistance = cameraHeight (half the screen height) / (yPx - cameraHeight)
-			const int rowDistance = CENTER_Y / (y - CENTER_Y);
-			std::cout << rowDistance << std::endl;
-		}
+		button; x; y;
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)

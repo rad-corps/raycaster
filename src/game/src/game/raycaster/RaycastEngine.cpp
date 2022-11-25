@@ -217,6 +217,9 @@ namespace game
 				// --------------------------------------------------- = ------------------------------
 				//               DIST_PROJECTION_PLANE                     screen y pixel - CENTER_Y   
 
+				// to find the straight distance: multiply both sides by the DIST_PROJECTION_PLANE
+
+
 
 				const int px = y - CENTER_Y;
 				const float straightDistance = DIST_PROJECTION_PLANE * (PLAYER_HEIGHT / (float)px);
@@ -233,21 +236,6 @@ namespace game
 				SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 				SDL_RenderFillRect(renderer, &rect);
 			}
-		}
-
-		SDL_Point worldSpaceToScreenSpace(int x, int y)
-		{
-			//const float straightDistance = DIST_PROJECTION_PLANE * (PLAYER_HEIGHT / (float)px);
-			//const float diagonalDistance = straightDistance * (1 / cos(rayAngle - playerTransform.angle));
-			//const float xEnd = diagonalDistance * cos(rayAngle) + playerTransform.pos.x;
-			//const float yEnd = diagonalDistance * sin(rayAngle) + playerTransform.pos.y;
-
-			// const float straightDistance = DIST_PROJECTION_PLANE * (PLAYER_HEIGHT / (float)px);
-
-
-			SDL_Point ret{};
-			std::cout << x << y << std::endl;
-			return ret;
 		}
 	}
 }
