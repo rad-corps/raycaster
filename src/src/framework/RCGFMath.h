@@ -33,4 +33,11 @@ namespace math
 	Mat2 scale(const Mat2& mat, float scalar);
 	Vec2 angle_to_vec(float angle);
 	Vec2 normalize(const Vec2& vec);
+
+	struct Transform
+	{
+		math::Vec2 pos;
+		float angle;
+		Transform(math::Vec2 pos, float angle) : pos{ pos }, angle{ angle }{}
+	};
 }

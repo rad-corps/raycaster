@@ -25,7 +25,7 @@ namespace game
 		void rotate(RotateDirection dir);
 		void move(float relativeAngle, const GameMap* map);
 
-		Transform transform;
+		math::Transform transform;
 		SDL_Rect wallCollisionBox;
 	};
 }

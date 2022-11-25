@@ -45,8 +45,8 @@ namespace game
 	namespace raycast_engine
 	{
 		int toMapIndex(float x, float y);
-		ColumnRenderData doRayTest(const Transform& transform, float rayAngle, int pxCol, GameMap* map);
-		void drawFloorColumn(SDL_Renderer* renderer, const Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx);
-		SDL_Point worldSpaceToScreenSpace(const Transform& playerTransform, int x, int y);
+		ColumnRenderData doRayTest(const math::Transform& transform, float rayAngle, int pxCol, GameMap* map);
+		void drawFloorColumn(SDL_Renderer* renderer, const math::Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx);
+		SDL_Point worldSpaceToScreenSpace(const math::Transform& playerTransform, int x, int y);
 	};
 }

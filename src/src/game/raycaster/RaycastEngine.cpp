@@ -59,7 +59,7 @@ namespace game
 		/// <param name="pxWidth"></param>
 		/// <param name="map"></param>
 		/// <returns></returns>
-		ColumnRenderData doRayTest(const Transform& transform, float rayAngle, int pxCol, GameMap* map)
+		ColumnRenderData doRayTest(const math::Transform& transform, float rayAngle, int pxCol, GameMap* map)
 		{
 			const float& x = transform.pos.x;
 			const float& y = transform.pos.y;
@@ -207,7 +207,7 @@ namespace game
 			return ret;
 		}
 
-		void drawFloorColumn(SDL_Renderer* renderer, const Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx)
+		void drawFloorColumn(SDL_Renderer* renderer, const math::Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx)
 		{
 			// draw floors https://github.com/permadi-com/ray-cast/blob/master/demo/4/sample4.js
 			// 1. start from the bottom of the wall

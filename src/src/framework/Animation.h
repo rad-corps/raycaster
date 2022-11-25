@@ -27,14 +27,6 @@ namespace rcgf
 			int cols
 		);
 
-		//Animation(
-		//	const char* texturePath,
-		//	int pxSpriteWidth,
-		//	int pxSpriteHeight,
-		//	int rows,
-		//	int cols
-		//);
-
 		void render(
 			int animIdx, 
 			int x, 
