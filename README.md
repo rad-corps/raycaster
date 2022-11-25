@@ -1,4 +1,4 @@
-# sdl2-starter
+# raycaster
 This was originally a project intended as a framework to fork to get up and running in SDL2 on windows. I didn't stick to my own original ideas and this has accidentally turned into my raycaster game project. At some point I should change the repository name and factor out the framework bits to their own repo.
 
 ### Build and Run
@@ -15,3 +15,5 @@ Tab           | Display top down view
 `             | Show/hide player rays
 Arrows        | Move/rotate player
 CTRL+Arrows   | Strafe
+
+### TODO
