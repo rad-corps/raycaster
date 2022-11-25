@@ -68,7 +68,7 @@
     <ProjectGuid>{a6e3d550-df03-42f1-b2bb-5082dc2be6df}</ProjectGuid>
     <RootNamespace>sdl2starter</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>entry</ProjectName>
+    <ProjectName>raycaster</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
