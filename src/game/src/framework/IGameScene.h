@@ -14,7 +14,6 @@ namespace rcgf
 
 		// return nullptr on no change. 
 		virtual void fixedUpdate() = 0;
-		virtual void sendData(const std::string& renderTime, const std::string& fps) { renderTime; fps; };
 		virtual void update() = 0;
 		virtual void render(SDL_Renderer* renderer) = 0;
 		virtual void keyDown(SDL_Keycode) = 0;

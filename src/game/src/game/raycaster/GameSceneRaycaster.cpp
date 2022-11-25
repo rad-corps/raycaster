@@ -74,10 +74,6 @@ namespace game
 		math::Vec2 enemyPos{ 50.f, 70.f };
 		SDL_Renderer* m_renderer;
 		
-		// diagnostic output
-		std::string renderTime;
-		std::string fps;
-		
 		std::map<SDL_Keycode, bool> keyStates= {
 			{SDLK_w, false},
 			{SDLK_a, false},
@@ -98,6 +94,7 @@ namespace game
 		}
 		Pimpl() = delete;
 
+		// TODO, move this out to some WorldSprite class
 		void render_enemy()
 		{
 			// find angle from player to enemy
@@ -168,12 +165,6 @@ namespace game
 	void GameSceneRaycaster::update()
 	{
 
-	}
-
-	void GameSceneRaycaster::sendData(const std::string& renderTime, const std::string& fps)
-	{
-		m_impl->renderTime = renderTime;
-		m_impl->fps = fps;
 	}
 
 	void GameSceneRaycaster::fixedUpdate()
@@ -285,15 +276,6 @@ namespace game
 		}
 
 		m_impl->render_enemy();
-		
-#ifdef RENDER_DEBUG_VALUES
-		{
-			int yOffset = 0;
-			constexpr int textXPos = SCREEN_WIDTH - 200;
-			global::Global::renderMonospaceText("fps:   " + m_impl->fps, textXPos, yOffset += 15);
-		}
-#endif
-
 	}
 	
 	void GameSceneRaycaster::mouseDown(int button, int x, int y)

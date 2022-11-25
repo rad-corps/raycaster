@@ -47,7 +47,6 @@ int main(int argc, char* args[])
 
 	SimplePerfCounter renderPerfCounter;
 	SimplePerfCounter fpsPerfCounter;
-	std::string renderTime;
 	std::string fps;
 
 	//While application is running
@@ -82,7 +81,6 @@ int main(int argc, char* args[])
 		SDL_SetRenderDrawColor(renderer, 60, 60, 72, 0xFF);
 		SDL_RenderClear(renderer);
 
-		gameState->sendData(renderTime, fps);
 		gameState->update();
 		if (gameState->hasPendingState())
 		{
@@ -95,9 +93,12 @@ int main(int argc, char* args[])
 
 		//Update screen
 		renderPerfCounter.Start();
-		SDL_RenderPresent(renderer);
-		renderTime = renderPerfCounter.Stop();
 
+		// show fps
+		global::Global::renderMonospaceText("fps:   " + fps, SCREEN_WIDTH - 160, 0);
+
+
+		SDL_RenderPresent(renderer);
 		time2 = std::chrono::high_resolution_clock::now();
 		deltaTimeMs += std::chrono::duration_cast<std::chrono::microseconds>(time2 - time1).count() / 1000.0;
 
