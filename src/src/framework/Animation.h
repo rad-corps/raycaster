@@ -5,6 +5,8 @@
 
 namespace rcgf
 {
+	// only create one of these for each animation/spritesheet consumed
+	// i.e. many sprites will share a single animation
 	class Animation
 	{
 	public:

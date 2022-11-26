@@ -10,8 +10,10 @@
 #include "RaycastEngine.h"
 #include "Map.h"
 #include "Texture.h"
+#include "Sprite.h"
 #include "RaycasterConstants.h"
 #include <vector>
+
 
 #define RENDER_DEBUG_VALUES
 
@@ -19,6 +21,7 @@ namespace
 {
 	SimplePerfCounter perfCounter;
 
+	// TODO: move this to Map.h or Map.cpp
 	game::GameMap map =
 	{
 		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -54,12 +57,6 @@ namespace
 		1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 		1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 	};
-
-
-	constexpr int TOP_DOWN_SCALE = 2;
-
-	
-	
 }
 
 namespace game
@@ -70,8 +67,8 @@ namespace game
 		bool showTopDown = false;
 		bool showRays = false;
 		rcgf::Texture wallTexture;
-		rcgf::Texture enemyTexture;
-		math::Vec2 enemyPos{ 50.f, 70.f };
+		std::unique_ptr<rcgf::Animation> enemyAnimation;
+		game::Sprite enemySprite;
 		SDL_Renderer* m_renderer;
 		
 		std::map<SDL_Keycode, bool> keyStates= {
@@ -87,72 +84,20 @@ namespace game
 		};
 		Pimpl(SDL_Renderer* renderer)
 			: wallTexture{ renderer, "./img/wall_64.png" }
-			, enemyTexture{ renderer, "./img/cabron.png" }
+			, enemyAnimation{std::make_unique<rcgf::Animation>(
+					std::make_unique<rcgf::Texture>(renderer, "img/Cabron_360.png"),
+					64, // sprite width
+					64, // sprite height
+					1,  // rows
+					4  // cols
+				)
+			}
+			, enemySprite{ renderer, enemyAnimation.get(), math::Transform{math::Vec2{50.f, 70.f}, 0.f}}
 			, m_renderer{ renderer }
 		{
 			wallTexture.printDebugInfo();
 		}
 		Pimpl() = delete;
-
-		// TODO, move this out to some WorldSprite class
-		void render_enemy()
-		{
-			// find angle from player to enemy
-			// 1. create two vectors
-			//  1.1 one for the forward direction of the player
-			const math::Vec2& playerPos = player.transform.pos;
-			math::Vec2 playerForward = math::angle_to_vec(player.transform.angle);
-
-			//  1.2 one for the direction from player to enemy
-			const math::Vec2 playerToEnemy = enemyPos - playerPos;
-			const float playerForwardToEnemyAngle = math::angle(playerForward, playerToEnemy);
-			float frustumToEnemyAngle = -1.f;
-
-			// draw the vectors on the map
-			if (showTopDown)
-			{
-				// draw line from player to enemy
-				SDL_RenderDrawLine(m_renderer, (int)playerPos.x * TOP_DOWN_SCALE, (int)playerPos.y * TOP_DOWN_SCALE, (int)enemyPos.x * TOP_DOWN_SCALE, (int)enemyPos.y * TOP_DOWN_SCALE);
-				math::Vec2 scaledPlayerDir = math::scale(playerForward, 100.f);
-				SDL_SetRenderDrawColor(m_renderer, 255, 100, 0, 0xFF);
-				// draw player forward vector
-				SDL_RenderDrawLine(m_renderer, (int)playerPos.x * TOP_DOWN_SCALE, (int)playerPos.y * TOP_DOWN_SCALE, (int)(playerPos.x + scaledPlayerDir.x) * TOP_DOWN_SCALE, (int)(playerPos.y + scaledPlayerDir.y) * TOP_DOWN_SCALE);
-			}
-
-			
-
-			// if cross is < 0 then enemy is RHS of screen, else LHS of screen
-			if (playerForwardToEnemyAngle < FOV / 2)
-			{
-				if (math::cross(math::normalize(playerToEnemy), math::normalize(playerForward)) < 0)
-				{
-					// RHS of screen
-					// add half of FOV to angle
-					frustumToEnemyAngle = playerForwardToEnemyAngle + FOV / 2;
-				}
-				else
-				{
-					// LHS of screen
-					// angleToEnemy starts as the player forward vector, so lets subtr
-					frustumToEnemyAngle = FOV / 2 - playerForwardToEnemyAngle;
-				}
-
-				// now we have an angle that is 0 at far left of FOV, and FOV at far right.
-				// convert angle to screen space
-				const float screenX = (frustumToEnemyAngle / FOV) * SCREEN_WIDTH;
-
-				// calculate the screenY position
-				// ================================
-				// playerToEnemy.length()          PLAYER_HEIGHT
-				// ----------------------  =   ---------------------
-				// DIST_PROJECTION_PLANE         screenY - CENTER_Y
-
-				const float screenY = ((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / math::magnitude(playerToEnemy)) + CENTER_Y;
-
-				// draw
-				enemyTexture.render((int)screenX, (int)screenY - 64);
-			}
-		}
 	};
 
 
@@ -266,16 +211,18 @@ namespace game
 
 			m_impl->player.render(m_renderer);
 
-			SDL_Rect enemyRect{
-				(int)m_impl->enemyPos.x * TOP_DOWN_SCALE - 2,
-				(int)m_impl->enemyPos.y * TOP_DOWN_SCALE - 2,
-				4, 4
-			};
-			SDL_SetRenderDrawColor(m_renderer, 255, 0, 100, 0xFF);
-			SDL_RenderFillRect(m_renderer, &enemyRect);
+
+			// TODO: move this to Sprite::render
+			//SDL_Rect enemyRect{
+			//	(int)m_impl->enemyPos.x * TOP_DOWN_SCALE - 2,
+			//	(int)m_impl->enemyPos.y * TOP_DOWN_SCALE - 2,
+			//	4, 4
+			//};
+			//SDL_SetRenderDrawColor(m_renderer, 255, 0, 100, 0xFF);
+			//SDL_RenderFillRect(m_renderer, &enemyRect);
 		}
 
-		m_impl->render_enemy();
+		m_impl->enemySprite.render(m_impl->player.transform, m_impl->showTopDown);
 	}
 	
 	void GameSceneRaycaster::mouseDown(int button, int x, int y)
