@@ -35,6 +35,11 @@ namespace rcgf
 			int y
 		);
 
+		void render(
+			int animIdx,
+			SDL_Rect* dstRect
+		);
+
 	private:
 		std::unique_ptr<Texture> m_texture;
 		int m_pxSpriteWidth;

@@ -55,12 +55,21 @@ namespace game
 			// playerToEnemy.length()          PLAYER_HEIGHT
 			// ----------------------  =   ---------------------
 			// DIST_PROJECTION_PLANE         screenY - CENTER_Y
+			const float distanceToSprite = math::magnitude(playerToSprite);
+			
+			const float screenYBottomOfSprite = ((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / distanceToSprite) + CENTER_Y;
 
-			const float screenY = ((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / math::magnitude(playerToSprite)) + CENTER_Y;
+			//find the height of the sprite
+			const int spriteHeight = static_cast<int>(MAP_CELL_PX / distanceToSprite * DIST_PROJECTION_PLANE);
 
 			// TODO: calculate this based on angle between player and sprite
 			const int animID = 0;
-			m_spritesheet->render(animID, (int)screenX, (int)screenY - 64);
+			SDL_Rect dstRect;
+			dstRect.h = spriteHeight;
+			dstRect.w = spriteHeight;
+			dstRect.x = (int)screenX - spriteHeight / 2;
+			dstRect.y = (int)screenYBottomOfSprite - spriteHeight;
+			m_spritesheet->render(animID, &dstRect);
 		}
 	}
 }
