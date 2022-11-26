@@ -5,20 +5,10 @@
 #include <cmath> // std::fmod
 #include <limits> // std::numeric_limits
 
+using math::PI;
+
 namespace game
 {
-	//bool operator==(const WallMapFace& lhs, const WallMapFace& rhs)
-	//{
-	//	return
-	//		lhs.mapIndex == rhs.mapIndex
-	//		&& lhs.facing == rhs.facing;
-	//}
-
-	//bool operator!=(const WallMapFace& lhs, const WallMapFace& rhs)
-	//{
-	//	return !(lhs == rhs);
-	//}
-
 	bool facingDown(float angle_)
 	{
 		return 0 < angle_ && angle_ < PI;

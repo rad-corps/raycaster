@@ -12,7 +12,7 @@ namespace game
 	constexpr int WALL_TEXTURE_SZ = 64;
 	constexpr int WALL_TEXTURE_W = WALL_TEXTURE_SZ;
 	constexpr int WALL_TEXTURE_H = WALL_TEXTURE_SZ;
-	constexpr float FOV = PI / 3.f; // 60 degrees
+	constexpr float FOV = math::PI / 3.f; // 60 degrees
 
 	// 0.57735 is precomputed tan(FOV/2) : for screen width 320, result is 277
 	constexpr int DIST_PROJECTION_PLANE = static_cast<int>((SCREEN_WIDTH / 2) / 0.57735); 

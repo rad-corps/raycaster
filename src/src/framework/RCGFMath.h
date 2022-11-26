@@ -4,6 +4,8 @@
 
 namespace math
 {
+	constexpr float PI = 3.14159265359f;
+
 	struct Mat2
 	{
 		float elements[2][2];
@@ -33,6 +35,7 @@ namespace math
 	Mat2 scale(const Mat2& mat, float scalar);
 	Vec2 angle_to_vec(float angle);
 	Vec2 normalize(const Vec2& vec);
+	float sum_angle(float angle1, float angle2);
 
 	struct Transform
 	{

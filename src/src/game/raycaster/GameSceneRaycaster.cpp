@@ -17,6 +17,8 @@
 
 #define RENDER_DEBUG_VALUES
 
+using math::PI;
+
 namespace
 {
 	SimplePerfCounter perfCounter;
@@ -161,7 +163,7 @@ namespace game
 				const float angle = pxPerc * FOV + FOV_OFFSET;
 
 				// sum with the player's current angle to get the angle to send to the engine
-				const float rayAngle = m_impl->player.sumAngle(angle);
+				const float rayAngle = math::sum_angle(m_impl->player.transform.angle, angle);
 
 				// cast the ray to calculate wall height for this column
 				ColumnRenderData crd = raycast_engine::doRayTest(m_impl->player.transform, rayAngle, screenColumnNumber, &map);

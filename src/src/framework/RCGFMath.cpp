@@ -103,4 +103,12 @@ namespace math
 		float mag = magnitude(vec);
 		return Vec2{ vec.x / mag, vec.y / mag };
 	}
+
+	float sum_angle(float angle1, float angle2)
+	{
+		angle1 += angle2;
+		if (angle1 < 0) angle1 += PI * 2;
+		else if (2 * PI < angle1) angle1 -= PI * 2;
+		return angle1;
+	}
 }

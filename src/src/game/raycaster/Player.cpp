@@ -4,6 +4,8 @@
 #include "Map.h"
 #include <iostream>
 
+using math::PI;
+
 namespace
 {
 	constexpr float X_START_POS = 20.f;
@@ -32,23 +34,19 @@ namespace game
 		return math::Vec2{ cos(angle) * distance, sin(angle) * distance };
 	}
 
-	float Player::sumAngle(float add) const
-	{
-		add += transform.angle;
-		if (add < 0) add += PI * 2;
-		else if (2 * PI < add) add -= PI * 2;
-		return add;
-	}
-
+	// TODO: move this to some map drawing class
 	void Player::render(SDL_Renderer* renderer)
 	{
 		// draw the player (for the top down map)
-		constexpr int playerDiameter = 2;
-		const SDL_Rect r{ (int)transform.pos.x * 2 - playerDiameter,(int)transform.pos.y * 2 - playerDiameter,playerDiameter * 2,playerDiameter * 2 };
+		constexpr int playerDiameter = 4;
+		const SDL_Rect r{ 
+			(int)transform.pos.x * TOP_DOWN_SCALE - playerDiameter / 2
+			,(int)transform.pos.y * TOP_DOWN_SCALE - playerDiameter / 2
+			,playerDiameter
+			,playerDiameter 
+		};
 		SDL_SetRenderDrawColor(renderer, 100, 200, 0, 0xFF);
 		SDL_RenderFillRect(renderer, &r);
-
-		//SDL_RenderDrawRect(renderer, &wallCollisionBox);
 	}
 
 	void Player::rotate(RotateDirection dir)
