@@ -36,7 +36,7 @@ namespace game
 		return ret;
 	}
 
-	const std::vector<ColumnRenderData>& RaycastEngine::generateWallRenderData(SDL_Renderer* renderer, math::Transform playerTransform, GameMap* map, bool showRays, rcgf::Texture* wallTexture)
+	const std::vector<ColumnRenderData>& RaycastEngine::generateWallRenderData(math::Transform playerTransform, GameMap* map, rcgf::Texture* wallTexture)
 	{
 		// render the 3D world from the player perspective
 
@@ -57,18 +57,6 @@ namespace game
 
 			// cast the ray to calculate wall height for this column
 			wallData[screenColumnNumber] = doRayTest(playerTransform, rayAngle, screenColumnNumber, map, wallTexture);
-			const ColumnRenderData& crd = wallData[screenColumnNumber];
-
-			// hack, draw the ray line here since we stopped caching the ColumnRenderData				
-			if (showRays)
-			{
-				SDL_SetRenderDrawColor(renderer, 133, 133, 173, 255);
-				SDL_RenderDrawLine(renderer, crd.ray.start.x * TOP_DOWN_SCALE, crd.ray.start.y * TOP_DOWN_SCALE, crd.ray.end.x * TOP_DOWN_SCALE, crd.ray.end.y * TOP_DOWN_SCALE);
-			}
-
-			// draw walls
-			
-			//wallTexture->render2(&crd.srcRect, &crd.dstRect);
 
 #ifdef RENDER_FLOORS
 			raycast_engine::drawFloorColumn(m_renderer, m_impl->player.transform, crd, screenColumnNumber, rayAngle, &m_impl->wallTexture);

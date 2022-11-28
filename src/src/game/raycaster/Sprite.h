@@ -20,6 +20,6 @@ namespace game
 		rcgf::Animation* m_spritesheet;
 		SDL_Renderer* m_renderer;
 
-		void render(const math::Transform& povTransform, bool showTopDown) const;
+		void render(const math::Transform& povTransform) const;
 	};
 }

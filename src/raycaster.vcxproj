@@ -29,7 +29,7 @@
     <ClCompile Include="src\game\raycaster\Map.cpp" />
     <ClCompile Include="src\game\raycaster\Player.cpp" />
     <ClCompile Include="src\game\raycaster\RaycastEngine.cpp" />
-    <ClCompile Include="src\game\raycaster\Renderer.cpp" />
+    <ClCompile Include="src\game\raycaster\RenderEngine.cpp" />
     <ClCompile Include="src\game\raycaster\Sprite.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneAABBCollision.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMain.cpp" />
@@ -54,7 +54,7 @@
     <ClInclude Include="src\game\raycaster\Player.h" />
     <ClInclude Include="src\game\raycaster\RaycastEngine.h" />
     <ClInclude Include="src\game\raycaster\RaycasterConstants.h" />
-    <ClInclude Include="src\game\raycaster\Renderer.h" />
+    <ClInclude Include="src\game\raycaster\RenderEngine.h" />
     <ClInclude Include="src\game\raycaster\Sprite.h" />
     <ClInclude Include="src\game\scenes\GameSceneAABBCollision.h" />
     <ClInclude Include="src\game\scenes\GameSceneMain.h" />

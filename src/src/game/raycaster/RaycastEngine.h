@@ -28,14 +28,11 @@ namespace game
 	{
 	public:
 		RaycastEngine() : wallData(SCREEN_WIDTH / X_PX_STEP) {}
+		const std::vector<ColumnRenderData>& generateWallRenderData(math::Transform playerTransform, GameMap* map, rcgf::Texture* wallTexture);
 
-		int toMapIndex(float x, float y);
-		const std::vector<ColumnRenderData>& generateWallRenderData(SDL_Renderer* renderer, math::Transform playerTransform, GameMap* map, bool showRays, rcgf::Texture* wallTexture);
+	private:	
 		ColumnRenderData doRayTest(const math::Transform& transform, float rayAngle, int pxCol, GameMap* map, rcgf::Texture* wallTexture);
 		void drawFloorColumn(SDL_Renderer* renderer, const math::Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx);
-		SDL_Point worldSpaceToScreenSpace(const math::Transform& playerTransform, int x, int y);
-
-	private:
 		std::vector<ColumnRenderData> wallData;
 	};
 }

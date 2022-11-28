@@ -3,7 +3,7 @@
 
 namespace game
 {
-	void Sprite::render(const math::Transform& povTransform, bool showTopDown) const
+	void Sprite::render(const math::Transform& povTransform) const
 	{
 		// find angle from player to enemy
 		// 1. create two vectors
@@ -16,19 +16,6 @@ namespace game
 		const math::Vec2 playerToSprite = spritePos - playerPos;
 		const float playerForwardToSpriteAngle = math::angle(playerForward, playerToSprite);
 		float frustumToSpriteAngle = -1.f;
-
-		// draw the vectors on the map
-		if (showTopDown)
-		{
-			// draw line from player to enemy
-			SDL_RenderDrawLine(m_renderer, (int)playerPos.x * TOP_DOWN_SCALE, (int)playerPos.y * TOP_DOWN_SCALE, (int)spritePos.x * TOP_DOWN_SCALE, (int)spritePos.y * TOP_DOWN_SCALE);
-			math::Vec2 scaledPlayerDir = math::scale(playerForward, 100.f);
-			SDL_SetRenderDrawColor(m_renderer, 255, 100, 0, 0xFF);
-			// draw player forward vector
-			SDL_RenderDrawLine(m_renderer, (int)playerPos.x * TOP_DOWN_SCALE, (int)playerPos.y * TOP_DOWN_SCALE, (int)(playerPos.x + scaledPlayerDir.x) * TOP_DOWN_SCALE, (int)(playerPos.y + scaledPlayerDir.y) * TOP_DOWN_SCALE);
-		}
-
-
 
 		// if cross is < 0 then enemy is RHS of screen, else LHS of screen
 		if (playerForwardToSpriteAngle < FOV / 2)

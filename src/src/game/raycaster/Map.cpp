@@ -4,12 +4,6 @@
 namespace game
 {
 
-	// TODO: Remove? 
-	int toMapIndex(float x, float y)
-	{
-		return toMapIndex(static_cast<int>(x), static_cast<int>(y));
-	}
-
 	int toMapIndex(int x, int y)
 	{
 		const int xIndex = x / MAP_CELL_PX;

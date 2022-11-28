@@ -13,7 +13,7 @@
 #include "Sprite.h"
 #include "RaycasterConstants.h"
 #include <vector>
-#include "Renderer.h"
+#include "RenderEngine.h"
 
 
 #define RENDER_DEBUG_VALUES
@@ -73,7 +73,7 @@ namespace game
 		std::unique_ptr<rcgf::Animation> enemyAnimation;
 		game::Sprite enemySprite;
 		SDL_Renderer* m_renderer;
-		Renderer m_renderEngine;
+		RenderEngine m_renderEngine;
 		RaycastEngine raycastEngine;
 		
 		std::map<SDL_Keycode, bool> keyStates= {
@@ -145,34 +145,20 @@ namespace game
 	{
 		// 4100
 		renderer;
-		const std::vector<ColumnRenderData>& crd = m_impl->raycastEngine.generateWallRenderData(renderer, m_impl->player.transform, &map, m_impl->showRays, &m_impl->wallTexture);
+
+		// generate wall data
+		const std::vector<ColumnRenderData>& crd = m_impl->raycastEngine.generateWallRenderData(m_impl->player.transform, &map, &m_impl->wallTexture);
+		
+		// render walls
 		m_impl->m_renderEngine.RenderWalls(crd);
 
-		// draw the map
+		// render sprites
+		m_impl->enemySprite.render(m_impl->player.transform);
+
 		if (m_impl->showTopDown)
 		{
-			SDL_SetRenderDrawColor(m_renderer, 0, 128, 0, 0xFF);
-			for (int row = 0; row < MAP_ROWS; ++row)
-			{
-				for (int col = 0; col < MAP_COLS; ++col)
-				{
-					// calc rect position and dimension
-					SDL_Rect dstRect{ col * MAP_CELL_PX * TOP_DOWN_SCALE, row * MAP_CELL_PX * TOP_DOWN_SCALE, MAP_CELL_PX * TOP_DOWN_SCALE, MAP_CELL_PX * TOP_DOWN_SCALE };
-					if (map[col + row * MAP_COLS] > 0)
-					{
-						SDL_RenderFillRect(m_renderer, &dstRect);
-					}
-					else
-					{
-						SDL_RenderDrawRect(m_renderer, &dstRect);
-					}
-				}
-			}
-
-			m_impl->player.render(m_renderer);
+			m_impl->m_renderEngine.RenderTopDownMap(map, crd, m_impl->player.transform, m_impl->enemySprite.m_transform, m_impl->showRays);
 		}
-
-		m_impl->enemySprite.render(m_impl->player.transform, m_impl->showTopDown);
 	}
 	
 	void GameSceneRaycaster::mouseDown(int button, int x, int y)
