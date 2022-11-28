@@ -2,8 +2,10 @@
 
 #include "RaycasterConstants.h"
 #include <array>
+#include <vector>
 #include "Map.h"
 #include "Texture.h"
+
 
 
 namespace game
@@ -22,31 +24,18 @@ namespace game
 	bool facingLeft(float angle_);
 	unsigned char getFacing(float angle_);
 
-	//struct WallMapFace
-	//{
-	//	WallMapFace()
-	//		: mapIndex(INT_MAX)
-	//		, facing(CHAR_MAX)
-	//	{}
-	//	friend bool operator==(const WallMapFace& lhs, const WallMapFace& rhs);
-	//	friend bool operator!=(const WallMapFace& lhs, const WallMapFace& rhs);
-	//	int mapIndex;
-	//	char facing;
-	//};
-
-	struct ColumnRenderData
+	class RaycastEngine
 	{
-		int textureXPos;
-		SDL_Rect rect;
-		//Color color;
-		Line ray;
-	};
+	public:
+		RaycastEngine() : wallData(SCREEN_WIDTH / X_PX_STEP) {}
 
-	namespace raycast_engine
-	{
 		int toMapIndex(float x, float y);
-		ColumnRenderData doRayTest(const math::Transform& transform, float rayAngle, int pxCol, GameMap* map);
+		const std::vector<ColumnRenderData>& generateWallRenderData(SDL_Renderer* renderer, math::Transform playerTransform, GameMap* map, bool showRays, rcgf::Texture* wallTexture);
+		ColumnRenderData doRayTest(const math::Transform& transform, float rayAngle, int pxCol, GameMap* map, rcgf::Texture* wallTexture);
 		void drawFloorColumn(SDL_Renderer* renderer, const math::Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx);
 		SDL_Point worldSpaceToScreenSpace(const math::Transform& playerTransform, int x, int y);
+
+	private:
+		std::vector<ColumnRenderData> wallData;
 	};
 }

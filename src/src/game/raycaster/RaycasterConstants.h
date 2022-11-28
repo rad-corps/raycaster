@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "RCGFMath.h"
+#include "Texture.h"
 
 // #define RENDER_FLOORS
 
@@ -23,4 +24,12 @@ namespace game
 	constexpr int COLUMNS = SCREEN_WIDTH / X_PX_STEP;
 	constexpr float START_ANGLE = 0.f;
 	constexpr int TOP_DOWN_SCALE = 2;
+
+	struct ColumnRenderData
+	{
+		rcgf::Texture* columnTexture;
+		SDL_Rect srcRect;
+		SDL_Rect dstRect;
+		Line ray;
+	};
 }
