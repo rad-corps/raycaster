@@ -14,7 +14,7 @@ namespace game
 		GameSceneRaycaster() = delete;
 		void update() override;
 		void fixedUpdate() override;
-		void render(SDL_Renderer* renderer) override;
+		void render() override;
 		void keyDown(SDL_Keycode) override;
 		void keyUp(SDL_Keycode) override;
 		void mouseDown(int button, int x, int y) override;

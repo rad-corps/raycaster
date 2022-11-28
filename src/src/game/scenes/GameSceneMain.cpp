@@ -1,9 +1,4 @@
 #include "GameSceneMain.h"
-#include "GameSceneTransform.h"
-#include "GameSceneUserInput.h"
-#include "GameSceneAABBCollision.h"
-#include "GameScenePolygon.h"
-#include "GameSceneMath.h"
 #include "../raycaster/GameSceneRaycaster.h"
 
 namespace
@@ -47,11 +42,8 @@ namespace game
 		
 	}
 
-	void GameSceneMain::render(SDL_Renderer* renderer)
+	void GameSceneMain::render()
 	{
-		// 4100 warning
-		renderer;
-
 		//Render current frame
 		m_impl->bgTex->render(
 			(SCREEN_WIDTH - m_impl->bgTex->getWidth()) / 2,
@@ -68,26 +60,6 @@ namespace game
 	{
 		switch (keycode)
 		{
-		case SDLK_0:
-		case SDLK_KP_0:
-			pushPendingState(std::make_unique<GameSceneTransform>(m_renderer, m_font));
-			break;
-		case SDLK_1:
-		case SDLK_KP_1:
-			pushPendingState(std::make_unique<GameSceneUserInput>(m_renderer, m_font));
-			break;
-		case SDLK_2:
-		case SDLK_KP_2:
-			pushPendingState(std::make_unique<GameSceneAABBCollision>(m_renderer, m_font));
-			break;
-		case SDLK_3:
-		case SDLK_KP_3:
-			pushPendingState(std::make_unique<GameScenePolygon>(m_renderer, m_font));
-			break;
-		case SDLK_4:
-		case SDLK_KP_4:
-			pushPendingState(std::make_unique<GameSceneMath>(m_renderer, m_font));
-			break;
 		case SDLK_5:
 		case SDLK_KP_5:
 			pushPendingState(std::make_unique<GameSceneRaycaster>(m_renderer, m_font));

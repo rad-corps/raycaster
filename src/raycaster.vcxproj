@@ -31,13 +31,8 @@
     <ClCompile Include="src\game\raycaster\RaycastEngine.cpp" />
     <ClCompile Include="src\game\raycaster\RenderEngine.cpp" />
     <ClCompile Include="src\game\raycaster\Sprite.cpp" />
-    <ClCompile Include="src\game\scenes\GameSceneAABBCollision.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMain.cpp" />
-    <ClCompile Include="src\game\scenes\GameSceneMath.cpp" />
-    <ClCompile Include="src\game\scenes\GameScenePolygon.cpp" />
     <ClCompile Include="src\game\raycaster\GameSceneRaycaster.cpp" />
-    <ClCompile Include="src\game\scenes\GameSceneTransform.cpp" />
-    <ClCompile Include="src\game\scenes\GameSceneUserInput.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -56,15 +51,10 @@
     <ClInclude Include="src\game\raycaster\RaycasterConstants.h" />
     <ClInclude Include="src\game\raycaster\RenderEngine.h" />
     <ClInclude Include="src\game\raycaster\Sprite.h" />
-    <ClInclude Include="src\game\scenes\GameSceneAABBCollision.h" />
     <ClInclude Include="src\game\scenes\GameSceneMain.h" />
-    <ClInclude Include="src\game\scenes\GameSceneMath.h" />
-    <ClInclude Include="src\game\scenes\GameScenePolygon.h" />
     <ClInclude Include="src\game\raycaster\GameSceneRaycaster.h" />
     <ClInclude Include="src\game\scenes\GameSceneRotating.h" />
     <ClInclude Include="src\game\scenes\GameSceneScaling.h" />
-    <ClInclude Include="src\game\scenes\GameSceneTransform.h" />
-    <ClInclude Include="src\game\scenes\GameSceneUserInput.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

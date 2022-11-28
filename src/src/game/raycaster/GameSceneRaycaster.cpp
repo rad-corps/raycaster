@@ -141,11 +141,8 @@ namespace game
 		if (keyStates[SDLK_s] || keyStates[SDLK_DOWN])  player.move(PI, &map);
 	}
 
-	void GameSceneRaycaster::render(SDL_Renderer* renderer)
+	void GameSceneRaycaster::render()
 	{
-		// 4100
-		renderer;
-
 		// generate wall data
 		const std::vector<ColumnRenderData>& crd = m_impl->raycastEngine.generateWallRenderData(m_impl->player.transform, &map, &m_impl->wallTexture);
 		

@@ -88,7 +88,7 @@ int main(int argc, char* args[])
 		}
 		else
 		{
-			gameState->render(renderer);
+			gameState->render();
 		}
 
 		//Update screen
