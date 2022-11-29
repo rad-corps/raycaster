@@ -97,7 +97,7 @@ namespace game
 					4  // cols
 				)
 			}
-			, enemySprite{ renderer, enemyAnimation.get(), math::Transform{math::Vec2{50.f, 70.f}, 0.f}}
+			, enemySprite{ enemyAnimation.get(), math::Transform{math::Vec2{50.f, 70.f}, 0.f}}
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer }
 		{
@@ -150,7 +150,7 @@ namespace game
 		m_impl->m_renderEngine.RenderWalls(crd);
 
 		// render sprites
-		m_impl->enemySprite.render(m_impl->player.transform);
+		m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, m_impl->enemySprite);
 
 		if (m_impl->showTopDown)
 		{
