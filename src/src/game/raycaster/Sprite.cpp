@@ -3,6 +3,7 @@
 
 namespace game
 {
+	// TODO: move this to RenderEngine
 	void Sprite::render(const math::Transform& povTransform) const
 	{
 		// find angle from player to enemy

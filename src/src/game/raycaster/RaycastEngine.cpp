@@ -47,7 +47,7 @@ namespace game
 		for (int column = 0; column < COLUMNS; ++column)
 		{
 			// px is what % across screen?
-			const float pxPerc = screenColumnNumber / (float)SCREEN_WIDTH;
+			const float pxPerc = (float)screenColumnNumber / (float)SCREEN_WIDTH;
 
 			// calculate the angle to raycast based on the x screen position
 			const float angle = pxPerc * FOV + FOV_OFFSET;

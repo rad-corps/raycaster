@@ -19,7 +19,6 @@ namespace game
 		};
 
 		math::Vec2 getOffset(float angle, float distance) const;
-		void render(SDL_Renderer* renderer);
 		void rotate(RotateDirection dir);
 		void move(float relativeAngle, const GameMap* map);
 

@@ -34,21 +34,6 @@ namespace game
 		return math::Vec2{ cos(angle) * distance, sin(angle) * distance };
 	}
 
-	// TODO: move this to some map drawing class
-	void Player::render(SDL_Renderer* renderer)
-	{
-		// draw the player (for the top down map)
-		constexpr int playerDiameter = 4;
-		const SDL_Rect r{ 
-			(int)transform.pos.x * TOP_DOWN_SCALE - playerDiameter / 2
-			,(int)transform.pos.y * TOP_DOWN_SCALE - playerDiameter / 2
-			,playerDiameter
-			,playerDiameter 
-		};
-		SDL_SetRenderDrawColor(renderer, 100, 200, 0, 0xFF);
-		SDL_RenderFillRect(renderer, &r);
-	}
-
 	void Player::rotate(RotateDirection dir)
 	{
 		if (dir == RotateDirection::Clockwise)

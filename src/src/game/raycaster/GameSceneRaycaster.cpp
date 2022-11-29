@@ -158,11 +158,6 @@ namespace game
 		}
 	}
 	
-	void GameSceneRaycaster::mouseDown(int button, int x, int y)
-	{
-		button; x; y;
-	}
-
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
 	{
 		m_impl->keyStates[keycode] = true;

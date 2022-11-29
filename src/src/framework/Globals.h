@@ -1,21 +1,18 @@
 #pragma once
 
-#pragma warning( push )
+// warning C4514: 'SimplePerfCounter::Start': unreferenced inline function has been removed
+#pragma warning( disable: 4515 )
 
-#pragma warning( disable: 26812 26819 4201 )
-
-#include "SDL.h"
-#include "SDL_log.h"
-#include "SDL_mouse.h"
-#include "SDL_ttf.h"
-#include "SDL_image.h"
+#include <SDL.h>
+#include <SDL_log.h>
+#include <SDL_mouse.h>
+#include <SDL_ttf.h>
+#include <SDL_image.h>
 #include <string>
 
 #include <chrono>
 #include <sstream>
 #include <iomanip>
-
-#pragma warning( pop )
 
 constexpr int SCREEN_WIDTH = 1920;
 constexpr int CENTER_X = SCREEN_WIDTH / 2;
@@ -66,7 +63,8 @@ struct SimplePerfCounter
 	}
 	double StopMs()
 	{
-		return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000.0;
+		double microseconds = (double)(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count());
+		return microseconds / 1000.0;
 	}
 	std::string StopFPS()
 	{

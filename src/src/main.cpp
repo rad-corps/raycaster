@@ -77,7 +77,7 @@ int main(int argc, char* args[])
 			}
 		}
 
-		// clear screen
+		// clear screen before drawing
 		SDL_SetRenderDrawColor(renderer, 60, 60, 72, 0xFF);
 		SDL_RenderClear(renderer);
 
@@ -88,6 +88,7 @@ int main(int argc, char* args[])
 		}
 		else
 		{
+			// all drawing should happen here
 			gameState->render();
 		}
 
@@ -97,7 +98,7 @@ int main(int argc, char* args[])
 		// show fps
 		global::Global::renderMonospaceText("fps:   " + fps, SCREEN_WIDTH - 160, 0);
 
-
+		// swap the framebuffer
 		SDL_RenderPresent(renderer);
 		time2 = std::chrono::high_resolution_clock::now();
 		deltaTimeMs += std::chrono::duration_cast<std::chrono::microseconds>(time2 - time1).count() / 1000.0;

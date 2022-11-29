@@ -17,7 +17,6 @@ namespace game
 		void render() override;
 		void keyDown(SDL_Keycode) override;
 		void keyUp(SDL_Keycode) override;
-		void mouseDown(int button, int x, int y) override;
 
 	private:
 		struct Pimpl;
