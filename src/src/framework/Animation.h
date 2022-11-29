@@ -40,6 +40,18 @@ namespace rcgf
 			SDL_Rect* dstRect
 		);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="animIdx"></param>
+		/// <param name="columnNum">relative x coordinate strip</param>
+		/// <param name="dstRect"></param>
+		void render(
+			int animIdx,
+			int columnNum,
+			SDL_Rect* dstRect
+		);
+
 	private:
 		std::unique_ptr<Texture> m_texture;
 		int m_pxSpriteWidth;

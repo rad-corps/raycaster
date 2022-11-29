@@ -20,9 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\framework\Animation.cpp" />
-    <ClCompile Include="src\framework\Collision.cpp" />
     <ClCompile Include="src\framework\RCGFMath.cpp" />
-    <ClCompile Include="src\framework\Polygon.cpp" />
     <ClCompile Include="src\framework\Texture.cpp" />
     <ClCompile Include="src\framework\Globals.cpp" />
     <ClCompile Include="src\framework\IGameScene.cpp" />
@@ -30,18 +28,13 @@
     <ClCompile Include="src\game\raycaster\Player.cpp" />
     <ClCompile Include="src\game\raycaster\RaycastEngine.cpp" />
     <ClCompile Include="src\game\raycaster\RenderEngine.cpp" />
-    <ClCompile Include="src\game\raycaster\Sprite.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMain.cpp" />
     <ClCompile Include="src\game\raycaster\GameSceneRaycaster.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\framework\Animation.h" />
-    <ClInclude Include="src\framework\Collision.h" />
-    <ClInclude Include="src\framework\Line.h" />
     <ClInclude Include="src\framework\RCGFMath.h" />
-    <ClInclude Include="src\framework\MeanTimer.h" />
-    <ClInclude Include="src\framework\Polygon.h" />
     <ClInclude Include="src\framework\Texture.h" />
     <ClInclude Include="src\framework\Globals.h" />
     <ClInclude Include="src\framework\IGameScene.h" />

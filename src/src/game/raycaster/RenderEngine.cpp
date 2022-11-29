@@ -98,15 +98,15 @@ namespace game
 			const float screenYBottomOfSprite = ((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / distanceToSprite) + CENTER_Y;
 
 			//find the height of the sprite
-			const int spriteHeight = static_cast<int>(MAP_CELL_PX / distanceToSprite * DIST_PROJECTION_PLANE);
+			const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / distanceToSprite * DIST_PROJECTION_PLANE);
 
 			// TODO: calculate this based on angle between player and sprite
 			const int animID = 0;
 			SDL_Rect dstRect;
-			dstRect.h = spriteHeight;
-			dstRect.w = spriteHeight;
-			dstRect.x = (int)screenX - spriteHeight / 2;
-			dstRect.y = (int)screenYBottomOfSprite - spriteHeight;
+			dstRect.h = screenSpaceSpriteHeight;
+			dstRect.w = screenSpaceSpriteHeight;
+			dstRect.x = (int)screenX - screenSpaceSpriteHeight / 2;
+			dstRect.y = (int)screenYBottomOfSprite - screenSpaceSpriteHeight;
 			sprite.m_spritesheet->render(animID, &dstRect);
 		}
 	}
