@@ -31,5 +31,6 @@ namespace game
 		SDL_Rect srcRect;
 		SDL_Rect dstRect;
 		Line ray;
+		float distance;
 	};
 }

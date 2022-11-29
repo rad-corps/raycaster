@@ -2,7 +2,7 @@
 
 namespace game
 {
-	void RenderEngine::RenderWalls(const std::vector<ColumnRenderData>& crdVec)
+	void RenderEngine::RenderWalls()
 	{
 		for (const ColumnRenderData& crd : crdVec)
 		{
@@ -10,7 +10,7 @@ namespace game
 		}
 	}
 
-	void RenderEngine::RenderTopDownMap(const game::GameMap& map, const std::vector<ColumnRenderData>& crdVec, const math::Transform& pov, const math::Transform& refTransform, bool showRays)
+	void RenderEngine::RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, const math::Transform& refTransform, bool showRays)
 	{
 		// draw the map
 		SDL_SetRenderDrawColor(m_renderer, 0, 128, 0, 0xFF);

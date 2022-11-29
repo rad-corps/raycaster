@@ -204,7 +204,7 @@ namespace game
 		}
 
 		ColumnRenderData ret;
-
+		ret.distance = distance;
 		ret.columnTexture = wallTexture;
 		ret.srcRect = SDL_Rect{ (int)positionAlongWall,0,1,WALL_TEXTURE_SZ };
 		ret.ray.start.x = (int)x;

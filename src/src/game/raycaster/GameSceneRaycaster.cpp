@@ -73,8 +73,8 @@ namespace game
 		std::unique_ptr<rcgf::Animation> enemyAnimation;
 		game::Sprite enemySprite;
 		SDL_Renderer* m_renderer;
-		RenderEngine m_renderEngine;
 		RaycastEngine raycastEngine;
+		RenderEngine m_renderEngine;
 		
 		std::map<SDL_Keycode, bool> keyStates= {
 			{SDLK_w, false},
@@ -99,7 +99,7 @@ namespace game
 			}
 			, enemySprite{ enemyAnimation.get(), math::Transform{math::Vec2{50.f, 70.f}, 0.f}}
 			, m_renderer{ renderer }
-			, m_renderEngine{ renderer }
+			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
 		{
 			wallTexture.printDebugInfo();
 		}
@@ -144,17 +144,17 @@ namespace game
 	void GameSceneRaycaster::render()
 	{
 		// generate wall data
-		const std::vector<ColumnRenderData>& crd = m_impl->raycastEngine.generateWallRenderData(m_impl->player.transform, &map, &m_impl->wallTexture);
+		m_impl->raycastEngine.generateWallRenderData(m_impl->player.transform, &map, &m_impl->wallTexture);
 		
 		// render walls
-		m_impl->m_renderEngine.RenderWalls(crd);
+		m_impl->m_renderEngine.RenderWalls();
 
 		// render sprites
 		m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, m_impl->enemySprite);
 
 		if (m_impl->showTopDown)
 		{
-			m_impl->m_renderEngine.RenderTopDownMap(map, crd, m_impl->player.transform, m_impl->enemySprite.m_transform, m_impl->showRays);
+			m_impl->m_renderEngine.RenderTopDownMap(map, m_impl->player.transform, m_impl->enemySprite.m_transform, m_impl->showRays);
 		}
 	}
 	
