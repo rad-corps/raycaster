@@ -26,6 +26,11 @@ namespace
 	//}
 }
 
+void SDL_SetRenderDrawColor(SDL_Renderer* renderer, Color color)
+{
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+}
+
 namespace global
 {
 	Global instance;

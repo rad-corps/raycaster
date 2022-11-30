@@ -20,7 +20,7 @@ namespace rcgf
 		Animation(Animation&&) = default;
 		Animation& operator=(Animation&&) = default;
 		
-		// TODO: unsigned params
+		// TODO: Animation should not have a unique pointer to Texture. Raw pointer is fine. Make this light weight and copyable.
 		Animation(
 			std::unique_ptr<Texture>, 
 			int pxSpriteWidth,
@@ -28,6 +28,13 @@ namespace rcgf
 			int rows,
 			int cols
 		);
+
+		Color getPixelColor(int animIdx, int x, int y);
+
+		Texture* getTexture()
+		{
+			return m_texture.get();
+		}
 
 		void render(
 			int animIdx, 
@@ -37,18 +44,6 @@ namespace rcgf
 
 		void render(
 			int animIdx,
-			SDL_Rect* dstRect
-		);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="animIdx"></param>
-		/// <param name="columnNum">relative x coordinate strip</param>
-		/// <param name="dstRect"></param>
-		void render(
-			int animIdx,
-			int columnNum,
 			SDL_Rect* dstRect
 		);
 

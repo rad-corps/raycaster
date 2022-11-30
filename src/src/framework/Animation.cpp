@@ -65,33 +65,19 @@ namespace rcgf
 
 		m_texture->render2(&clip, dstRect);
 	}
-
-	void Animation::render(int animIdx,
-		int columnNum,
-		SDL_Rect* dstRect
-	)
+	
+	Color Animation::getPixelColor(int animIdx, int x, int y)
 	{
-		// discover row and col
 		const int col = animIdx % m_cols;
 		const int row = animIdx / m_cols;
 
 		// discover x position (col)
-		const int spriteSheetX = col * m_pxSpriteWidth;
+		const int spriteSheetX = (col * m_pxSpriteWidth) + x;
 
 		// discover y position (row)
-		const int spriteSheetY = row * m_pxSpriteHeight;
+		const int spriteSheetY = (row * m_pxSpriteHeight) + y;
 
-		SDL_Rect srcRect{};
-		srcRect.x = spriteSheetX;
-		srcRect.y = spriteSheetY;
-		srcRect.w = m_pxSpriteWidth;
-		srcRect.h = m_pxSpriteHeight;
-
-		// offset clip.x and clip.w by the column num
-		srcRect.x += columnNum;
-		srcRect.w = 1;
-
-		m_texture->render2(&srcRect, dstRect);
+		return m_texture->getPixelColor(spriteSheetX, spriteSheetY);
 	}
 
 }

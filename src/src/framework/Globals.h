@@ -49,6 +49,9 @@ struct Color
 	Uint8 a;
 };
 
+// wrapper for SDL's SetRenderDrawColor
+void SDL_SetRenderDrawColor(SDL_Renderer* renderer, Color color);
+
 struct Line
 {
 	SDL_Point start;
