@@ -88,7 +88,8 @@ namespace game
 			{SDLK_LCTRL, false},
 		};
 		Pimpl(SDL_Renderer* renderer)
-			: wallTexture{ renderer, "./img/wall_64.png" }
+			: player{math::Transform{36.7974f, 142.176f, 5.81318f}}
+			, wallTexture{ renderer, "./img/wall_64.png" }
 			, enemyAnimation{std::make_unique<rcgf::Animation>(
 					std::make_unique<rcgf::Texture>(renderer, "img/Cabron_360.png"),
 					64, // sprite width
@@ -97,7 +98,7 @@ namespace game
 					4  // cols
 				)
 			}
-			, enemySprite{ enemyAnimation.get(), math::Transform{math::Vec2{50.f, 70.f}, 0.f}}
+			, enemySprite{ enemyAnimation.get(), math::Transform{85.4074f, 122.237f, 2.71314f}}
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
 		{
@@ -193,6 +194,10 @@ namespace game
 			{
 				m_impl->showRays = !m_impl->showRays;
 			}
+			break;
+		case SDLK_SPACE:
+			const math::Transform& t = m_impl->player.transform;
+			std::cout << t.pos.x << ", " << t.pos.y << " - " << t.angle << std::endl;
 			break;
 		}
 

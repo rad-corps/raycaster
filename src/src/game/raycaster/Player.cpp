@@ -8,8 +8,6 @@ using math::PI;
 
 namespace
 {
-	constexpr float X_START_POS = 20.f;
-	constexpr float Y_START_POS = 64.f;
 	constexpr float MOVEMENT_SPEED = 0.25f;
 	constexpr float ROTATION_SPEED = 0.01f;
 	//constexpr float ROTATION_SPEED = 0.001f;
@@ -18,11 +16,11 @@ namespace
 
 namespace game
 {
-	Player::Player()
-		: transform{ math::Vec2{ X_START_POS, Y_START_POS}, 0.f }
+	Player::Player(const math::Transform& startingPos)
+		: transform{ startingPos }
 		, wallCollisionBox{ 
-			static_cast<int>(X_START_POS) - HALF_WALL_COLLISION_BOX_SZ,
-			static_cast<int>(Y_START_POS) - HALF_WALL_COLLISION_BOX_SZ,
+			static_cast<int>(transform.pos.x) - HALF_WALL_COLLISION_BOX_SZ,
+			static_cast<int>(transform.pos.y) - HALF_WALL_COLLISION_BOX_SZ,
 			HALF_WALL_COLLISION_BOX_SZ * 2,
 			HALF_WALL_COLLISION_BOX_SZ * 2
 		}

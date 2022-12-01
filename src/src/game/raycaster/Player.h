@@ -10,7 +10,8 @@ namespace game
 	class Player
 	{
 	public:
-		Player();
+		Player(const math::Transform& startingPos);
+		Player() = delete;
 
 		enum class RotateDirection
 		{

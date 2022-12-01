@@ -42,5 +42,6 @@ namespace math
 		math::Vec2 pos;
 		float angle;
 		Transform(math::Vec2 pos, float angle) : pos{ pos }, angle{ angle }{}
+		Transform(float x, float y, float angle) : pos{ x, y }, angle{ angle }{}
 	};
 }

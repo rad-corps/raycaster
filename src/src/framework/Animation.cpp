@@ -42,10 +42,7 @@ namespace rcgf
 		m_texture->render(x, y, &clip);
 	}
 
-	void Animation::render(
-		int animIdx,
-		SDL_Rect* dstRect
-	)
+	void Animation::render(int animIdx,SDL_Rect* dstRect)
 	{
 		// discover row and col
 		const int col = animIdx % m_cols;
@@ -62,6 +59,27 @@ namespace rcgf
 		clip.y = spriteSheetY;
 		clip.w = m_pxSpriteWidth;
 		clip.h = m_pxSpriteHeight;
+
+		m_texture->render2(&clip, dstRect);
+	}
+
+	void Animation::render(int animIdx, SDL_Rect* srcRect, SDL_Rect* dstRect)
+	{
+		// discover row and col
+		const int col = animIdx % m_cols;
+		const int row = animIdx / m_cols;
+
+		// discover x position (col)
+		const int spriteSheetX = col * m_pxSpriteWidth + srcRect->x;
+
+		// discover y position (row)
+		const int spriteSheetY = row * m_pxSpriteHeight + srcRect->y;
+
+		SDL_Rect clip{};
+		clip.x = spriteSheetX;
+		clip.y = spriteSheetY;
+		clip.w = srcRect->w;
+		clip.h = srcRect->h;
 
 		m_texture->render2(&clip, dstRect);
 	}
