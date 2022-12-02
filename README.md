@@ -24,10 +24,10 @@ CTRL+Arrows   | Strafe
     - [ ] RaycastEngine - Calculate wall and floor positions. Renders floors, but GameSceneRaycaster currently renders walls (even though they are calculated here)
     - [ ] Create a unified place for rendering
   - [x] Add a Sprite component (POC currently lives in GameSceneRaycaster)
-    - [x] don't draw sprites behind walls~~
+    - [x] don't draw sprites behind walls
       - [x]consider sprites partially covered by walls
     - [ ] animate sprites based on viewing angle (sides and back of enemies)
-    - [x] Sprite scaling~~
+    - [x] Sprite scaling
     - [ ] Fisheye correction
     - [ ] Sort sprites furthest to nearest (so closest sprites are drawn last)
     - [ ] bug: sprites clipped too early off LHS of screen
