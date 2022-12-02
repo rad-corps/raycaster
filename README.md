@@ -17,32 +17,32 @@ Arrows        | Move/rotate player
 CTRL+Arrows   | Strafe
 
 ### TODO
-* Fix project directory structure ./raycaster/src/game/src/game is not intuitive
-* Better application structure
-  * Currently two main components. It's not really clear where the responsibilities lie between these. 
-    * GameSceneRaycaster - Outer game loop. Proof of concept code also ends up in here.
-    * RaycastEngine - Calculate wall and floor positions. Renders floors, but GameSceneRaycaster currently renders walls (even though they are calculated here)
-    * Create a unified place for rendering
-  * ~~Add a Sprite component (POC currently lives in GameSceneRaycaster)~~
-    * ~~don't draw sprites behind walls~~
-      * ~~consider sprites partially covered by walls~~
-    * animate sprites based on viewing angle (sides and back of enemies)
-    * ~~Sprite scaling~~
-    * Fisheye correction
-    * Sort sprites furthest to nearest (so closest sprites are drawn last)
-    * bug: sprites clipped too early off LHS of screen
-  * Add a cordoned off section for proof of concepts
-* Maps
-  * Load a map from disk
-    * import from some pre-existing filetype (Tiled editor maybe?)
-  * Define:
-    * wall tiles
-    * floor tiles
-    * enemy types and positions
-    * pickup types and positions
-    * rules?
-  * Randomly generate a map
-  * Move any map specifics out of GameSceneRaycaster
-* Raycasting
-  * Go back to software/pixel raycasting? The performance of rendering gpu texture column strips may not be worth the issues it presents
-* Bug: FixedUpdate attempts to catch up if FPS target is not being reached
+- [ ] Fix project directory structure ./raycaster/src/game/src/game is not intuitive
+- [ ] Better application structure
+  - [ ] Currently two main components. It's not really clear where the responsibilities lie between these. 
+    - [ ] GameSceneRaycaster - Outer game loop. Proof of concept code also ends up in here.
+    - [ ] RaycastEngine - Calculate wall and floor positions. Renders floors, but GameSceneRaycaster currently renders walls (even though they are calculated here)
+    - [ ] Create a unified place for rendering
+  - [x] Add a Sprite component (POC currently lives in GameSceneRaycaster)
+    - [x] don't draw sprites behind walls~~
+      - [x]consider sprites partially covered by walls
+    - [ ] animate sprites based on viewing angle (sides and back of enemies)
+    - [x] Sprite scaling~~
+    - [ ] Fisheye correction
+    - [ ] Sort sprites furthest to nearest (so closest sprites are drawn last)
+    - [ ] bug: sprites clipped too early off LHS of screen
+  - [ ] Add a cordoned off section for proof of concepts
+- [ ] Maps
+  - [ ] Load a map from disk
+    - [ ] import from some pre-existing filetype (Tiled editor maybe?)
+  - [ ] Define:
+    - [ ] wall tiles
+    - [ ] floor tiles
+    - [ ] enemy types and positions
+    - [ ] pickup types and positions
+    - [ ] rules?
+  - [ ] Randomly generate a map
+  - [ ] Move any map specifics out of GameSceneRaycaster
+- [ ] Raycasting
+  - [ ] ~~Go back to software/pixel raycasting? The performance of rendering gpu texture column strips may not be worth the issues it presents~~
+- [ ] Bug: FixedUpdate attempts to catch up if FPS target is not being reached
