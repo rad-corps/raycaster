@@ -56,6 +56,7 @@ namespace
 		bool rhsObstructed = crdVec[rBound].distance < distanceToSprite;
 
 		// if both lhs and rhs are not obstructed, assume no obstruction (I think this checks out, as long as our sprite sizes are <= wallsize)
+		// TODO: there may be partial obstruction that doesn't cover the edges
 		if (!lhsObstructed && !rhsObstructed)
 		{
 			return RectContainer{ 
@@ -65,6 +66,7 @@ namespace
 		}
 
 		// if both sides obstructed, assume it is completely obstructed
+		// TODO: it may not be completely obstructed.
 		if (lhsObstructed && rhsObstructed)
 		{
 			return RectContainer{};
@@ -93,6 +95,36 @@ namespace
 							spritesheetX,
 							0,
 							spriteDims - spritesheetX,
+							spriteDims
+						}
+					};
+				}
+			}
+		}
+		else if (rhsObstructed)
+		{
+			//march backwards until no obstruction then snip the screenSpaceSprite rect
+			for (int x = rBound; x >= lBound; --x)
+			{
+				const game::ColumnRenderData& crd = crdVec[x];
+				if (crd.distance > distanceToSprite)
+				{
+					const float percentSpriteDisplayed = (float)(x - lBound) / (float)screenSpaceSprite.w;
+					const float spritesheetWidth = percentSpriteDisplayed * (float)spriteDims;
+					const float screenSpaceWidth = percentSpriteDisplayed * screenSpaceSprite.w;
+
+					return RectContainer{
+
+						SDL_Rect{ // Screenspace rect
+							lBound,
+							screenSpaceSprite.y,
+							(int)screenSpaceWidth,
+							screenSpaceSprite.h
+						},
+						SDL_Rect{ // spritesheet rect
+							0,
+							0,
+							(int)spritesheetWidth,
 							spriteDims
 						}
 					};
@@ -236,8 +268,6 @@ namespace game
 				dstRect.h
 			);
 			sprite.m_spritesheet->render(animID, &spriteSheetRect, &dstRect);
-
-			//std::cout << IsObstructed(crdVec, dstRect, distanceToSprite) << std::endl;
 		}
 	}
 }

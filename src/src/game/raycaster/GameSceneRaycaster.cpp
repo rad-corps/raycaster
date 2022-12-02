@@ -72,6 +72,7 @@ namespace game
 		rcgf::Texture wallTexture;
 		std::unique_ptr<rcgf::Animation> enemyAnimation;
 		game::Sprite enemySprite;
+		game::Sprite enemySprite2;
 		SDL_Renderer* m_renderer;
 		RaycastEngine raycastEngine;
 		RenderEngine m_renderEngine;
@@ -88,7 +89,7 @@ namespace game
 			{SDLK_LCTRL, false},
 		};
 		Pimpl(SDL_Renderer* renderer)
-			: player{math::Transform{36.7974f, 142.176f, 5.81318f}}
+			: player{math::Transform{92.7399f, 150.433f, 3.91314f}}
 			, wallTexture{ renderer, "./img/wall_64.png" }
 			, enemyAnimation{std::make_unique<rcgf::Animation>(
 					std::make_unique<rcgf::Texture>(renderer, "img/Cabron_360.png"),
@@ -98,7 +99,8 @@ namespace game
 					4  // cols
 				)
 			}
-			, enemySprite{ enemyAnimation.get(), math::Transform{85.4074f, 122.237f, 2.71314f}}
+			, enemySprite{ enemyAnimation.get(), math::Transform{50.5074f, 117.181f, 0.630005f}}
+			, enemySprite2{ enemyAnimation.get(), math::Transform{85.4074f, 122.237f, 2.71314f} }
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
 		{
@@ -152,6 +154,7 @@ namespace game
 
 		// render sprites
 		m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, m_impl->enemySprite);
+		m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, m_impl->enemySprite2);
 
 		if (m_impl->showTopDown)
 		{
