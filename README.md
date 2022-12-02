@@ -23,9 +23,9 @@ CTRL+Arrows   | Strafe
     * GameSceneRaycaster - Outer game loop. Proof of concept code also ends up in here.
     * RaycastEngine - Calculate wall and floor positions. Renders floors, but GameSceneRaycaster currently renders walls (even though they are calculated here)
     * Create a unified place for rendering
-  * Add a Sprite component (POC currently lives in GameSceneRaycaster)
-    * don't draw sprites behind walls
-      * consider sprites partially covered by walls
+  * ~~Add a Sprite component (POC currently lives in GameSceneRaycaster)~~
+    * ~~don't draw sprites behind walls~~
+      * ~~consider sprites partially covered by walls~~
     * animate sprites based on viewing angle (sides and back of enemies)
     * ~~Sprite scaling~~
     * Fisheye correction
