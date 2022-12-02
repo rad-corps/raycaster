@@ -15,6 +15,11 @@
 #include <vector>
 #include "RenderEngine.h"
 
+#include <algorithm> // std::sort
+
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
+
 
 #define RENDER_DEBUG_VALUES
 
@@ -71,11 +76,10 @@ namespace game
 		bool showRays = false;
 		rcgf::Texture wallTexture;
 		std::unique_ptr<rcgf::Animation> enemyAnimation;
-		game::Sprite enemySprite;
-		game::Sprite enemySprite2;
 		SDL_Renderer* m_renderer;
 		RaycastEngine raycastEngine;
 		RenderEngine m_renderEngine;
+		std::vector<game::Sprite> spriteArray;
 		
 		std::map<SDL_Keycode, bool> keyStates= {
 			{SDLK_w, false},
@@ -99,12 +103,23 @@ namespace game
 					4  // cols
 				)
 			}
-			, enemySprite{ enemyAnimation.get(), math::Transform{50.5074f, 117.181f, 0.630005f}}
-			, enemySprite2{ enemyAnimation.get(), math::Transform{85.4074f, 122.237f, 2.71314f} }
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
 		{
+			srand((unsigned int)time(NULL));
+
 			wallTexture.printDebugInfo();
+
+			// init 100 enemy sprites
+			for (int i = 0; i < 250; ++i)
+			{
+				// what are the x/y position boundaries? 
+				// This will generate a number from 0.0 to some arbitrary float, X:
+				float x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_X_BOUNDARY));
+				float y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_Y_BOUNDARY));
+				spriteArray.emplace_back(Sprite{ enemyAnimation.get(), math::Transform{x,y,0.f} });
+			}
+
 		}
 		Pimpl() = delete;
 	};
@@ -152,13 +167,20 @@ namespace game
 		// render walls
 		m_impl->m_renderEngine.RenderWalls();
 
+		// sort sprites (closest to player last)
+		const math::Vec2 player_pos = m_impl->player.transform.pos;
+		std::sort(m_impl->spriteArray.begin(), m_impl->spriteArray.end(), [player_pos](Sprite a, Sprite b) {
+			return math::magnitude(player_pos - a.m_transform.pos) > math::magnitude(player_pos - b.m_transform.pos);
+		});
 		// render sprites
-		m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, m_impl->enemySprite);
-		m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, m_impl->enemySprite2);
+		for (const auto& sprite : m_impl->spriteArray)
+		{
+			m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, sprite);
+		}
 
 		if (m_impl->showTopDown)
 		{
-			m_impl->m_renderEngine.RenderTopDownMap(map, m_impl->player.transform, m_impl->enemySprite.m_transform, m_impl->showRays);
+			m_impl->m_renderEngine.RenderTopDownMap(map, m_impl->player.transform, math::Transform{0.f,0.f,0.f}/*m_impl->enemySprite.m_transform*/, m_impl->showRays);
 		}
 	}
 	

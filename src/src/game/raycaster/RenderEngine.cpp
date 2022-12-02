@@ -257,16 +257,16 @@ namespace game
 
 			dstRect = rectContainer.screenSpaceRect;
 			SDL_Rect spriteSheetRect = rectContainer.spriteSheetRect;
-			printf("spritesheet x:%d, y:%d, w:%d, h:%d || screenspace x:%d, y:%d, w:%d, h:%d\n",
-				spriteSheetRect.x,
-				spriteSheetRect.y,
-				spriteSheetRect.w,
-				spriteSheetRect.h,
-				dstRect.x,
-				dstRect.y,
-				dstRect.w,
-				dstRect.h
-			);
+			//printf("spritesheet x:%d, y:%d, w:%d, h:%d || screenspace x:%d, y:%d, w:%d, h:%d\n",
+			//	spriteSheetRect.x,
+			//	spriteSheetRect.y,
+			//	spriteSheetRect.w,
+			//	spriteSheetRect.h,
+			//	dstRect.x,
+			//	dstRect.y,
+			//	dstRect.w,
+			//	dstRect.h
+			//);
 			sprite.m_spritesheet->render(animID, &spriteSheetRect, &dstRect);
 		}
 	}
