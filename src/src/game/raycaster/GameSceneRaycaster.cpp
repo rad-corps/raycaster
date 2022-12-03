@@ -80,6 +80,7 @@ namespace game
 		RaycastEngine raycastEngine;
 		RenderEngine m_renderEngine;
 		std::vector<game::Sprite> spriteArray;
+		game::Sprite testSprite;
 		
 		std::map<SDL_Keycode, bool> keyStates= {
 			{SDLK_w, false},
@@ -93,7 +94,7 @@ namespace game
 			{SDLK_LCTRL, false},
 		};
 		Pimpl(SDL_Renderer* renderer)
-			: player{math::Transform{92.7399f, 150.433f, 3.91314f}}
+			: player{math::Transform{58.4994f, 149.201f, 0.0299706f}}
 			, wallTexture{ renderer, "./img/wall_64.png" }
 			, enemyAnimation{std::make_unique<rcgf::Animation>(
 					std::make_unique<rcgf::Texture>(renderer, "img/Cabron_360.png"),
@@ -105,13 +106,14 @@ namespace game
 			}
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
+			, testSprite{ enemyAnimation.get(), math::Transform{92.7399f, 150.433f, 0.f} }
 		{
 			srand((unsigned int)time(NULL));
 
 			wallTexture.printDebugInfo();
 
 			// init 100 enemy sprites
-			for (int i = 0; i < 250; ++i)
+			for (int i = 0; i < 2000; ++i)
 			{
 				// what are the x/y position boundaries? 
 				// This will generate a number from 0.0 to some arbitrary float, X:
@@ -172,15 +174,17 @@ namespace game
 		std::sort(m_impl->spriteArray.begin(), m_impl->spriteArray.end(), [player_pos](Sprite a, Sprite b) {
 			return math::magnitude(player_pos - a.m_transform.pos) > math::magnitude(player_pos - b.m_transform.pos);
 		});
-		// render sprites
-		for (const auto& sprite : m_impl->spriteArray)
-		{
-			m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, sprite);
-		}
+		//// render sprites
+		//for (const auto& sprite : m_impl->spriteArray)
+		//{
+		//	m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, sprite);
+		//}
+
+		m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, m_impl->testSprite);
 
 		if (m_impl->showTopDown)
 		{
-			m_impl->m_renderEngine.RenderTopDownMap(map, m_impl->player.transform, math::Transform{0.f,0.f,0.f}/*m_impl->enemySprite.m_transform*/, m_impl->showRays);
+			m_impl->m_renderEngine.RenderTopDownMap(map, m_impl->player.transform, m_impl->showRays);
 		}
 	}
 	
@@ -222,7 +226,7 @@ namespace game
 			break;
 		case SDLK_SPACE:
 			const math::Transform& t = m_impl->player.transform;
-			std::cout << t.pos.x << ", " << t.pos.y << " - " << t.angle << std::endl;
+			std::cout << "{" << t.pos.x << "f, " << t.pos.y << "f, " << t.angle << "f}" << std::endl;
 			break;
 		}
 

@@ -67,6 +67,14 @@ namespace math
 		return ret;
 	}
 
+	Vec2 Vec2::operator*(float scalar) const
+	{
+		Vec2 ret;
+		ret.x = x * scalar;
+		ret.y = y * scalar;
+		return ret;
+	}
+
 	float dot(const Vec2& vec1, const Vec2& vec2)
 	{
 		return vec1.x * vec2.x + vec1.y * vec2.y;

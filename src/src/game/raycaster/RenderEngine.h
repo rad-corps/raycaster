@@ -24,12 +24,14 @@ namespace game
 		{}
 
 		void RenderWalls();
-		void RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, const math::Transform& refTransform, bool showRays);
+		void RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, bool showRays);
 		void RenderSprite(const math::Transform& povTransform, const Sprite& sprite) const;
 
 	private:
 		SDL_Renderer* m_renderer;
 		const std::vector<ColumnRenderData>& crdVec;
+		
+		
 	};
 }
 

@@ -22,6 +22,7 @@ namespace math
 		Vec2& operator-=(const Vec2& rhs);
 		Vec2 operator+(const Vec2& vec1) const;
 		Vec2 operator-(const Vec2& vec1) const;
+		Vec2 operator*(float scalar) const;
 		
 	};
 

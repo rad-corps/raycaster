@@ -5,6 +5,25 @@
 
 namespace
 {
+
+	struct TopDownLine
+	{
+		TopDownLine(math::Vec2 point, math::Vec2 velocity, Color color) :point{ point }, velocity{ velocity }, color{ color }{}
+		math::Vec2 point;
+		math::Vec2 velocity;
+		Color color;
+	};
+	std::vector<TopDownLine> topDownLines;
+	void RegisterTransitiveTopDownData(TopDownLine tdl)
+	{
+		topDownLines.push_back(tdl);
+	}
+	void ResetTransitiveTopDownData()
+	{
+		topDownLines.clear();
+	}
+
+
 	bool IsObstructed(const std::vector<game::ColumnRenderData>& crdVec, const SDL_Rect& screenSpaceSprite, float distanceToSprite)
 	{
 		const int lBound = std::max(screenSpaceSprite.x, 0);
@@ -142,13 +161,16 @@ namespace game
 {
 	void RenderEngine::RenderWalls()
 	{
+		// hacky to do this here. but we need to guaruntee it is called every frame.
+		ResetTransitiveTopDownData();
+
 		for (const ColumnRenderData& crd : crdVec)
 		{
 			crd.columnTexture->render2(&crd.srcRect, &crd.dstRect);
 		}
 	}
 
-	void RenderEngine::RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, const math::Transform& refTransform, bool showRays)
+	void RenderEngine::RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, bool showRays)
 	{
 		// draw the map
 		SDL_SetRenderDrawColor(m_renderer, 0, 128, 0, 0xFF);
@@ -181,7 +203,19 @@ namespace game
 		}
 
 		// draw line from player to enemy
-		SDL_RenderDrawLine(m_renderer, (int)pov.pos.x * TOP_DOWN_SCALE, (int)pov.pos.y * TOP_DOWN_SCALE, (int)refTransform.pos.x * TOP_DOWN_SCALE, (int)refTransform.pos.y * TOP_DOWN_SCALE);
+		for (auto& tdl : topDownLines)
+		{
+			SDL_SetRenderDrawColor(m_renderer, tdl.color);
+			SDL_RenderDrawLineF(
+			m_renderer, 
+				tdl.point.x * TOP_DOWN_SCALE, 
+				tdl.point.y * TOP_DOWN_SCALE, 
+				(tdl.point.x + tdl.velocity.x) * TOP_DOWN_SCALE,
+				(tdl.point.y + tdl.velocity.y) * TOP_DOWN_SCALE
+			);
+		}
+		
+		
 		const math::Vec2 povForwardVec = math::angle_to_vec(pov.angle);
 		math::Vec2 scaledPlayerDir = math::scale(povForwardVec, 100.f);
 		SDL_SetRenderDrawColor(m_renderer, 255, 100, 0, 0xFF);
@@ -267,6 +301,24 @@ namespace game
 			//	dstRect.w,
 			//	dstRect.h
 			//);
+
+			// find the forward vector for the enemy
+			const math::Vec2 spriteForwardVec = math::angle_to_vec(sprite.m_transform.angle);
+
+			// register vector between player and enemy
+			RegisterTransitiveTopDownData(TopDownLine{ playerPos, playerToSprite, Color{255,255,255,255} });
+
+			// register vector for enemy forward
+			RegisterTransitiveTopDownData(TopDownLine{ sprite.m_transform.pos, math::angle_to_vec(sprite.m_transform.angle) * 100, Color{200,0,230,255} });
+
+			// register vector for player forward
+
+			// find the angle between player forward vec and enemy forward vec
+			const float angleBetweenPlayerForwardAndEnemyForward = math::angle(playerToSprite, spriteForwardVec);
+
+			printf("angle: %f\n", angleBetweenPlayerForwardAndEnemyForward);
+
+
 			sprite.m_spritesheet->render(animID, &spriteSheetRect, &dstRect);
 		}
 	}
