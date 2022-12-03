@@ -18,18 +18,18 @@ CTRL+Arrows   | Strafe
 
 ### TODO
 - [ ] Fix project directory structure ./raycaster/src/game/src/game is not intuitive
-- [ ] Better application structure
-  - [ ] Currently two main components. It's not really clear where the responsibilities lie between these. 
-    - [ ] GameSceneRaycaster - Outer game loop. Proof of concept code also ends up in here.
-    - [ ] RaycastEngine - Calculate wall and floor positions. Renders floors, but GameSceneRaycaster currently renders walls (even though they are calculated here)
-    - [ ] Create a unified place for rendering
+- [x] Better application structure
+  - [x] Currently two main components. It's not really clear where the responsibilities lie between these. 
+    - [x] GameSceneRaycaster - much simpler
+    - [x] RaycastEngine - Now only does raycast calculations (no rendering)
+    - [x] Create a unified place for rendering
   - [x] Add a Sprite component (POC currently lives in GameSceneRaycaster)
     - [x] don't draw sprites behind walls
       - [x]consider sprites partially covered by walls
     - [ ] animate sprites based on viewing angle (sides and back of enemies)
     - [x] Sprite scaling
     - [ ] Fisheye correction
-    - [ ] Sort sprites furthest to nearest (so closest sprites are drawn last)
+    - [x] Sort sprites furthest to nearest (so closest sprites are drawn last)
     - [ ] bug: sprites clipped too early off LHS of screen
   - [ ] Add a cordoned off section for proof of concepts
 - [ ] Maps
@@ -44,5 +44,5 @@ CTRL+Arrows   | Strafe
   - [ ] Randomly generate a map
   - [ ] Move any map specifics out of GameSceneRaycaster
 - [ ] Raycasting
-  - [ ] ~~Go back to software/pixel raycasting? The performance of rendering gpu texture column strips may not be worth the issues it presents~~
+  - [x] ~~Go back to software/pixel raycasting? The performance of rendering gpu texture column strips may not be worth the issues it presents~~
 - [ ] Bug: FixedUpdate attempts to catch up if FPS target is not being reached
