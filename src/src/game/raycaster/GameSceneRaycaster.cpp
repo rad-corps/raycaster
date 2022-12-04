@@ -97,7 +97,7 @@ namespace game
 			: player{math::Transform{58.4994f, 149.201f, 0.0299706f}}
 			, wallTexture{ renderer, "./img/wall_64.png" }
 			, enemyAnimation{std::make_unique<rcgf::Animation>(
-					std::make_unique<rcgf::Texture>(renderer, "img/Cabron_360.png"),
+					std::make_unique<rcgf::Texture>(renderer, "img/CabronTileset.png"),
 					64, // sprite width
 					64, // sprite height
 					1,  // rows
@@ -113,7 +113,7 @@ namespace game
 			wallTexture.printDebugInfo();
 
 			// init 100 enemy sprites
-			for (int i = 0; i < 2000; ++i)
+			for (int i = 0; i < RANDOM_ENEMY_NUM; ++i)
 			{
 				// what are the x/y position boundaries? 
 				// This will generate a number from 0.0 to some arbitrary float, X:

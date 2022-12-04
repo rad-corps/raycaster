@@ -85,6 +85,13 @@ namespace math
 		return acosf(dot(vec1, vec2) / (magnitude(vec1) * magnitude(vec2)));
 	}
 
+	float angle2(const Vec2& vec1, const Vec2& vec2)
+	{
+		float ret = atan2(vec2.y, vec2.x) - atan2(vec1.y, vec1.x);
+		ret = ret < 0 ? ret + 2 * PI : ret;
+		return ret;
+	}
+
 	float cross(const Vec2& vec1, const Vec2& vec2)
 	{
 		return (vec1.x * vec2.y) - (vec1.y * vec2.x);

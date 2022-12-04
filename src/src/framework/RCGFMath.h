@@ -31,6 +31,7 @@ namespace math
 	float cross(const Vec2& vec1, const Vec2& vec2);
 	float dot(const Vec2& vec1, const Vec2& Vec2);
 	float angle(const Vec2& vec1, const Vec2& Vec2);
+	float angle2(const Vec2& vec1, const Vec2& Vec2);
 	float magnitude(const Vec2& vec);
 	Mat2 invert(const Mat2& mat);
 	Mat2 scale(const Mat2& mat, float scalar);

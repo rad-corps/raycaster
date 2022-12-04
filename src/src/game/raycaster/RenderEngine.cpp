@@ -5,6 +5,7 @@
 
 namespace
 {
+	using math::PI;
 
 	struct TopDownLine
 	{
@@ -23,6 +24,30 @@ namespace
 		topDownLines.clear();
 	}
 
+	int CalculateSpriteAnimationID(float angle)
+	{
+		// 0: front, 1: right, 2: back, 3: left
+
+		if (angle >= 7 * PI / 4 || angle <= PI / 4)
+		{
+			return 2;
+		}
+		if (angle >= PI / 4 && angle <= 3 * PI / 4)
+		{
+			return 3;
+		}
+		if (angle >= 3 * PI / 4 && angle <= 5 * PI / 4)
+		{
+			return 0;
+		}
+		if (angle >= 5 * PI / 4 && angle <= 7 * PI / 4)
+		{
+			return 1;
+		}
+
+		assert(false);
+		return -1;
+	}
 
 	bool IsObstructed(const std::vector<game::ColumnRenderData>& crdVec, const SDL_Rect& screenSpaceSprite, float distanceToSprite)
 	{
@@ -272,9 +297,6 @@ namespace game
 			//find the height of the sprite
 			const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / distanceToSprite * DIST_PROJECTION_PLANE);
 
-			// TODO: calculate this based on angle between player and sprite
-			const int animID = 0;
-
 			SDL_Rect dstRect;
 			dstRect.h = screenSpaceSpriteHeight;
 			dstRect.w = screenSpaceSpriteHeight;
@@ -291,16 +313,6 @@ namespace game
 
 			dstRect = rectContainer.screenSpaceRect;
 			SDL_Rect spriteSheetRect = rectContainer.spriteSheetRect;
-			//printf("spritesheet x:%d, y:%d, w:%d, h:%d || screenspace x:%d, y:%d, w:%d, h:%d\n",
-			//	spriteSheetRect.x,
-			//	spriteSheetRect.y,
-			//	spriteSheetRect.w,
-			//	spriteSheetRect.h,
-			//	dstRect.x,
-			//	dstRect.y,
-			//	dstRect.w,
-			//	dstRect.h
-			//);
 
 			// find the forward vector for the enemy
 			const math::Vec2 spriteForwardVec = math::angle_to_vec(sprite.m_transform.angle);
@@ -311,13 +323,8 @@ namespace game
 			// register vector for enemy forward
 			RegisterTransitiveTopDownData(TopDownLine{ sprite.m_transform.pos, math::angle_to_vec(sprite.m_transform.angle) * 100, Color{200,0,230,255} });
 
-			// register vector for player forward
-
-			// find the angle between player forward vec and enemy forward vec
-			const float angleBetweenPlayerForwardAndEnemyForward = math::angle(playerToSprite, spriteForwardVec);
-
-			printf("angle: %f\n", angleBetweenPlayerForwardAndEnemyForward);
-
+			// calculate animID
+			int animID = CalculateSpriteAnimationID(math::angle2(playerToSprite, spriteForwardVec));
 
 			sprite.m_spritesheet->render(animID, &spriteSheetRect, &dstRect);
 		}

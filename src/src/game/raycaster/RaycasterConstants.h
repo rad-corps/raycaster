@@ -27,6 +27,8 @@ namespace game
 	constexpr float START_ANGLE = 0.f;
 	constexpr int TOP_DOWN_SCALE = 2;
 
+	constexpr int RANDOM_ENEMY_NUM = 50;
+
 	struct ColumnRenderData
 	{
 		rcgf::Texture* columnTexture;
