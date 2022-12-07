@@ -29,6 +29,8 @@ namespace game
 
 	constexpr int RANDOM_ENEMY_NUM = 50;
 
+	constexpr float ACTOR_VELOCITY = 0.15f;
+
 	struct ColumnRenderData
 	{
 		rcgf::Texture* columnTexture;

@@ -19,14 +19,15 @@ namespace game
 	{
 	public:
 		AI_WaypointFollow(std::vector<math::Vec2> waypointPositions)
-			: waypointPositions{ waypointPositions }
+			: m_waypointPositions{ waypointPositions }
 		{}
 		~AI_WaypointFollow() {}
 
 		std::unique_ptr<AI> Update(Actor& actor) override;
 	
 	private:
-		std::vector<math::Vec2> waypointPositions;
+		std::vector<math::Vec2> m_waypointPositions;
+		int m_waypointIndex = 0;
 	};
 
 	class AI_Empty : public AI
