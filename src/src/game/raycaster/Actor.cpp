@@ -8,5 +8,14 @@ namespace game
 		, m_transform{ transform }
 		, m_ai{ std::move(ai) }
 	{}
+
+	void Actor::Update()
+	{
+		std::unique_ptr<AI> newAI = m_ai->Update(*this);
+		if (newAI)
+		{
+			m_ai = std::move(newAI);
+		}
+	}
 }
 

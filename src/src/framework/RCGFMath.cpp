@@ -113,6 +113,11 @@ namespace math
 		return Vec2{ cos(angle), sin(angle) };
 	}
 
+	float vec_to_angle(const Vec2& vec)
+	{
+		return atan2f(vec.y, vec.x);
+	}
+
 	Vec2 normalize(const Vec2& vec)
 	{
 		float mag = magnitude(vec);

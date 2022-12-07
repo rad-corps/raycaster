@@ -80,10 +80,10 @@ namespace game
 		SDL_Renderer* m_renderer;
 		RaycastEngine raycastEngine;
 		RenderEngine m_renderEngine;
-		std::vector<game::Actor> spriteArray;
+		//std::vector<game::Actor> spriteArray;
 		game::Actor testSprite;
-		
-		std::map<SDL_Keycode, bool> keyStates= {
+
+		std::map<SDL_Keycode, bool> keyStates = {
 			{SDLK_w, false},
 			{SDLK_a, false},
 			{SDLK_s, false},
@@ -95,52 +95,69 @@ namespace game
 			{SDLK_LCTRL, false},
 		};
 		Pimpl(SDL_Renderer* renderer)
-			: player{math::Transform{58.4994f, 149.201f, 0.0299706f}}
+			: player{ math::Transform{58.4994f, 149.201f, 0.0299706f} }
 			, wallTexture{ renderer, "./img/wall_64.png" }
-			, enemyAnimation{std::make_unique<rcgf::Animation>(
+			, enemyAnimation{ std::make_unique<rcgf::Animation>(
 					std::make_unique<rcgf::Texture>(renderer, "img/CabronTileset.png"),
 					64, // sprite width
 					64, // sprite height
 					1,  // rows
 					4  // cols
 				)
-			}
+		}
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
-			, testSprite{ enemyAnimation.get(), math::Transform{92.7399f, 150.433f, 0.f}, std::make_unique<AI_Empty>()}
+			, testSprite{
+				enemyAnimation.get(),
+				math::Transform{92.7399f, 150.433f, 0.f},
+				std::make_unique<AI_WaypointFollow>(std::vector<math::Vec2>
+					{
+						math::Vec2{139.675f, 162.776f},
+						math::Vec2{116.09f, 140.828f},
+						math::Vec2{106.411f, 73.3184f},
+						math::Vec2{81.0254f, 139.27f},
+						math::Vec2{50.7314f, 134.953f},
+						math::Vec2{49.8596f, 79.302f},
+						math::Vec2{30.3543f, 84.3723f},
+						math::Vec2{61.1379f, 156.247f},
+						math::Vec2{100.179f, 158.618f}
+					}
+				) }
 		{
 			srand((unsigned int)time(NULL));
 
 			wallTexture.printDebugInfo();
 
-			// init 100 enemy sprites
-			for (int i = 0; i < RANDOM_ENEMY_NUM; ++i)
-			{
-				// what are the x/y position boundaries? 
-				// This will generate a number from 0.0 to some arbitrary float, X:
-				float x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_X_BOUNDARY));
-				float y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_Y_BOUNDARY));
-				spriteArray.emplace_back(Actor{ enemyAnimation.get(), math::Transform{x,y,0.f}, std::make_unique<AI_Empty>() });
-			}
+			//// init 100 enemy sprites
+			//for (int i = 0; i < RANDOM_ENEMY_NUM; ++i)
+			//{
+			//	// what are the x/y position boundaries? 
+			//	// This will generate a number from 0.0 to some arbitrary float, X:
+			//	float x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_X_BOUNDARY));
+			//	float y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_Y_BOUNDARY));
+			//	spriteArray.emplace_back(Actor{ enemyAnimation.get(), math::Transform{x,y,0.f}, std::make_unique<AI_Empty>() });
+			//}
 
 		}
-		Pimpl() = delete;
+				Pimpl() = delete;
 	};
 
 
 	GameSceneRaycaster::GameSceneRaycaster(SDL_Renderer* renderer, TTF_Font* font)
 		: m_impl{ std::make_unique<Pimpl>(renderer) }
-		, m_renderer{renderer}
-		, m_font{font}
+		, m_renderer{ renderer }
+		, m_font{ font }
 	{}
 
 	void GameSceneRaycaster::update()
 	{
-
+		
 	}
 
 	void GameSceneRaycaster::fixedUpdate()
 	{
+		m_impl->testSprite.Update();
+
 		Player& player = m_impl->player;
 		auto& keyStates = m_impl->keyStates;
 
@@ -156,7 +173,7 @@ namespace game
 			if (keyStates[SDLK_d] || keyStates[SDLK_RIGHT]) player.move(PI / 2.f, &map);
 			if (keyStates[SDLK_a] || keyStates[SDLK_LEFT])  player.move(PI + PI * 0.5f, &map);
 		}
-		
+
 		// forward and backward movement
 		if (keyStates[SDLK_w] || keyStates[SDLK_UP])    player.move(0.f, &map);
 		if (keyStates[SDLK_s] || keyStates[SDLK_DOWN])  player.move(PI, &map);
@@ -166,20 +183,21 @@ namespace game
 	{
 		// generate wall data
 		m_impl->raycastEngine.generateWallRenderData(m_impl->player.transform, &map, &m_impl->wallTexture);
-		
+
 		// render walls
 		m_impl->m_renderEngine.RenderWalls();
 
 		// sort sprites (closest to player last)
 		const math::Vec2 player_pos = m_impl->player.transform.pos;
-		std::sort(m_impl->spriteArray.begin(), m_impl->spriteArray.end(), [player_pos](const Actor& a, const Actor& b) {
-			return math::magnitude(player_pos - a.m_transform.pos) > math::magnitude(player_pos - b.m_transform.pos);
-		});
+
+		//std::sort(m_impl->spriteArray.begin(), m_impl->spriteArray.end(), [player_pos](const Actor& a, const Actor& b) {
+		//	return math::magnitude(player_pos - a.m_transform.pos) > math::magnitude(player_pos - b.m_transform.pos);
+		//});
 		//// render sprites
-		for (const auto& sprite : m_impl->spriteArray)
-		{
-			m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, sprite);
-		}
+		//for (const auto& sprite : m_impl->spriteArray)
+		//{
+		//	m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, sprite);
+		//}
 
 		m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, m_impl->testSprite);
 
@@ -188,7 +206,7 @@ namespace game
 			m_impl->m_renderEngine.RenderTopDownMap(map, m_impl->player.transform, m_impl->showRays);
 		}
 	}
-	
+
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
 	{
 		m_impl->keyStates[keycode] = true;
