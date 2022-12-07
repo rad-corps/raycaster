@@ -17,4 +17,4 @@ namespace game
 		rcgf::Animation* m_spritesheet;
 		std::unique_ptr<AI> m_ai;
 	};
-}
+} 
