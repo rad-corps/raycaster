@@ -80,7 +80,7 @@ namespace game
 		SDL_Renderer* m_renderer;
 		RaycastEngine raycastEngine;
 		RenderEngine m_renderEngine;
-		std::vector<game::Actor> spriteArray;
+		//std::vector<game::Actor> spriteArray;
 		game::Actor testSprite;
 		
 		std::map<SDL_Keycode, bool> keyStates= {
@@ -107,21 +107,28 @@ namespace game
 			}
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
-			, testSprite{ enemyAnimation.get(), math::Transform{92.7399f, 150.433f, 0.f}, std::make_unique<AI_Empty>()}
+			, testSprite{ 
+				enemyAnimation.get(), 
+				math::Transform{92.7399f, 150.433f, 0.f}, 
+				std::make_unique<AI_WaypointFollow>(std::vector<math::Vec2>
+					{
+						math::Vec2{1.f, 1.f}
+					}
+				)}
 		{
 			srand((unsigned int)time(NULL));
 
 			wallTexture.printDebugInfo();
 
-			// init 100 enemy sprites
-			for (int i = 0; i < RANDOM_ENEMY_NUM; ++i)
-			{
-				// what are the x/y position boundaries? 
-				// This will generate a number from 0.0 to some arbitrary float, X:
-				float x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_X_BOUNDARY));
-				float y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_Y_BOUNDARY));
-				spriteArray.emplace_back(Actor{ enemyAnimation.get(), math::Transform{x,y,0.f}, std::make_unique<AI_Empty>() });
-			}
+			//// init 100 enemy sprites
+			//for (int i = 0; i < RANDOM_ENEMY_NUM; ++i)
+			//{
+			//	// what are the x/y position boundaries? 
+			//	// This will generate a number from 0.0 to some arbitrary float, X:
+			//	float x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_X_BOUNDARY));
+			//	float y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_Y_BOUNDARY));
+			//	spriteArray.emplace_back(Actor{ enemyAnimation.get(), math::Transform{x,y,0.f}, std::make_unique<AI_Empty>() });
+			//}
 
 		}
 		Pimpl() = delete;
@@ -136,7 +143,7 @@ namespace game
 
 	void GameSceneRaycaster::update()
 	{
-
+		m_impl->testSprite.Update();
 	}
 
 	void GameSceneRaycaster::fixedUpdate()
@@ -172,14 +179,15 @@ namespace game
 
 		// sort sprites (closest to player last)
 		const math::Vec2 player_pos = m_impl->player.transform.pos;
-		std::sort(m_impl->spriteArray.begin(), m_impl->spriteArray.end(), [player_pos](const Actor& a, const Actor& b) {
-			return math::magnitude(player_pos - a.m_transform.pos) > math::magnitude(player_pos - b.m_transform.pos);
-		});
+		
+		//std::sort(m_impl->spriteArray.begin(), m_impl->spriteArray.end(), [player_pos](const Actor& a, const Actor& b) {
+		//	return math::magnitude(player_pos - a.m_transform.pos) > math::magnitude(player_pos - b.m_transform.pos);
+		//});
 		//// render sprites
-		for (const auto& sprite : m_impl->spriteArray)
-		{
-			m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, sprite);
-		}
+		//for (const auto& sprite : m_impl->spriteArray)
+		//{
+		//	m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, sprite);
+		//}
 
 		m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, m_impl->testSprite);
 

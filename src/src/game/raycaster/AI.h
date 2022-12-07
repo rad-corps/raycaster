@@ -2,6 +2,7 @@
 
 #include "RCGFMath.h"
 #include <vector>
+#include <memory>
 
 namespace game
 {
@@ -11,7 +12,7 @@ namespace game
 	{
 	public:
 		virtual ~AI() {}
-		virtual void Update(Actor& actor) = 0;
+		virtual std::unique_ptr<AI> Update(Actor& actor) = 0;
 	};
 
 	class AI_WaypointFollow : public AI
@@ -22,7 +23,7 @@ namespace game
 		{}
 		~AI_WaypointFollow() {}
 
-		void Update(Actor& actor) override;
+		std::unique_ptr<AI> Update(Actor& actor) override;
 	
 	private:
 		std::vector<math::Vec2> waypointPositions;
@@ -33,6 +34,6 @@ namespace game
 	public:
 		AI_Empty() {}
 		~AI_Empty() {}
-		void Update(Actor& actor) override;
+		std::unique_ptr<AI> Update(Actor& actor) override;
 	};
 }

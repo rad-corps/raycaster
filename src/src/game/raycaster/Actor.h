@@ -12,6 +12,7 @@ namespace game
 	{
 		Actor() = delete;
 		Actor(rcgf::Animation* spritesheet, math::Transform transform, std::unique_ptr<AI> ai);
+		void Update();
 
 		math::Transform m_transform;
 		rcgf::Animation* m_spritesheet;
