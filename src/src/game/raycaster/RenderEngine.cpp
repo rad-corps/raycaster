@@ -251,7 +251,7 @@ namespace game
 		//m_impl->player.render(m_renderer);		
 	}
 
-	void RenderEngine::RenderSprite(const math::Transform & povTransform, const Sprite& sprite) const
+	void RenderEngine::RenderSprite(const math::Transform & povTransform, const Actor& sprite) const
 	{
 		// find angle from player to enemy
 		// 1. create two vectors
