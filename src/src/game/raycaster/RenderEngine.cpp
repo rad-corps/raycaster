@@ -180,6 +180,12 @@ namespace
 
 		return RectContainer{ screenSpaceSprite, SDL_Rect{0,0,spriteDims,spriteDims} };
 	}
+
+	float calculate_sprite_angle_from_left_fov(float povAngle, const math::Vec2& povToSprite)
+	{
+		const math::Vec2 leftFovVec = math::angle_to_vec(math::sum_angle(povAngle, -game::FOV / 2));
+		return math::angle(leftFovVec, povToSprite);
+	}
 }
 
 namespace game
@@ -253,9 +259,8 @@ namespace game
 
 	void RenderEngine::RenderSprite(const math::Transform& povTransform, const Actor& sprite) const
 	{
-		const math::Vec2 leftFovVec = math::angle_to_vec(math::sum_angle(povTransform.angle, -FOV / 2));
-		const math::Vec2 playerToSprite = sprite.m_transform.pos - povTransform.pos;
-		const float leftFovToSpriteAngle = math::angle(leftFovVec, playerToSprite);
+		const math::Vec2 povToSprite = sprite.m_transform.pos - povTransform.pos;
+		const float leftFovToSpriteAngle = calculate_sprite_angle_from_left_fov(povTransform.angle, povToSprite);
 
 		// cull actors that are off screen
 		if (leftFovToSpriteAngle < 0 || leftFovToSpriteAngle > FOV)
@@ -264,7 +269,7 @@ namespace game
 			return;
 		}
 
-		const float distanceToSprite = math::magnitude(playerToSprite);
+		const float distanceToSprite = math::magnitude(povToSprite);
 		const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / distanceToSprite * DIST_PROJECTION_PLANE);
 
 		// now we have an angle in radians from the player to the sprite that is 0 at far left of FOV, and FOV at far right.
@@ -306,13 +311,13 @@ namespace game
 		const math::Vec2 spriteForwardVec = math::angle_to_vec(sprite.m_transform.angle);
 
 		// register vector between player and enemy
-		RegisterTransitiveTopDownData(TopDownLine{ povTransform.pos, playerToSprite, Color{255,255,255,255} });
+		RegisterTransitiveTopDownData(TopDownLine{ povTransform.pos, povToSprite, Color{255,255,255,255} });
 
 		// register vector for enemy forward
 		RegisterTransitiveTopDownData(TopDownLine{ sprite.m_transform.pos, math::angle_to_vec(sprite.m_transform.angle) * 100, Color{200,0,230,255} });
 
 		// calculate animID
-		int animID = CalculateSpriteAnimationID(math::angle(playerToSprite, spriteForwardVec));
+		int animID = CalculateSpriteAnimationID(math::angle(povToSprite, spriteForwardVec));
 
 		sprite.m_spritesheet->render(animID, &spriteSheetRect, &dstRect);
 		
