@@ -82,11 +82,6 @@ namespace math
 
 	float angle(const Vec2& vec1, const Vec2& vec2)
 	{
-		return acosf(dot(vec1, vec2) / (magnitude(vec1) * magnitude(vec2)));
-	}
-
-	float angle2(const Vec2& vec1, const Vec2& vec2)
-	{
 		float ret = atan2(vec2.y, vec2.x) - atan2(vec1.y, vec1.x);
 		ret = ret < 0 ? ret + 2 * PI : ret;
 		return ret;
@@ -124,9 +119,9 @@ namespace math
 		return Vec2{ vec.x / mag, vec.y / mag };
 	}
 
-	float sum_angle(float angle1, float angle2)
+	float sum_angle(float angle1, float angle)
 	{
-		angle1 += angle2;
+		angle1 += angle;
 		if (angle1 < 0) angle1 += PI * 2;
 		else if (2 * PI < angle1) angle1 -= PI * 2;
 		return angle1;
