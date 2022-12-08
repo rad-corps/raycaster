@@ -290,6 +290,7 @@ namespace game
 			screenSpaceSpriteHeight
 		};
 
+
 		RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, distanceToSprite, 64 /* TODO: fix magic number */);
 
 		// completely obstructed. Bail
