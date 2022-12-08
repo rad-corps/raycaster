@@ -253,42 +253,43 @@ namespace game
 
 	void RenderEngine::RenderSprite(const math::Transform& povTransform, const Actor& sprite) const
 	{
-		const math::Vec2& playerPos = povTransform.pos;
-		const math::Vec2& spritePos = sprite.m_transform.pos;
-
-		const math::Vec2 playerForward = math::angle_to_vec(povTransform.angle);
-		const float leftFovAngle = math::sum_angle(povTransform.angle, -FOV / 2);
-		const math::Vec2 leftFovVec = math::angle_to_vec(leftFovAngle);
-		const math::Vec2 playerToSprite = spritePos - playerPos;
+		const math::Vec2 leftFovVec = math::angle_to_vec(math::sum_angle(povTransform.angle, -FOV / 2));
+		const math::Vec2 playerToSprite = sprite.m_transform.pos - povTransform.pos;
 		const float leftFovToSpriteAngle = math::angle(leftFovVec, playerToSprite);
 
 		// cull actors that are off screen
 		if (leftFovToSpriteAngle < 0 || leftFovToSpriteAngle > FOV)
 		{
+			// TODO: we need to be a bit smarter about < 0 off the left of screen.
 			return;
 		}
 
-		// now we have an angle that is 0 at far left of FOV, and FOV at far right.
-		// convert angle to screen space
-		const float screenX = (leftFovToSpriteAngle / FOV) * SCREEN_WIDTH;
-
-		// calculate the screenY position
-		// ================================
-		// playerToEnemy.length()          PLAYER_HEIGHT
-		// ----------------------  =   ---------------------
-		// DIST_PROJECTION_PLANE         screenY - CENTER_Y
 		const float distanceToSprite = math::magnitude(playerToSprite);
-
-		const float screenYBottomOfSprite = ((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / distanceToSprite) + CENTER_Y;
-
-		//find the height of the sprite
 		const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / distanceToSprite * DIST_PROJECTION_PLANE);
 
-		SDL_Rect dstRect;
-		dstRect.h = screenSpaceSpriteHeight;
-		dstRect.w = screenSpaceSpriteHeight;
-		dstRect.x = (int)screenX - screenSpaceSpriteHeight / 2;
-		dstRect.y = (int)screenYBottomOfSprite - screenSpaceSpriteHeight;
+		// now we have an angle in radians from the player to the sprite that is 0 at far left of FOV, and FOV at far right.
+		// convert angle to screen space
+		const float screenXLeftOfSprite = ((leftFovToSpriteAngle / FOV) * SCREEN_WIDTH) - screenSpaceSpriteHeight / 2;
+
+		// ==========================================================================================================
+		//                         To calculate the screen Y pixel position of a sprite
+		// ==========================================================================================================
+		// 
+		//     distance from player to enemy                                     player height                       
+		// ----------------------------------------  =   ------------------------------------------------------------
+		// distance from player to projection plane         screen y pixel position - center y screen pixel position
+		//
+		// 
+		// solving for screen y pixel position below
+		const float screenYTopOfSprite = (((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / distanceToSprite) + CENTER_Y) - screenSpaceSpriteHeight;
+
+		SDL_Rect dstRect{
+			(int)screenXLeftOfSprite,
+			(int)screenYTopOfSprite,
+			screenSpaceSpriteHeight,
+			screenSpaceSpriteHeight
+		};
+
 
 		RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, distanceToSprite, 64 /* TODO: fix magic number */);
 
@@ -305,7 +306,7 @@ namespace game
 		const math::Vec2 spriteForwardVec = math::angle_to_vec(sprite.m_transform.angle);
 
 		// register vector between player and enemy
-		RegisterTransitiveTopDownData(TopDownLine{ playerPos, playerToSprite, Color{255,255,255,255} });
+		RegisterTransitiveTopDownData(TopDownLine{ povTransform.pos, playerToSprite, Color{255,255,255,255} });
 
 		// register vector for enemy forward
 		RegisterTransitiveTopDownData(TopDownLine{ sprite.m_transform.pos, math::angle_to_vec(sprite.m_transform.angle) * 100, Color{200,0,230,255} });
