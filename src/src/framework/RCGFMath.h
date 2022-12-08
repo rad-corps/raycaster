@@ -31,14 +31,13 @@ namespace math
 	float cross(const Vec2& vec1, const Vec2& vec2);
 	float dot(const Vec2& vec1, const Vec2& Vec2);
 	float angle(const Vec2& vec1, const Vec2& Vec2);
-	float angle2(const Vec2& vec1, const Vec2& Vec2);
 	float magnitude(const Vec2& vec);
 	Mat2 invert(const Mat2& mat);
 	Mat2 scale(const Mat2& mat, float scalar);
 	Vec2 angle_to_vec(float angle);
 	float vec_to_angle(const Vec2& vec);
 	Vec2 normalize(const Vec2& vec);
-	float sum_angle(float angle1, float angle2);
+	float sum_angle(float angle1, float angle);
 
 	struct Transform
 	{

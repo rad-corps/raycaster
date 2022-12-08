@@ -251,83 +251,70 @@ namespace game
 		//m_impl->player.render(m_renderer);		
 	}
 
-	void RenderEngine::RenderSprite(const math::Transform & povTransform, const Actor& sprite) const
+	void RenderEngine::RenderSprite(const math::Transform& povTransform, const Actor& sprite) const
 	{
-		// find angle from player to enemy
-		// 1. create two vectors
-		//  1.1 one for the forward direction of the player
 		const math::Vec2& playerPos = povTransform.pos;
 		const math::Vec2& spritePos = sprite.m_transform.pos;
+
 		const math::Vec2 playerForward = math::angle_to_vec(povTransform.angle);
-
-		//  1.2 one for the direction from player to enemy
+		const float leftFovAngle = math::sum_angle(povTransform.angle, -FOV / 2);
+		const math::Vec2 leftFovVec = math::angle_to_vec(leftFovAngle);
 		const math::Vec2 playerToSprite = spritePos - playerPos;
-		const float playerForwardToSpriteAngle = math::angle(playerForward, playerToSprite);
-		float frustumToSpriteAngle = -1.f;
+		const float leftFovToSpriteAngle = math::angle(leftFovVec, playerToSprite);
 
-		// if cross is < 0 then enemy is RHS of screen, else LHS of screen
-		if (playerForwardToSpriteAngle < FOV / 2)
+		// cull actors that are off screen
+		if (leftFovToSpriteAngle < 0 || leftFovToSpriteAngle > FOV)
 		{
-			if (math::cross(math::normalize(playerToSprite), math::normalize(playerForward)) < 0)
-			{
-				// RHS of screen
-				// add half of FOV to angle
-				frustumToSpriteAngle = playerForwardToSpriteAngle + FOV / 2;
-			}
-			else
-			{
-				// LHS of screen
-				// angleToEnemy starts as the player forward vector, so lets subtr
-				frustumToSpriteAngle = FOV / 2 - playerForwardToSpriteAngle;
-			}
-
-			// now we have an angle that is 0 at far left of FOV, and FOV at far right.
-			// convert angle to screen space
-			const float screenX = (frustumToSpriteAngle / FOV) * SCREEN_WIDTH;
-
-			// calculate the screenY position
-			// ================================
-			// playerToEnemy.length()          PLAYER_HEIGHT
-			// ----------------------  =   ---------------------
-			// DIST_PROJECTION_PLANE         screenY - CENTER_Y
-			const float distanceToSprite = math::magnitude(playerToSprite);
-
-			const float screenYBottomOfSprite = ((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / distanceToSprite) + CENTER_Y;
-
-			//find the height of the sprite
-			const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / distanceToSprite * DIST_PROJECTION_PLANE);
-
-			SDL_Rect dstRect;
-			dstRect.h = screenSpaceSpriteHeight;
-			dstRect.w = screenSpaceSpriteHeight;
-			dstRect.x = (int)screenX - screenSpaceSpriteHeight / 2;
-			dstRect.y = (int)screenYBottomOfSprite - screenSpaceSpriteHeight;
-			
-			RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, distanceToSprite, 64 /* TODO: fix magic number */);
-			
-			// completely obstructed. Bail
-			if (!rectContainer.display)
-			{
-				return;
-			}
-
-			dstRect = rectContainer.screenSpaceRect;
-			SDL_Rect spriteSheetRect = rectContainer.spriteSheetRect;
-
-			// find the forward vector for the enemy
-			const math::Vec2 spriteForwardVec = math::angle_to_vec(sprite.m_transform.angle);
-
-			// register vector between player and enemy
-			RegisterTransitiveTopDownData(TopDownLine{ playerPos, playerToSprite, Color{255,255,255,255} });
-
-			// register vector for enemy forward
-			RegisterTransitiveTopDownData(TopDownLine{ sprite.m_transform.pos, math::angle_to_vec(sprite.m_transform.angle) * 100, Color{200,0,230,255} });
-
-			// calculate animID
-			int animID = CalculateSpriteAnimationID(math::angle2(playerToSprite, spriteForwardVec));
-
-			sprite.m_spritesheet->render(animID, &spriteSheetRect, &dstRect);
+			return;
 		}
+
+		// now we have an angle that is 0 at far left of FOV, and FOV at far right.
+		// convert angle to screen space
+		const float screenX = (leftFovToSpriteAngle / FOV) * SCREEN_WIDTH;
+
+		// calculate the screenY position
+		// ================================
+		// playerToEnemy.length()          PLAYER_HEIGHT
+		// ----------------------  =   ---------------------
+		// DIST_PROJECTION_PLANE         screenY - CENTER_Y
+		const float distanceToSprite = math::magnitude(playerToSprite);
+
+		const float screenYBottomOfSprite = ((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / distanceToSprite) + CENTER_Y;
+
+		//find the height of the sprite
+		const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / distanceToSprite * DIST_PROJECTION_PLANE);
+
+		SDL_Rect dstRect;
+		dstRect.h = screenSpaceSpriteHeight;
+		dstRect.w = screenSpaceSpriteHeight;
+		dstRect.x = (int)screenX - screenSpaceSpriteHeight / 2;
+		dstRect.y = (int)screenYBottomOfSprite - screenSpaceSpriteHeight;
+
+		RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, distanceToSprite, 64 /* TODO: fix magic number */);
+
+		// completely obstructed. Bail
+		if (!rectContainer.display)
+		{
+			return;
+		}
+
+		dstRect = rectContainer.screenSpaceRect;
+		SDL_Rect spriteSheetRect = rectContainer.spriteSheetRect;
+
+		// find the forward vector for the enemy
+		const math::Vec2 spriteForwardVec = math::angle_to_vec(sprite.m_transform.angle);
+
+		// register vector between player and enemy
+		RegisterTransitiveTopDownData(TopDownLine{ playerPos, playerToSprite, Color{255,255,255,255} });
+
+		// register vector for enemy forward
+		RegisterTransitiveTopDownData(TopDownLine{ sprite.m_transform.pos, math::angle_to_vec(sprite.m_transform.angle) * 100, Color{200,0,230,255} });
+
+		// calculate animID
+		int animID = CalculateSpriteAnimationID(math::angle(playerToSprite, spriteForwardVec));
+
+		sprite.m_spritesheet->render(animID, &spriteSheetRect, &dstRect);
+		
 	}
 }
 
