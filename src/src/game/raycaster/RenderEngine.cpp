@@ -187,7 +187,7 @@ namespace
 		return math::angle(leftFovVec, povToSprite);
 	}
 
-	float calculate_fisheye_corrected_distance(const math::Vec2& povToSprite, float povWorldRotation)
+float calculate_fisheye_corrected_distance(const math::Vec2& povToSprite, float povWorldRotation)
 	{
 		const float distanceToSprite = math::magnitude(povToSprite);
 		const float angleDifference = math::vec_to_angle(povToSprite) - povWorldRotation;
