@@ -9,8 +9,7 @@ using math::PI;
 namespace
 {
 	constexpr float MOVEMENT_SPEED = 0.6f;
-	constexpr float ROTATION_SPEED = 0.03f;
-	//constexpr float ROTATION_SPEED = 0.001f;
+	constexpr float ROTATION_SPEED = 0.010f;
 	constexpr int HALF_WALL_COLLISION_BOX_SZ = 3;
 }
 

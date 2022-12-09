@@ -186,6 +186,13 @@ namespace
 		const math::Vec2 leftFovVec = math::angle_to_vec(math::sum_angle(povAngle, -game::FOV / 2));
 		return math::angle(leftFovVec, povToSprite);
 	}
+
+float calculate_fisheye_corrected_distance(const math::Vec2& povToSprite, float povWorldRotation)
+	{
+		const float distanceToSprite = math::magnitude(povToSprite);
+		const float angleDifference = math::vec_to_angle(povToSprite) - povWorldRotation;
+		return distanceToSprite * cos(angleDifference);
+	}
 }
 
 namespace game
@@ -268,9 +275,10 @@ namespace game
 			// TODO: we need to be a bit smarter about < 0 off the left of screen.
 			return;
 		}
+		
+		const float correctedDistanceToSprite = calculate_fisheye_corrected_distance(povToSprite, povTransform.angle);
 
-		const float distanceToSprite = math::magnitude(povToSprite);
-		const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / distanceToSprite * DIST_PROJECTION_PLANE);
+		const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / correctedDistanceToSprite * DIST_PROJECTION_PLANE);
 
 		// now we have an angle in radians from the player to the sprite that is 0 at far left of FOV, and FOV at far right.
 		// convert angle to screen space
@@ -286,7 +294,7 @@ namespace game
 		//
 		// 
 		// solving for screen y pixel position below
-		const float screenYTopOfSprite = (((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / distanceToSprite) + CENTER_Y) - screenSpaceSpriteHeight;
+		const float screenYTopOfSprite = (((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / correctedDistanceToSprite) + CENTER_Y) - screenSpaceSpriteHeight;
 
 		SDL_Rect dstRect{
 			(int)screenXLeftOfSprite,
@@ -296,7 +304,7 @@ namespace game
 		};
 
 
-		RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, distanceToSprite, 64 /* TODO: fix magic number */);
+		RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, correctedDistanceToSprite, 64 /* TODO: fix magic number */);
 
 		// completely obstructed. Bail
 		if (!rectContainer.display)

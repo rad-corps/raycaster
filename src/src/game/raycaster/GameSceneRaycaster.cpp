@@ -122,7 +122,8 @@ namespace game
 						math::Vec2{61.1379f, 156.247f},
 						math::Vec2{100.179f, 158.618f}
 					}
-				) }
+				)
+			}
 		{
 			srand((unsigned int)time(NULL));
 

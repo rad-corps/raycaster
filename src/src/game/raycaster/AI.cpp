@@ -36,7 +36,6 @@ namespace game
 
 	std::unique_ptr<AI> AI_Empty::Update(Actor& sprite)
 	{
-		std::cout << "AI_Empty::update: " << sprite.m_transform.angle << std::endl;
 		return nullptr;
 	}
 }
