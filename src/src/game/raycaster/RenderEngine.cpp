@@ -24,31 +24,6 @@ namespace
 		topDownLines.clear();
 	}
 
-	int CalculateSpriteAnimationID(float angle)
-	{
-		// 0: front, 1: right, 2: back, 3: left
-
-		if (angle >= 7 * PI / 4 || angle <= PI / 4)
-		{
-			return 2;
-		}
-		if (angle >= PI / 4 && angle <= 3 * PI / 4)
-		{
-			return 3;
-		}
-		if (angle >= 3 * PI / 4 && angle <= 5 * PI / 4)
-		{
-			return 0;
-		}
-		if (angle >= 5 * PI / 4 && angle <= 7 * PI / 4)
-		{
-			return 1;
-		}
-
-		assert(false);
-		return -1;
-	}
-
 	bool IsObstructed(const std::vector<game::ColumnRenderData>& crdVec, const SDL_Rect& screenSpaceSprite, float distanceToSprite)
 	{
 		const int lBound = std::max(screenSpaceSprite.x, 0);
@@ -252,19 +227,15 @@ namespace game
 				(tdl.point.y + tdl.velocity.y) * TOP_DOWN_SCALE
 			);
 		}
-		
-		
+
 		const math::Vec2 povForwardVec = math::angle_to_vec(pov.angle);
 		math::Vec2 scaledPlayerDir = math::scale(povForwardVec, 100.f);
 		SDL_SetRenderDrawColor(m_renderer, 255, 100, 0, 0xFF);
 		// draw player forward vector
 		SDL_RenderDrawLine(m_renderer, (int)pov.pos.x * TOP_DOWN_SCALE, (int)pov.pos.y * TOP_DOWN_SCALE, (int)(pov.pos.x + scaledPlayerDir.x) * TOP_DOWN_SCALE, (int)(pov.pos.y + scaledPlayerDir.y) * TOP_DOWN_SCALE);
-		
-
-		//m_impl->player.render(m_renderer);		
 	}
 
-	void RenderEngine::RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, const rcgf::Texture& texture) const
+	void RenderEngine::RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, rcgf::SpriteSheet* spriteSheet, int spriteSheetIdx) const
 	{
 		const math::Vec2 povToSprite = spriteTransform.pos - povTransform.pos;
 		const float leftFovToSpriteAngle = calculate_sprite_angle_from_left_fov(povTransform.angle, povToSprite);
@@ -275,13 +246,11 @@ namespace game
 			// TODO: we need to be a bit smarter about < 0 off the left of screen.
 			return;
 		}
-
-		const float correctedDistanceToSprite = calculate_fisheye_corrected_distance(povToSprite, povTransform.angle);
 		
-		// avoid divide by 0
+		const float correctedDistanceToSprite = calculate_fisheye_corrected_distance(povToSprite, povTransform.angle);
 		if (correctedDistanceToSprite < 0.01f)
 		{
-			return;
+			return; // avoid divide by 0
 		}
 
 		const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / correctedDistanceToSprite * DIST_PROJECTION_PLANE);
@@ -309,7 +278,6 @@ namespace game
 			screenSpaceSpriteHeight
 		};
 
-
 		RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, correctedDistanceToSprite, 64 /* TODO: fix magic number */);
 
 		// completely obstructed. Bail
@@ -320,75 +288,7 @@ namespace game
 
 		dstRect = rectContainer.screenSpaceRect;
 		SDL_Rect spriteSheetRect = rectContainer.spriteSheetRect;
-		texture.render2(&spriteSheetRect, &dstRect);
-		
-	}
-
-	void RenderEngine::RenderSprite(const math::Transform& povTransform, const Actor& sprite) const
-	{
-		const math::Vec2 povToSprite = sprite.m_transform.pos - povTransform.pos;
-		const float leftFovToSpriteAngle = calculate_sprite_angle_from_left_fov(povTransform.angle, povToSprite);
-
-		// cull actors that are off screen
-		if (leftFovToSpriteAngle < 0 || leftFovToSpriteAngle > FOV)
-		{
-			// TODO: we need to be a bit smarter about < 0 off the left of screen.
-			return;
-		}
-		
-		const float correctedDistanceToSprite = calculate_fisheye_corrected_distance(povToSprite, povTransform.angle);
-
-		const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / correctedDistanceToSprite * DIST_PROJECTION_PLANE);
-
-		// now we have an angle in radians from the player to the sprite that is 0 at far left of FOV, and FOV at far right.
-		// convert angle to screen space
-		const float screenXLeftOfSprite = ((leftFovToSpriteAngle / FOV) * SCREEN_WIDTH) - screenSpaceSpriteHeight / 2;
-
-		// ==========================================================================================================
-		//                         To calculate the screen Y pixel position of a sprite
-		// ==========================================================================================================
-		// 
-		//     distance from player to enemy                                     player height                       
-		// ----------------------------------------  =   ------------------------------------------------------------
-		// distance from player to projection plane         screen y pixel position - center y screen pixel position
-		//
-		// 
-		// solving for screen y pixel position below
-		const float screenYTopOfSprite = (((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / correctedDistanceToSprite) + CENTER_Y) - screenSpaceSpriteHeight;
-
-		SDL_Rect dstRect{
-			(int)screenXLeftOfSprite,
-			(int)screenYTopOfSprite,
-			screenSpaceSpriteHeight,
-			screenSpaceSpriteHeight
-		};
-
-
-		RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, correctedDistanceToSprite, 64 /* TODO: fix magic number */);
-
-		// completely obstructed. Bail
-		if (!rectContainer.display)
-		{
-			return;
-		}
-
-		dstRect = rectContainer.screenSpaceRect;
-		SDL_Rect spriteSheetRect = rectContainer.spriteSheetRect;
-
-		// find the forward vector for the enemy
-		const math::Vec2 spriteForwardVec = math::angle_to_vec(sprite.m_transform.angle);
-
-		// register vector between player and enemy
-		RegisterTransitiveTopDownData(TopDownLine{ povTransform.pos, povToSprite, Color{255,255,255,255} });
-
-		// register vector for enemy forward
-		RegisterTransitiveTopDownData(TopDownLine{ sprite.m_transform.pos, math::angle_to_vec(sprite.m_transform.angle) * 100, Color{200,0,230,255} });
-
-		// calculate animID
-		int animID = CalculateSpriteAnimationID(math::angle(povToSprite, spriteForwardVec));
-
-		sprite.m_spritesheet->render(animID, &spriteSheetRect, &dstRect);
-		
+		spriteSheet->render(spriteSheetIdx, &spriteSheetRect, &dstRect);
 	}
 }
 

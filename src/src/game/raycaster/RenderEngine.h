@@ -4,7 +4,8 @@
 #include "RaycasterConstants.h"
 #include <vector>
 #include "Map.h"
-#include "Actor.h"
+#include "SpriteSheet.h"
+//#include "Actor.h"
 
 namespace game
 {
@@ -25,14 +26,11 @@ namespace game
 
 		void RenderWalls();
 		void RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, bool showRays);
-		void RenderSprite(const math::Transform& povTransform, const Actor& sprite) const;
-		void RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, const rcgf::Texture& texture) const;
+		void RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, rcgf::SpriteSheet* spriteSheet, int spriteSheetIdx) const;
 
 	private:
 		SDL_Renderer* m_renderer;
 		const std::vector<ColumnRenderData>& crdVec;
-		
-		
 	};
 }
 
