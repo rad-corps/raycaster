@@ -4,7 +4,7 @@
 
 // unfortunately this gets in the way when throwing away params for some derived/overridden functions. 
 #pragma warning( disable : 4100 ) // unreferenced formal parameter
-
+ 
 #include "Globals.h"
 #include "RCGFMath.h"
 #include "Texture.h"

@@ -1,13 +1,13 @@
 #include "Globals.h"
 #include <cstdio>
 #include <cassert>
-#include "Animation.h"
+#include "SpriteSheet.h"
 
 namespace
 {
 	//TTF_Font* font;
 	//SDL_Renderer* renderer;
-	std::unique_ptr<rcgf::Animation> monoText;
+	std::unique_ptr<rcgf::SpriteSheet> monoText;
 
 	TTF_Font* loadFont(const char* font_, int fontSz)
 	{
@@ -104,7 +104,7 @@ namespace global
 
 
 		// works but its too big
-		monoText = std::make_unique<rcgf::Animation>(
+		monoText = std::make_unique<rcgf::SpriteSheet>(
 			std::make_unique<rcgf::Texture>(ret.renderer, "img/mono_font.png"), 
 			20, // sprite width
 			20, // sprite height

@@ -1,9 +1,11 @@
 #pragma once
 
 #include <memory>
-#include "Animation.h"
+#include "SpriteSheet.h"
 #include "AI.h"
 #include "RCGFMath.h"
+#include "RenderingComponent.h"
+#include "RenderEngine.h"
 
 namespace game
 {
@@ -11,11 +13,13 @@ namespace game
 	struct Actor
 	{
 		Actor() = delete;
-		Actor(rcgf::Animation* spritesheet, math::Transform transform, std::unique_ptr<AI> ai);
+		Actor(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI> ai, std::unique_ptr<RenderingComponent> rc);
 		void Update();
+		void Render(const game::RenderEngine& re, const math::Transform& pov);
 
 		math::Transform m_transform;
-		rcgf::Animation* m_spritesheet;
+		rcgf::SpriteSheet* m_spritesheet;
 		std::unique_ptr<AI> m_ai;
+		std::unique_ptr<RenderingComponent> m_rc;
 	};
 } 

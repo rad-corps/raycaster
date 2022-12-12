@@ -1,8 +1,8 @@
-#include "Animation.h"
+#include "SpriteSheet.h"
 
 namespace rcgf
 {
-	Animation::Animation(
+	SpriteSheet::SpriteSheet(
 		std::unique_ptr<Texture> texture,
 		int pxSpriteWidth,
 		int pxSpriteHeight,
@@ -17,7 +17,7 @@ namespace rcgf
 	{}
 
 
-	void Animation::render(
+	void SpriteSheet::render(
 		int animIdx,
 		int x,
 		int y
@@ -42,7 +42,7 @@ namespace rcgf
 		m_texture->render(x, y, &clip);
 	}
 
-	void Animation::render(int animIdx,SDL_Rect* dstRect)
+	void SpriteSheet::render(int animIdx,SDL_Rect* dstRect)
 	{
 		// discover row and col
 		const int col = animIdx % m_cols;
@@ -63,7 +63,7 @@ namespace rcgf
 		m_texture->render2(&clip, dstRect);
 	}
 
-	void Animation::render(int animIdx, SDL_Rect* srcRect, SDL_Rect* dstRect)
+	void SpriteSheet::render(int animIdx, SDL_Rect* srcRect, SDL_Rect* dstRect)
 	{
 		// discover row and col
 		const int col = animIdx % m_cols;
@@ -84,7 +84,7 @@ namespace rcgf
 		m_texture->render2(&clip, dstRect);
 	}
 	
-	Color Animation::getPixelColor(int animIdx, int x, int y)
+	Color SpriteSheet::getPixelColor(int animIdx, int x, int y)
 	{
 		const int col = animIdx % m_cols;
 		const int row = animIdx / m_cols;

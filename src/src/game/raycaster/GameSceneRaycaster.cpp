@@ -14,6 +14,7 @@
 #include "RaycasterConstants.h"
 #include <vector>
 #include "RenderEngine.h"
+#include "RenderingComponent.h"
 
 #include <algorithm> // std::sort
 
@@ -76,8 +77,8 @@ namespace game
 		bool showTopDown = false;
 		bool showRays = false;
 		rcgf::Texture wallTexture;
-		rcgf::Texture bulletTexture;
-		std::unique_ptr<rcgf::Animation> enemyAnimation;
+		std::unique_ptr<rcgf::SpriteSheet> bulletTexture;
+		std::unique_ptr<rcgf::SpriteSheet> enemyAnimation;
 		SDL_Renderer* m_renderer;
 		RaycastEngine raycastEngine;
 		RenderEngine m_renderEngine;
@@ -99,8 +100,11 @@ namespace game
 		Pimpl(SDL_Renderer* renderer)
 			: player{ math::Transform{58.4994f, 149.201f, 0.0299706f} }
 			, wallTexture{ renderer, "./img/wall_64.png" }
-			, bulletTexture{ renderer, "./img/player_bullet.png"}
-			, enemyAnimation{ std::make_unique<rcgf::Animation>(
+			, bulletTexture{ std::make_unique<rcgf::SpriteSheet>(
+					std::make_unique<rcgf::Texture>(renderer, "./img/player_bullet.png"),
+					64,64,1,1
+				)}
+			, enemyAnimation{ std::make_unique<rcgf::SpriteSheet>(
 					std::make_unique<rcgf::Texture>(renderer, "img/CabronTileset.png"),
 					64, // sprite width
 					64, // sprite height
@@ -124,7 +128,8 @@ namespace game
 						math::Vec2{61.1379f, 156.247f},
 						math::Vec2{100.179f, 158.618f}
 					}
-				)
+				),
+				std::make_unique<CabronRenderer>()
 			}
 		{
 			srand((unsigned int)time(NULL));
@@ -194,10 +199,11 @@ namespace game
 		//	m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, sprite);
 		//}
 
-		m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, m_impl->testSprite);
+		m_impl->testSprite.Render(m_impl->m_renderEngine, m_impl->player.transform);
+
 		for (auto& bullet : m_impl->playerBullets)
 		{
-			m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, bullet.transform, m_impl->bulletTexture);
+			m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, bullet.transform, m_impl->bulletTexture.get(), 0);
 		}
 		
 

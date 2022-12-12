@@ -7,21 +7,21 @@ namespace rcgf
 {
 	// only create one of these for each animation/spritesheet consumed
 	// i.e. many sprites will share a single animation
-	class Animation
+	class SpriteSheet
 	{
 	public:
 
 		// remove default construction and copy assignment/move assignment
-		Animation() = delete;
-		Animation(const Animation&) = delete;
-		Animation& operator=(const Animation&) = delete;
+		SpriteSheet() = delete;
+		SpriteSheet(const SpriteSheet&) = delete;
+		SpriteSheet& operator=(const SpriteSheet&) = delete;
 		
 		// allow compiler provided move operations
-		Animation(Animation&&) = default;
-		Animation& operator=(Animation&&) = default;
+		SpriteSheet(SpriteSheet&&) = default;
+		SpriteSheet& operator=(SpriteSheet&&) = default;
 		
 		// TODO: Animation should not have a unique pointer to Texture. Raw pointer is fine. Make this light weight and copyable.
-		Animation(
+		SpriteSheet(
 			std::unique_ptr<Texture>, 
 			int pxSpriteWidth,
 			int pxSpriteHeight,
