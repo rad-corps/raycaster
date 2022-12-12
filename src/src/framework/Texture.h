@@ -40,8 +40,8 @@ namespace rcgf
 		SDL_Texture* get();
 
 		// TODO: better names for these two render functions
-		void render(int x, int y, SDL_Rect* clip = NULL, float scale = 1.0f, double angle = 0.0, SDL_RendererFlip flip = SDL_FLIP_NONE, bool drawFromCenter = false);
-		void render2(const SDL_Rect* textureClip, const SDL_Rect* outputClip);
+		void render(int x, int y, SDL_Rect* clip = NULL, float scale = 1.0f, double angle = 0.0, SDL_RendererFlip flip = SDL_FLIP_NONE, bool drawFromCenter = false) const;
+		void render2(const SDL_Rect* textureClip, const SDL_Rect* outputClip) const;
 		
 
 		Color getPixelColor(int col, int row);

@@ -76,11 +76,13 @@ namespace game
 		bool showTopDown = false;
 		bool showRays = false;
 		rcgf::Texture wallTexture;
+		rcgf::Texture bulletTexture;
 		std::unique_ptr<rcgf::Animation> enemyAnimation;
 		SDL_Renderer* m_renderer;
 		RaycastEngine raycastEngine;
 		RenderEngine m_renderEngine;
 		//std::vector<game::Actor> spriteArray;
+		std::vector<PlayerBullet> playerBullets;
 		game::Actor testSprite;
 
 		std::map<SDL_Keycode, bool> keyStates = {
@@ -97,14 +99,14 @@ namespace game
 		Pimpl(SDL_Renderer* renderer)
 			: player{ math::Transform{58.4994f, 149.201f, 0.0299706f} }
 			, wallTexture{ renderer, "./img/wall_64.png" }
+			, bulletTexture{ renderer, "./img/player_bullet.png"}
 			, enemyAnimation{ std::make_unique<rcgf::Animation>(
 					std::make_unique<rcgf::Texture>(renderer, "img/CabronTileset.png"),
 					64, // sprite width
 					64, // sprite height
 					1,  // rows
 					4  // cols
-				)
-		}
+				) }
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
 			, testSprite{
@@ -122,25 +124,11 @@ namespace game
 						math::Vec2{61.1379f, 156.247f},
 						math::Vec2{100.179f, 158.618f}
 					}
-				)
-			}
+				) }
 		{
 			srand((unsigned int)time(NULL));
-
-			wallTexture.printDebugInfo();
-
-			//// init 100 enemy sprites
-			//for (int i = 0; i < RANDOM_ENEMY_NUM; ++i)
-			//{
-			//	// what are the x/y position boundaries? 
-			//	// This will generate a number from 0.0 to some arbitrary float, X:
-			//	float x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_X_BOUNDARY));
-			//	float y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (float)MAX_Y_BOUNDARY));
-			//	spriteArray.emplace_back(Actor{ enemyAnimation.get(), math::Transform{x,y,0.f}, std::make_unique<AI_Empty>() });
-			//}
-
 		}
-				Pimpl() = delete;
+		Pimpl() = delete;
 	};
 
 
@@ -157,10 +145,15 @@ namespace game
 
 	void GameSceneRaycaster::fixedUpdate()
 	{
-		m_impl->testSprite.Update();
-
 		Player& player = m_impl->player;
 		auto& keyStates = m_impl->keyStates;
+
+		m_impl->testSprite.Update();
+
+		for (auto& bullet : m_impl->playerBullets)
+		{
+			bullet.update();
+		}
 
 		if (!keyStates[SDLK_LCTRL])
 		{
@@ -201,6 +194,11 @@ namespace game
 		//}
 
 		m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, m_impl->testSprite);
+		for (auto& bullet : m_impl->playerBullets)
+		{
+			m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, bullet.transform, m_impl->bulletTexture);
+		}
+		
 
 		if (m_impl->showTopDown)
 		{
@@ -245,8 +243,16 @@ namespace game
 			}
 			break;
 		case SDLK_SPACE:
+		{
 			const math::Transform& t = m_impl->player.transform;
 			std::cout << "{" << t.pos.x << "f, " << t.pos.y << "f, " << t.angle << "f}" << std::endl;
+			break;
+		}
+		case SDLK_LALT:
+			// todo: 
+			// make this a pool
+			// clean up when colliding with wall or enemy
+			m_impl->playerBullets.push_back(PlayerBullet{ m_impl->player.transform });
 			break;
 		}
 

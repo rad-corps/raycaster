@@ -264,6 +264,66 @@ namespace game
 		//m_impl->player.render(m_renderer);		
 	}
 
+	void RenderEngine::RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, const rcgf::Texture& texture) const
+	{
+		const math::Vec2 povToSprite = spriteTransform.pos - povTransform.pos;
+		const float leftFovToSpriteAngle = calculate_sprite_angle_from_left_fov(povTransform.angle, povToSprite);
+
+		// cull actors that are off screen
+		if (leftFovToSpriteAngle < 0 || leftFovToSpriteAngle > FOV)
+		{
+			// TODO: we need to be a bit smarter about < 0 off the left of screen.
+			return;
+		}
+
+		const float correctedDistanceToSprite = calculate_fisheye_corrected_distance(povToSprite, povTransform.angle);
+		
+		// avoid divide by 0
+		if (correctedDistanceToSprite < 0.01f)
+		{
+			return;
+		}
+
+		const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / correctedDistanceToSprite * DIST_PROJECTION_PLANE);
+
+		// now we have an angle in radians from the player to the sprite that is 0 at far left of FOV, and FOV at far right.
+		// convert angle to screen space
+		const float screenXLeftOfSprite = ((leftFovToSpriteAngle / FOV) * SCREEN_WIDTH) - screenSpaceSpriteHeight / 2;
+
+		// ==========================================================================================================
+		//                         To calculate the screen Y pixel position of a sprite
+		// ==========================================================================================================
+		// 
+		//     distance from player to enemy                                     player height                       
+		// ----------------------------------------  =   ------------------------------------------------------------
+		// distance from player to projection plane         screen y pixel position - center y screen pixel position
+		//
+		// 
+		// solving for screen y pixel position below
+		const float screenYTopOfSprite = (((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / correctedDistanceToSprite) + CENTER_Y) - screenSpaceSpriteHeight;
+
+		SDL_Rect dstRect{
+			(int)screenXLeftOfSprite,
+			(int)screenYTopOfSprite,
+			screenSpaceSpriteHeight,
+			screenSpaceSpriteHeight
+		};
+
+
+		RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, correctedDistanceToSprite, 64 /* TODO: fix magic number */);
+
+		// completely obstructed. Bail
+		if (!rectContainer.display)
+		{
+			return;
+		}
+
+		dstRect = rectContainer.screenSpaceRect;
+		SDL_Rect spriteSheetRect = rectContainer.spriteSheetRect;
+		texture.render2(&spriteSheetRect, &dstRect);
+		
+	}
+
 	void RenderEngine::RenderSprite(const math::Transform& povTransform, const Actor& sprite) const
 	{
 		const math::Vec2 povToSprite = sprite.m_transform.pos - povTransform.pos;

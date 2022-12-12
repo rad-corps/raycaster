@@ -7,6 +7,23 @@
 
 namespace game
 {
+	struct PlayerBullet
+	{
+		PlayerBullet(math::Transform initialPosition)
+			: transform{ initialPosition }
+			, velocity{0.f,0.f}
+		{
+			velocity = math::angle_to_vec(initialPosition.angle) * bulletSpeed;
+		}
+		void update()
+		{
+			transform.pos += velocity;
+		}
+		math::Transform transform;
+		math::Vec2 velocity;
+		static constexpr float bulletSpeed = 5.f;
+	};
+
 	class Player
 	{
 	public:
@@ -22,6 +39,7 @@ namespace game
 		math::Vec2 getOffset(float angle, float distance) const;
 		void rotate(RotateDirection dir);
 		void move(float relativeAngle, const GameMap* map);
+		void fire();
 
 		math::Transform transform;
 		SDL_Rect wallCollisionBox;
