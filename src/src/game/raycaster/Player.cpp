@@ -78,4 +78,10 @@ namespace game
 			wallCollisionBox.x = static_cast<int>(transform.pos.x) - HALF_WALL_COLLISION_BOX_SZ;
 		}
 	}
+
+
+	void Player::fire()
+	{
+
+	}
 }

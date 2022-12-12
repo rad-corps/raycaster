@@ -123,7 +123,7 @@ namespace rcgf
 		return ret;
 	}
 
-	void Texture::render(int x, int y, SDL_Rect* clip, float scale, double angle, SDL_RendererFlip flip, bool drawFromCenter)
+	void Texture::render(int x, int y, SDL_Rect* clip, float scale, double angle, SDL_RendererFlip flip, bool drawFromCenter) const
 	{
 		if ( drawFromCenter )
 		{
@@ -146,7 +146,7 @@ namespace rcgf
 		SDL_RenderCopyEx(m_renderer, m_texture.get(), clip, &renderQuad, angle, NULL, flip);
 	}
 	
-	void Texture::render2(const SDL_Rect* textureClip, const SDL_Rect* outputClip)
+	void Texture::render2(const SDL_Rect* textureClip, const SDL_Rect* outputClip) const
 	{
 		SDL_RenderCopyEx(m_renderer, m_texture.get(), textureClip, outputClip, 0.0, NULL, SDL_RendererFlip::SDL_FLIP_NONE);
 	}
