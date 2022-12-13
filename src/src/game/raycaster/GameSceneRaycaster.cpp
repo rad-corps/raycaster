@@ -161,16 +161,11 @@ namespace game
 		// sort sprites (closest to player last)
 		const math::Vec2 player_pos = m_impl->player.transform.pos;
 
-		//std::sort(m_impl->spriteArray.begin(), m_impl->spriteArray.end(), [player_pos](const Actor& a, const Actor& b) {
-		//	return math::magnitude(player_pos - a.m_transform.pos) > math::magnitude(player_pos - b.m_transform.pos);
-		//});
-		//// render sprites
-		//for (const auto& sprite : m_impl->spriteArray)
-		//{
-		//	m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, sprite);
-		//}
+		std::sort(m_impl->gameObjects.begin(), m_impl->gameObjects.end(), [player_pos](const GameObject& a, const GameObject& b) {
+			return math::magnitude(player_pos - a.m_transform.pos) > math::magnitude(player_pos - b.m_transform.pos);
+		});
 
-		for (GameObject& go : m_impl->gameObjects)
+		for (const GameObject& go : m_impl->gameObjects)
 		{
 			// TODO: render function should be const
 			go.Render(m_impl->m_renderEngine, m_impl->player.transform);

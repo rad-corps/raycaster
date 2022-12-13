@@ -10,8 +10,9 @@
 namespace game
 {
 	// create one of these per object in world
-	struct GameObject
+	class GameObject
 	{
+	public:
 		// remove default construction
 		GameObject() = delete;
 		
@@ -29,6 +30,8 @@ namespace game
 		void Render(const game::RenderEngine& re, const math::Transform& pov) const;
 
 		math::Transform m_transform;
+
+	private:
 		rcgf::SpriteSheet* m_spritesheet;
 		std::unique_ptr<AI> m_ai;
 		std::unique_ptr<RenderingComponent> m_rc;

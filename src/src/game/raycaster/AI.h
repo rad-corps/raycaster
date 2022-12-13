@@ -6,7 +6,7 @@
 
 namespace game
 {
-	struct GameObject;
+	class GameObject;
 
 	class AI
 	{

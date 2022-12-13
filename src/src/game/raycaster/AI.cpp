@@ -42,7 +42,7 @@ namespace game
 	std::unique_ptr<AI> BulletBehavior::Update(GameObject& go)
 	{
 		math::Vec2 direction = math::angle_to_vec(go.m_transform.angle);
-		math::Vec2 velocity = direction * 5;
+		math::Vec2 velocity = direction * 1;
 		go.m_transform.pos += velocity;
 		return nullptr;
 	}
