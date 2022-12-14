@@ -81,7 +81,9 @@ namespace game
 		SDL_Renderer* m_renderer;
 		RaycastEngine raycastEngine;
 		RenderEngine m_renderEngine;
-		std::vector<GameObject> gameObjects;
+		GameObjectPool m_gameObjects;
+		//std::vector<GameObject> m_gameObjects;
+
 		GameObjectFactory m_factory;
 
 
@@ -102,10 +104,11 @@ namespace game
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
 			, m_factory{renderer}
+			, m_gameObjects(10, m_renderEngine)
 		{
 			srand((unsigned int)time(NULL));
 
-			gameObjects.push_back(m_factory.CreateCabron(math::Transform{ 92.7399f, 150.433f, 0.f }));
+			m_gameObjects.Add(m_factory.CreateCabron(math::Transform{ 92.7399f, 150.433f, 0.f }));
 		}
 		Pimpl() = delete;
 	};
@@ -127,10 +130,7 @@ namespace game
 		Player& player = m_impl->player;
 		auto& keyStates = m_impl->keyStates;
 
-		for (GameObject& go : m_impl->gameObjects)
-		{
-			go.Update();
-		}
+		m_impl->m_gameObjects.Update();
 
 		if (!keyStates[SDLK_LCTRL])
 		{
@@ -152,40 +152,30 @@ namespace game
 
 	void GameSceneRaycaster::render()
 	{
+		const math::Transform& playerTransform = m_impl->player.transform;
+		auto& gameObjects = m_impl->m_gameObjects;
+		auto& renderEngine = m_impl->m_renderEngine;
+		
 		// generate wall data
-		m_impl->raycastEngine.generateWallRenderData(m_impl->player.transform, &map, &m_impl->wallTexture);
+		m_impl->raycastEngine.generateWallRenderData(playerTransform, &map, &m_impl->wallTexture);
 
 		// render walls
 		m_impl->m_renderEngine.RenderWalls();
 
-		// sort sprites (closest to player last)
-		const math::Vec2 player_pos = m_impl->player.transform.pos;
-
-		std::sort(m_impl->gameObjects.begin(), m_impl->gameObjects.end(), [player_pos](const GameObject& a, const GameObject& b) {
-			return math::magnitude(player_pos - a.m_transform.pos) > math::magnitude(player_pos - b.m_transform.pos);
-		});
-
-		for (const GameObject& go : m_impl->gameObjects)
-		{
-			// TODO: render function should be const
-			go.Render(m_impl->m_renderEngine, m_impl->player.transform);
-		}
-
-		//for (auto& bullet : m_impl->playerBullets)
-		//{
-		//	m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, bullet.transform, m_impl->bulletTexture.get(), 0);
-		//}
-		
+		// render all gameobjects
+		gameObjects.Render(playerTransform);
 
 		if (m_impl->showTopDown)
 		{
-			m_impl->m_renderEngine.RenderTopDownMap(map, m_impl->player.transform, m_impl->showRays);
+			renderEngine.RenderTopDownMap(map, playerTransform, m_impl->showRays);
 		}
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
 	{
-		m_impl->keyStates[keycode] = true;
+		auto& keyStates = m_impl->keyStates;
+
+		keyStates[keycode] = true;
 
 		switch (keycode)
 		{
@@ -197,7 +187,7 @@ namespace game
 		case SDLK_RIGHT:
 		case SDLK_UP:
 		case SDLK_DOWN:
-			m_impl->keyStates[keycode] = true;
+			keyStates[keycode] = true;
 			break;
 		}
 
@@ -226,7 +216,7 @@ namespace game
 			break;
 		}
 		case SDLK_LALT:
-			m_impl->gameObjects.push_back(m_impl->m_factory.CreatePlayerBullet(m_impl->player.transform));
+			m_impl->m_gameObjects.Add(m_impl->m_factory.CreatePlayerBullet(m_impl->player.transform));
 			break;
 		}
 

@@ -7,8 +7,6 @@ namespace game
 {
 	std::unique_ptr<AI> AI_WaypointFollow::Update(GameObject& go)
 	{
-		//std::cout << "waypoint update: " << sprite.m_transform.angle << std::endl;
-
 		// get current position
 		const math::Vec2& currentPos = go.m_transform.pos;
 
@@ -19,7 +17,6 @@ namespace game
 		const math::Vec2 delta = nextPos - currentPos;
 		const math::Vec2 direction = math::normalize(delta);
 		const math::Vec2 velocity = direction * ACTOR_VELOCITY;
-
 
 		// travel
 		go.m_transform.pos += velocity;

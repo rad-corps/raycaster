@@ -13,8 +13,11 @@ namespace game
 	class GameObject
 	{
 	public:
-		// remove default construction
-		GameObject() = delete;
+		// default construction
+		GameObject()
+			: m_transform{ 0.f,0.f,0.f }
+			, m_active{false}
+		{}
 		
 		// remove copy construction
 		GameObject(const GameObject&) = delete;
@@ -31,9 +34,28 @@ namespace game
 
 		math::Transform m_transform;
 
+		// todo make this private and make GameObjectPool a friend
+		bool m_active = false;
+
 	private:
+		
 		rcgf::SpriteSheet* m_spritesheet;
 		std::unique_ptr<AI> m_ai;
 		std::unique_ptr<RenderingComponent> m_rc;
+	};
+
+	class GameObjectPool
+	{
+	public:
+		// todo make this a template and std::array
+		GameObjectPool(size_t num, const game::RenderEngine& re);
+		void Add(GameObject&& go);
+		void Update();
+		void Render(const math::Transform& pov);
+
+	private:
+		std::vector<GameObject> m_gameObjects;
+		const RenderEngine& m_renderEngine;
+		int m_index = -1;
 	};
 } 
