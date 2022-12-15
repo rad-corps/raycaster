@@ -29,7 +29,7 @@ namespace game
 
 		GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI> ai, std::unique_ptr<RenderingComponent> rc);
 
-		void Update(const std::vector<GameObject>& gameObjects, const game::GameMap& map);
+		void Update(std::vector<GameObject>& gameObjects, const game::GameMap& map);
 		void Render(const game::RenderEngine& re, const math::Transform& pov) const;
 
 		math::Transform m_transform;
@@ -60,6 +60,6 @@ namespace game
 		const RenderEngine& m_renderEngine;
 
 		// TODO: For debugging info. Report whenever the pool hits its highest point.
-		//int maxActivePoolCount = 0;
+		int m_maxActivePoolCount = 0;
 	};
 } 

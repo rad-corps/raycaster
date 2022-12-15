@@ -13,7 +13,7 @@ namespace game
 	{
 	public:
 		virtual ~AI() {}
-		virtual std::unique_ptr<AI> Update(GameObject& subject, const std::vector<GameObject>& gameObjects, const GameMap& gameMap) = 0;
+		virtual std::unique_ptr<AI> Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap) = 0;
 	};
 
 	class AI_WaypointFollow : public AI
@@ -24,7 +24,7 @@ namespace game
 			: m_waypointPositions{ waypointPositions }
 		{}
 
-		std::unique_ptr<AI> Update(GameObject& subject, const std::vector<GameObject>& gameObjects, const GameMap& gameMap) override;
+		std::unique_ptr<AI> Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap) override;
 	
 	private:
 		std::vector<math::Vec2> m_waypointPositions;
@@ -34,12 +34,12 @@ namespace game
 	class AI_Empty : public AI
 	{
 	public:
-		std::unique_ptr<AI> Update(GameObject& subject, const std::vector<GameObject>& gameObjects, const GameMap& gameMap) override;
+		std::unique_ptr<AI> Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap) override;
 	};
 
 	class BulletBehavior : public AI
 	{
 	public:
-		std::unique_ptr<AI> Update(GameObject& subject, const std::vector<GameObject>& gameObjects, const GameMap& gameMap) override;
+		std::unique_ptr<AI> Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap) override;
 	};
 }
