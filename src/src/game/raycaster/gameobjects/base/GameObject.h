@@ -2,9 +2,9 @@
 
 #include <memory>
 #include "SpriteSheet.h"
-#include "AI.h"
+#include "./gameobjects/base/AI.h"
 #include "RCGFMath.h"
-#include "RenderingComponent.h"
+#include "./gameobjects/base/RenderingComponent.h"
 #include "RenderEngine.h"
 
 namespace game

@@ -1,5 +1,5 @@
 #include "GameSceneMain.h"
-#include "../raycaster/GameSceneRaycaster.h"
+#include "GameSceneRaycaster.h"
 
 namespace
 {

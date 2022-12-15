@@ -1,8 +1,13 @@
 #include "GameObjectFactory.h"
 #include "SpriteSheet.h"
 #include <memory>
-#include "AI.h"
-#include "RenderingComponent.h"
+#include "./gameobjects/base/AI.h"
+#include "./gameobjects/base/RenderingComponent.h"
+#include "./gameobjects/render/CabronRenderer.h"
+#include "./gameobjects/render/BulletRenderer.h"
+#include "./gameobjects/AI/CabronAI.h"
+#include "./gameobjects/AI/BulletAI.h"
+
 
 namespace
 {

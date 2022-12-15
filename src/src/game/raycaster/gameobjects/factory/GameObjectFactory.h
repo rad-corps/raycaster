@@ -2,7 +2,7 @@
 
 #include "Globals.h"
 #include <memory>
-#include "GameObject.h"
+#include "./gameobjects/base/GameObject.h"
 #include "RCGFMath.h"
 
 namespace game

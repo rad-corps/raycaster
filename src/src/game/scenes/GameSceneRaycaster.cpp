@@ -10,18 +10,18 @@
 #include "RaycastEngine.h"
 #include "Map.h"
 #include "Texture.h"
-#include "GameObject.h"
+#include "./gameobjects/base/GameObject.h"
 #include "RaycasterConstants.h"
 #include <vector>
 #include "RenderEngine.h"
-#include "RenderingComponent.h"
-#include "GameObjectFactory.h"
+//#include "RenderingComponent.h"
+#include "./gameobjects/factory/GameObjectFactory.h"
 
 #include <algorithm> // std::sort
 
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
-#include "AI.h"
+//#include "AI.h"
 
 
 #define RENDER_DEBUG_VALUES

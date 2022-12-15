@@ -1,5 +1,5 @@
 #include "GameObject.h"
-#include "AI.h"
+#include "./gameobjects/base/AI.h"
 #include <iostream>
 #include <algorithm>
 #include <cassert>
