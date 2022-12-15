@@ -14,7 +14,7 @@ namespace game
 		, m_active{true}
 	{}
 
-	void GameObject::Update(const std::vector<GameObject>& gameObjects, const game::GameMap& map)
+	void GameObject::Update(std::vector<GameObject>& gameObjects, const game::GameMap& map)
 	{
 		if (!m_active) return;
 
@@ -52,8 +52,15 @@ namespace game
 			// TODO: if we can't find an object in the pool, reuse the furthest or something?
 			assert(index >= 0);
 		}
-		std::cout << "index: " << index << ", iterations: " << iterations << std::endl;
 		m_gameObjects[index] = std::move(go);
+
+		// keep track of the pool depth
+		const int count = static_cast<int>(std::count_if(m_gameObjects.begin(), m_gameObjects.end(), [](const GameObject& go) {return go.m_active; }));
+		if (count > m_maxActivePoolCount)
+		{
+			m_maxActivePoolCount = count;
+			std::cout << "new depth for object pool. " << m_maxActivePoolCount << " active elements with " << GAME_OBJECT_ACTIVE_POOL_SZ << " total size" << std::endl;
+		}
 	}
 
 	void GameObjectPool::Update(const game::GameMap& map)
