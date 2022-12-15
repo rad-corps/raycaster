@@ -104,7 +104,7 @@ namespace game
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
 			, m_factory{renderer}
-			, m_gameObjects(10, m_renderEngine)
+			, m_gameObjects(GAME_OBJECT_ACTIVE_POOL_SZ, m_renderEngine)
 		{
 			srand((unsigned int)time(NULL));
 
@@ -130,7 +130,7 @@ namespace game
 		Player& player = m_impl->player;
 		auto& keyStates = m_impl->keyStates;
 
-		m_impl->m_gameObjects.Update();
+		m_impl->m_gameObjects.Update(map);
 
 		if (!keyStates[SDLK_LCTRL])
 		{

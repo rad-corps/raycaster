@@ -14,11 +14,11 @@ namespace game
 		, m_active{true}
 	{}
 
-	void GameObject::Update()
+	void GameObject::Update(const std::vector<GameObject>& gameObjects, const game::GameMap& map)
 	{
 		if (!m_active) return;
 
-		std::unique_ptr<AI> newAI = m_ai->Update(*this);
+		std::unique_ptr<AI> newAI = m_ai->Update(*this, gameObjects, map);
 		if (newAI)
 		{
 			m_ai = std::move(newAI);
@@ -39,26 +39,28 @@ namespace game
 
 	void GameObjectPool::Add(GameObject&& go)
 	{
-		// find next available
+		// easier to deal with int so we know we've checked all slots when we hit -1
+		// don't want to deal with size_t underflow, and we are never going to have 
+		// more than INT_MAX in our gameobject pool
+		int index = static_cast<int>(m_gameObjects.size() - 1);
 		int iterations = 0;
-		while (m_gameObjects[++m_index].m_active)
+		while (m_gameObjects[index].m_active)
 		{
+			--index;
 			++iterations;
-			if (m_index == m_gameObjects.size() - 1)
-			{
-				m_index = -1;
-			}
-			assert(iterations < m_gameObjects.size());
+
+			// TODO: if we can't find an object in the pool, reuse the furthest or something?
+			assert(index >= 0);
 		}
-		std::cout << "took " << iterations << " tries to find an inactive gameobject in the pool. index: " << m_index << std::endl;
-		m_gameObjects[m_index] = std::move(go);
+		std::cout << "index: " << index << ", iterations: " << iterations << std::endl;
+		m_gameObjects[index] = std::move(go);
 	}
 
-	void GameObjectPool::Update()
+	void GameObjectPool::Update(const game::GameMap& map)
 	{
 		for (auto& go : m_gameObjects)
 		{
-			go.Update();
+			go.Update(m_gameObjects, map);
 		}
 	}
 
@@ -67,7 +69,12 @@ namespace game
 		// sort before render
 		const auto& playerPos = pov.pos;
 		std::sort(m_gameObjects.begin(), m_gameObjects.end(), [playerPos](const GameObject& a, const GameObject& b) {
-			return math::magnitude(playerPos - a.m_transform.pos) > math::magnitude(playerPos - b.m_transform.pos);
+			// if both active, then sort by distance
+			if (a.m_active && b.m_active)
+				return math::magnitude(playerPos - a.m_transform.pos) > math::magnitude(playerPos - b.m_transform.pos);
+			else if (a.m_active)
+				return true;
+			return false;
 		});
 
 		for (const auto& go : m_gameObjects)

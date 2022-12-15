@@ -29,7 +29,7 @@ namespace game
 
 		GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI> ai, std::unique_ptr<RenderingComponent> rc);
 
-		void Update();
+		void Update(const std::vector<GameObject>& gameObjects, const game::GameMap& map);
 		void Render(const game::RenderEngine& re, const math::Transform& pov) const;
 
 		math::Transform m_transform;
@@ -49,13 +49,17 @@ namespace game
 	public:
 		// todo make this a template and std::array
 		GameObjectPool(size_t num, const game::RenderEngine& re);
+		
+		// GameObject is move only (no copy construction)
 		void Add(GameObject&& go);
-		void Update();
+		void Update(const game::GameMap& map);
 		void Render(const math::Transform& pov);
 
 	private:
 		std::vector<GameObject> m_gameObjects;
 		const RenderEngine& m_renderEngine;
-		int m_index = -1;
+
+		// TODO: For debugging info. Report whenever the pool hits its highest point.
+		//int maxActivePoolCount = 0;
 	};
 } 
