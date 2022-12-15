@@ -38,4 +38,9 @@ namespace game
 		const int animID = CalculateSpriteAnimationID(math::angle(povToSprite, spriteForwardVec));
 		re.RenderSprite(pov, objTransform, spriteSheet, animID);
 	}
+
+	void BulletRenderer::Render(const RenderEngine& re, const math::Transform& pov, const math::Transform& objTransform, rcgf::SpriteSheet* spriteSheet)
+	{
+		re.RenderSprite(pov, objTransform, spriteSheet, 0);
+	}
 }

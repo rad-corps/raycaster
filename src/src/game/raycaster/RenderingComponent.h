@@ -21,4 +21,10 @@ namespace game
 	private:
 		int CalculateSpriteAnimationID(float angle);
 	};
+
+	class BulletRenderer : public RenderingComponent
+	{
+	public:
+		void Render(const game::RenderEngine& re, const math::Transform& pov, const math::Transform& objTransform, rcgf::SpriteSheet* spriteSheet) override;
+	};
 }

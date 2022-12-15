@@ -10,11 +10,12 @@
 #include "RaycastEngine.h"
 #include "Map.h"
 #include "Texture.h"
-#include "Actor.h"
+#include "GameObject.h"
 #include "RaycasterConstants.h"
 #include <vector>
 #include "RenderEngine.h"
 #include "RenderingComponent.h"
+#include "GameObjectFactory.h"
 
 #include <algorithm> // std::sort
 
@@ -77,14 +78,14 @@ namespace game
 		bool showTopDown = false;
 		bool showRays = false;
 		rcgf::Texture wallTexture;
-		std::unique_ptr<rcgf::SpriteSheet> bulletTexture;
-		std::unique_ptr<rcgf::SpriteSheet> enemyAnimation;
 		SDL_Renderer* m_renderer;
 		RaycastEngine raycastEngine;
 		RenderEngine m_renderEngine;
-		//std::vector<game::Actor> spriteArray;
-		std::vector<PlayerBullet> playerBullets;
-		game::Actor testSprite;
+		GameObjectPool m_gameObjects;
+		//std::vector<GameObject> m_gameObjects;
+
+		GameObjectFactory m_factory;
+
 
 		std::map<SDL_Keycode, bool> keyStates = {
 			{SDLK_w, false},
@@ -100,39 +101,14 @@ namespace game
 		Pimpl(SDL_Renderer* renderer)
 			: player{ math::Transform{58.4994f, 149.201f, 0.0299706f} }
 			, wallTexture{ renderer, "./img/wall_64.png" }
-			, bulletTexture{ std::make_unique<rcgf::SpriteSheet>(
-					std::make_unique<rcgf::Texture>(renderer, "./img/player_bullet.png"),
-					64,64,1,1
-				)}
-			, enemyAnimation{ std::make_unique<rcgf::SpriteSheet>(
-					std::make_unique<rcgf::Texture>(renderer, "img/CabronTileset.png"),
-					64, // sprite width
-					64, // sprite height
-					1,  // rows
-					4  // cols
-				) }
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
-			, testSprite{
-				enemyAnimation.get(),
-				math::Transform{92.7399f, 150.433f, 0.f},
-				std::make_unique<AI_WaypointFollow>(std::vector<math::Vec2>
-					{
-						math::Vec2{139.675f, 162.776f},
-						math::Vec2{116.09f, 140.828f},
-						math::Vec2{106.411f, 73.3184f},
-						math::Vec2{81.0254f, 139.27f},
-						math::Vec2{50.7314f, 134.953f},
-						math::Vec2{49.8596f, 79.302f},
-						math::Vec2{30.3543f, 84.3723f},
-						math::Vec2{61.1379f, 156.247f},
-						math::Vec2{100.179f, 158.618f}
-					}
-				),
-				std::make_unique<CabronRenderer>()
-			}
+			, m_factory{renderer}
+			, m_gameObjects(GAME_OBJECT_ACTIVE_POOL_SZ, m_renderEngine)
 		{
 			srand((unsigned int)time(NULL));
+
+			m_gameObjects.Add(m_factory.CreateCabron(math::Transform{ 92.7399f, 150.433f, 0.f }));
 		}
 		Pimpl() = delete;
 	};
@@ -154,12 +130,7 @@ namespace game
 		Player& player = m_impl->player;
 		auto& keyStates = m_impl->keyStates;
 
-		m_impl->testSprite.Update();
-
-		for (auto& bullet : m_impl->playerBullets)
-		{
-			bullet.update();
-		}
+		m_impl->m_gameObjects.Update(map);
 
 		if (!keyStates[SDLK_LCTRL])
 		{
@@ -181,41 +152,30 @@ namespace game
 
 	void GameSceneRaycaster::render()
 	{
+		const math::Transform& playerTransform = m_impl->player.transform;
+		auto& gameObjects = m_impl->m_gameObjects;
+		auto& renderEngine = m_impl->m_renderEngine;
+		
 		// generate wall data
-		m_impl->raycastEngine.generateWallRenderData(m_impl->player.transform, &map, &m_impl->wallTexture);
+		m_impl->raycastEngine.generateWallRenderData(playerTransform, &map, &m_impl->wallTexture);
 
 		// render walls
 		m_impl->m_renderEngine.RenderWalls();
 
-		// sort sprites (closest to player last)
-		const math::Vec2 player_pos = m_impl->player.transform.pos;
-
-		//std::sort(m_impl->spriteArray.begin(), m_impl->spriteArray.end(), [player_pos](const Actor& a, const Actor& b) {
-		//	return math::magnitude(player_pos - a.m_transform.pos) > math::magnitude(player_pos - b.m_transform.pos);
-		//});
-		//// render sprites
-		//for (const auto& sprite : m_impl->spriteArray)
-		//{
-		//	m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, sprite);
-		//}
-
-		m_impl->testSprite.Render(m_impl->m_renderEngine, m_impl->player.transform);
-
-		for (auto& bullet : m_impl->playerBullets)
-		{
-			m_impl->m_renderEngine.RenderSprite(m_impl->player.transform, bullet.transform, m_impl->bulletTexture.get(), 0);
-		}
-		
+		// render all gameobjects
+		gameObjects.Render(playerTransform);
 
 		if (m_impl->showTopDown)
 		{
-			m_impl->m_renderEngine.RenderTopDownMap(map, m_impl->player.transform, m_impl->showRays);
+			renderEngine.RenderTopDownMap(map, playerTransform, m_impl->showRays);
 		}
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
 	{
-		m_impl->keyStates[keycode] = true;
+		auto& keyStates = m_impl->keyStates;
+
+		keyStates[keycode] = true;
 
 		switch (keycode)
 		{
@@ -227,7 +187,7 @@ namespace game
 		case SDLK_RIGHT:
 		case SDLK_UP:
 		case SDLK_DOWN:
-			m_impl->keyStates[keycode] = true;
+			keyStates[keycode] = true;
 			break;
 		}
 
@@ -256,10 +216,7 @@ namespace game
 			break;
 		}
 		case SDLK_LALT:
-			// todo: 
-			// make this a pool
-			// clean up when colliding with wall or enemy
-			m_impl->playerBullets.push_back(PlayerBullet{ m_impl->player.transform });
+			m_impl->m_gameObjects.Add(m_impl->m_factory.CreatePlayerBullet(m_impl->player.transform));
 			break;
 		}
 

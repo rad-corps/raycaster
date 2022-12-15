@@ -31,6 +31,7 @@ namespace game
 	constexpr int COLUMNS = SCREEN_WIDTH / X_PX_STEP;
 	constexpr float START_ANGLE = 0.f;
 	constexpr int TOP_DOWN_SCALE = 2;
+	constexpr int GAME_OBJECT_ACTIVE_POOL_SZ = 1024; // arbitrary, lets tune this as we need to.
 
 	constexpr int RANDOM_ENEMY_NUM = 50;
 
