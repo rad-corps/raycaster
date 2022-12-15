@@ -1,6 +1,6 @@
-#include "RenderingComponent.h"
+#include "CabronRenderer.h"
+#include "RCGFMath.h"
 #include <cassert>
-#pragma warning( disable : 4100 )
 
 using math::PI;
 
@@ -37,10 +37,5 @@ namespace game
 		const math::Vec2 spriteForwardVec = math::angle_to_vec(objTransform.angle);
 		const int animID = CalculateSpriteAnimationID(math::angle(povToSprite, spriteForwardVec));
 		re.RenderSprite(pov, objTransform, spriteSheet, animID);
-	}
-
-	void BulletRenderer::Render(const RenderEngine& re, const math::Transform& pov, const math::Transform& objTransform, rcgf::SpriteSheet* spriteSheet)
-	{
-		re.RenderSprite(pov, objTransform, spriteSheet, 0);
 	}
 }

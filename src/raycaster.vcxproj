@@ -24,16 +24,20 @@
     <ClCompile Include="src\framework\Texture.cpp" />
     <ClCompile Include="src\framework\Globals.cpp" />
     <ClCompile Include="src\framework\IGameScene.cpp" />
-    <ClCompile Include="src\game\raycaster\AI.cpp" />
-    <ClCompile Include="src\game\raycaster\GameObjectFactory.cpp" />
+    <ClCompile Include="src\game\raycaster\gameobjects\ai\BulletAI.cpp" />
+    <ClCompile Include="src\game\raycaster\gameobjects\ai\CabronAI.cpp" />
+    <ClCompile Include="src\game\raycaster\gameobjects\base\AI.cpp" />
+    <ClCompile Include="src\game\raycaster\gameobjects\factory\GameObjectFactory.cpp" />
+    <ClCompile Include="src\game\raycaster\gameobjects\render\BulletRenderer.cpp" />
+    <ClCompile Include="src\game\raycaster\gameobjects\render\CabronRenderer.cpp" />
     <ClCompile Include="src\game\raycaster\Map.cpp" />
     <ClCompile Include="src\game\raycaster\Player.cpp" />
     <ClCompile Include="src\game\raycaster\RaycastEngine.cpp" />
     <ClCompile Include="src\game\raycaster\RenderEngine.cpp" />
-    <ClCompile Include="src\game\raycaster\GameObject.cpp" />
-    <ClCompile Include="src\game\raycaster\RenderingComponent.cpp" />
+    <ClCompile Include="src\game\raycaster\gameobjects\base\GameObject.cpp" />
+    <ClCompile Include="src\game\raycaster\gameobjects\base\RenderingComponent.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMain.cpp" />
-    <ClCompile Include="src\game\raycaster\GameSceneRaycaster.cpp" />
+    <ClCompile Include="src\game\scenes\GameSceneRaycaster.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -42,17 +46,21 @@
     <ClInclude Include="src\framework\Texture.h" />
     <ClInclude Include="src\framework\Globals.h" />
     <ClInclude Include="src\framework\IGameScene.h" />
-    <ClInclude Include="src\game\raycaster\AI.h" />
-    <ClInclude Include="src\game\raycaster\GameObjectFactory.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\ai\BulletAI.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\ai\CabronAI.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\base\AI.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\factory\GameObjectFactory.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\render\BulletRenderer.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\render\CabronRenderer.h" />
     <ClInclude Include="src\game\raycaster\Map.h" />
     <ClInclude Include="src\game\raycaster\Player.h" />
     <ClInclude Include="src\game\raycaster\RaycastEngine.h" />
     <ClInclude Include="src\game\raycaster\RaycasterConstants.h" />
     <ClInclude Include="src\game\raycaster\RenderEngine.h" />
-    <ClInclude Include="src\game\raycaster\GameObject.h" />
-    <ClInclude Include="src\game\raycaster\RenderingComponent.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\base\GameObject.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\base\RenderingComponent.h" />
     <ClInclude Include="src\game\scenes\GameSceneMain.h" />
-    <ClInclude Include="src\game\raycaster\GameSceneRaycaster.h" />
+    <ClInclude Include="src\game\scenes\GameSceneRaycaster.h" />
     <ClInclude Include="src\game\scenes\GameSceneRotating.h" />
     <ClInclude Include="src\game\scenes\GameSceneScaling.h" />
   </ItemGroup>
@@ -164,7 +172,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>..\include\SDL2-2.0.18;..\include\SDL_image-2.0.5;..\include\SDL2_ttf-2.0.15;..\include;.\src\framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include\SDL2-2.0.18;..\include\SDL_image-2.0.5;..\include\SDL2_ttf-2.0.15;..\include;.\src\framework;.\src\game\raycaster;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/permissive- /w14640 /w14242 /w14254 /w14263 /w14265 /w14287 /we4289 /w14296 /w14311 /w14545 /w14546 /w14547 /w14549 /w14555 /w14619 /w14640 /w14826 /w14905 /w14906 /w14928  /external:anglebrackets /external:W0 %(AdditionalOptions)</AdditionalOptions>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
@@ -185,7 +193,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>..\include\SDL2-2.0.18;..\include\SDL_image-2.0.5;..\include\SDL2_ttf-2.0.15;..\include;.\src\framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include\SDL2-2.0.18;..\include\SDL_image-2.0.5;..\include\SDL2_ttf-2.0.15;..\include;.\src\framework;.\src\game\raycaster;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/permissive- /w14640 /w14242 /w14254 /w14263 /w14265 /w14287 /we4289 /w14296 /w14311 /w14545 /w14546 /w14547 /w14549 /w14555 /w14619 /w14640 /w14826 /w14905 /w14906 /w14928  /external:anglebrackets /external:W0 %(AdditionalOptions)</AdditionalOptions>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
