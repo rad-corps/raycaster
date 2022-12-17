@@ -1,5 +1,6 @@
 #include "CabronAI.h"
 #include "./gameobjects/base/GameObject.h"
+#include <iostream>
 
 namespace game
 {
@@ -32,5 +33,15 @@ namespace game
 	std::unique_ptr<AI> AI_Empty::Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap)
 	{
 		return nullptr;
+	}
+
+	void AI_Empty::OnEnemyDamage(const EnemyDamagePayload& payload)
+	{
+		std::cout << "AI_Empty::OnEnemyDamage: " << payload.damage << std::endl;
+	}
+
+	void AI_Empty::OnEnemyDeath(const EnemyDeathPayload& payload)
+	{
+		std::cout << "AI_Empty::OnEnemyDeath" << std::endl;
 	}
 }

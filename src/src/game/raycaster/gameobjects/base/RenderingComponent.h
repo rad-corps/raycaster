@@ -4,10 +4,11 @@
 #include "RCGFMath.h"
 #include "SpriteSheet.h"
 #include "RenderEngine.h"
+#include "EventRecipient.h"
 
 namespace game
 {
-	class RenderingComponent
+	class RenderingComponent : public EventRecipient
 	{
 	public:
 		virtual ~RenderingComponent() = default;
