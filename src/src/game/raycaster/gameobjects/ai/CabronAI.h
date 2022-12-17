@@ -23,5 +23,7 @@ namespace game
 	{
 	public:
 		std::unique_ptr<AI> Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap) override;
+		void OnEnemyDamage(const EnemyDamagePayload& payload) override;
+		void OnEnemyDeath(const EnemyDeathPayload& payload) override;
 	};
 }

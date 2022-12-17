@@ -32,6 +32,11 @@ namespace game
 		void Update(std::vector<GameObject>& gameObjects, const game::GameMap& map);
 		void Render(const game::RenderEngine& re, const math::Transform& pov) const;
 
+		
+		// send events
+		void SendEnemyDamaged(const EnemyDamagePayload& payload);
+		void SendEnemyDeath(const EnemyDeathPayload& payload);
+		
 		math::Transform m_transform;
 
 		// todo make this private and make GameObjectPool a friend

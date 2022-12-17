@@ -49,6 +49,8 @@
     <ClInclude Include="src\game\raycaster\gameobjects\ai\BulletAI.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\ai\CabronAI.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\base\AI.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\base\EventRecipient.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\base\EventTypes.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\factory\GameObjectFactory.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\render\BulletRenderer.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\render\CabronRenderer.h" />

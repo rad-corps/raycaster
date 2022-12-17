@@ -31,7 +31,8 @@ namespace game
 			// get the distance from subject to gameObject
 			if (math::magnitude(gameObject.m_transform.pos - subject.m_transform.pos) < 3.f /* TODO: this shouldn't be a magic number*/)
 			{
-				// todo: damage enemy
+				gameObject.SendEnemyDamaged(EnemyDamagePayload{ 1.f });
+				gameObject.SendEnemyDeath(EnemyDeathPayload{});
 				gameObject.m_active = false;
 				subject.m_active = false;
 			}

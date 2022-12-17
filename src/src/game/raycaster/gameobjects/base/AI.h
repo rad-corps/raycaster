@@ -4,12 +4,13 @@
 #include <vector>
 #include <memory>
 #include "Map.h"
+#include "EventRecipient.h"
 
 namespace game
 {
 	class GameObject;
 
-	class AI
+	class AI : public EventRecipient
 	{
 	public:
 		virtual ~AI() {}

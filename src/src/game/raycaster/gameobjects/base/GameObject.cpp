@@ -14,6 +14,18 @@ namespace game
 		, m_active{true}
 	{}
 
+	void GameObject::SendEnemyDamaged(const EnemyDamagePayload& payload)
+	{
+		if (m_ai) m_ai->OnEnemyDamage(payload);
+		if (m_rc) m_rc->OnEnemyDamage(payload);
+	}
+
+	void GameObject::SendEnemyDeath(const EnemyDeathPayload& payload)
+	{
+		if (m_ai) m_ai->OnEnemyDeath(payload);
+		if (m_rc) m_rc->OnEnemyDeath(payload);
+	}
+
 	void GameObject::Update(std::vector<GameObject>& gameObjects, const game::GameMap& map)
 	{
 		if (!m_active) return;
