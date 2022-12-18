@@ -1,12 +1,12 @@
 #include "GameObjectFactory.h"
 #include "SpriteSheet.h"
 #include <memory>
-#include "./gameobjects/base/AI.h"
-#include "./gameobjects/base/RenderingComponent.h"
-#include "./gameobjects/render/CabronRenderer.h"
-#include "./gameobjects/render/BulletRenderer.h"
-#include "./gameobjects/AI/CabronAI.h"
-#include "./gameobjects/AI/BulletAI.h"
+//#include "./gameobjects/base/AI_Component.h"
+//#include "./gameobjects/base/RenderComponent.h"
+#include "./gameobjects/render/RenderComponentCabron.h"
+#include "./gameobjects/render/RenderComponentBullet.h"
+#include "./gameobjects/AI/AI_ComponentEnemyCabron.h"
+#include "./gameobjects/AI/AI_ComponentBullet.h"
 
 
 namespace
@@ -33,14 +33,14 @@ namespace game
 	GameObject GameObjectFactory::CreateCabron(const math::Transform& transform)
 	{
 		auto ai = std::make_unique<AI_Empty>();
-		auto rc = std::make_unique<CabronRenderer>();
+		auto rc = std::make_unique<RenderComponentCabron>();
 		return GameObject{ ssEnemy01.get(), transform, std::move(ai), std::move(rc) };
 	}
 
 	GameObject GameObjectFactory::CreatePlayerBullet(const math::Transform& transform)
 	{
-		auto ai = std::make_unique<BulletBehavior>();
-		auto rc = std::make_unique<BulletRenderer>();
+		auto ai = std::make_unique<AI_ComponentBullet>();
+		auto rc = std::make_unique<RenderComponentBullet>();
 		return GameObject{ ssBullet.get(), transform, std::move(ai), std::move(rc) };
 	}
 }

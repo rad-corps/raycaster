@@ -2,9 +2,9 @@
 
 #include <memory>
 #include "SpriteSheet.h"
-#include "./gameobjects/base/AI.h"
+#include "./gameobjects/base/AI_Component.h"
 #include "RCGFMath.h"
-#include "./gameobjects/base/RenderingComponent.h"
+#include "./gameobjects/base/RenderComponent.h"
 #include "RenderEngine.h"
 
 namespace game
@@ -27,7 +27,7 @@ namespace game
 		GameObject(GameObject&&) = default;
 		GameObject& operator=(GameObject&&) = default;
 
-		GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI> ai, std::unique_ptr<RenderingComponent> rc);
+		GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI_Component> ai, std::unique_ptr<RenderComponent> rc);
 
 		void Update(std::vector<GameObject>& gameObjects, const game::GameMap& map);
 		void Render(const game::RenderEngine& re, const math::Transform& pov) const;
@@ -45,8 +45,8 @@ namespace game
 	private:
 		
 		rcgf::SpriteSheet* m_spritesheet;
-		std::unique_ptr<AI> m_ai;
-		std::unique_ptr<RenderingComponent> m_rc;
+		std::unique_ptr<AI_Component> m_ai;
+		std::unique_ptr<RenderComponent> m_rc;
 	};
 
 	class GameObjectPool

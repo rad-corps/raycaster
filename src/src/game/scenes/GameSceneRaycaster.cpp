@@ -21,7 +21,7 @@
 
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
-//#include "AI.h"
+//#include "AIComponent.h"
 
 
 #define RENDER_DEBUG_VALUES

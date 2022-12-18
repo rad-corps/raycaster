@@ -1,4 +1,4 @@
-#include "CabronRenderer.h"
+#include "RenderComponentCabron.h"
 #include "RCGFMath.h"
 #include <cassert>
 
@@ -6,7 +6,7 @@ using math::PI;
 
 namespace game
 {
-	int CabronRenderer::CalculateSpriteAnimationID(float angle)
+	int RenderComponentCabron::CalculateSpriteAnimationID(float angle)
 	{
 		// 0: front, 1: right, 2: back, 3: left
 
@@ -31,7 +31,7 @@ namespace game
 		return -1;
 	}
 
-	void CabronRenderer::Render(const RenderEngine& re, const math::Transform& pov, const math::Transform& objTransform, rcgf::SpriteSheet* spriteSheet)
+	void RenderComponentCabron::Render(const RenderEngine& re, const math::Transform& pov, const math::Transform& objTransform, rcgf::SpriteSheet* spriteSheet)
 	{
 		const math::Vec2 povToSprite = objTransform.pos - pov.pos;
 		const math::Vec2 spriteForwardVec = math::angle_to_vec(objTransform.angle);
