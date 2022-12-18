@@ -4,7 +4,7 @@
 
 namespace game
 {
-	std::unique_ptr<AI_Component> AI_WaypointFollow::Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap)
+	std::unique_ptr<AI_Component> AI_WaypointFollow::Update(GameObject& subject, GameObjectPool& pool, const GameMap& gameMap)
 	{
 		// get current position
 		const math::Vec2& currentPos = subject.m_transform.pos;
@@ -30,7 +30,7 @@ namespace game
 		return nullptr;
 	}
 
-	std::unique_ptr<AI_Component> AI_Empty::Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap)
+	std::unique_ptr<AI_Component> AI_Empty::Update(GameObject& subject, GameObjectPool& gameObjects, const GameMap& gameMap)
 	{
 		return nullptr;
 	}

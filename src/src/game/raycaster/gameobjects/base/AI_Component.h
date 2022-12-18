@@ -9,11 +9,12 @@
 namespace game
 {
 	class GameObject;
+	class GameObjectPool;
 
 	class AI_Component : public EventRecipient
 	{
 	public:
 		virtual ~AI_Component() {}
-		virtual std::unique_ptr<AI_Component> Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap) = 0;
+		virtual std::unique_ptr<AI_Component> Update(GameObject& subject, GameObjectPool& pool, const GameMap& gameMap) = 0;
 	};
 }

@@ -9,6 +9,8 @@
 
 namespace game
 {
+	class GameObjectPool;
+
 	// create one of these per object in world
 	class GameObject
 	{
@@ -29,7 +31,7 @@ namespace game
 
 		GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI_Component> ai, std::unique_ptr<RenderComponent> rc);
 
-		void Update(std::vector<GameObject>& gameObjects, const game::GameMap& map);
+		void Update(GameObjectPool& gameObjects, const game::GameMap& map);
 		void Render(const game::RenderEngine& re, const math::Transform& pov) const;
 
 		
@@ -47,24 +49,5 @@ namespace game
 		rcgf::SpriteSheet* m_spritesheet;
 		std::unique_ptr<AI_Component> m_ai;
 		std::unique_ptr<RenderComponent> m_rc;
-	};
-
-	class GameObjectPool
-	{
-	public:
-		// todo make this a template and std::array
-		GameObjectPool(size_t num, const game::RenderEngine& re);
-		
-		// GameObject is move only (no copy construction)
-		void Add(GameObject&& go);
-		void Update(const game::GameMap& map);
-		void Render(const math::Transform& pov);
-
-	private:
-		std::vector<GameObject> m_gameObjects;
-		const RenderEngine& m_renderEngine;
-
-		// TODO: For debugging info. Report whenever the pool hits its highest point.
-		int m_maxActivePoolCount = 0;
 	};
 } 
