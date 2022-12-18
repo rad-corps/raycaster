@@ -1,10 +1,11 @@
 #include "AI_ComponentBullet.h"
 #include "./gameobjects/base/GameObject.h"
+#include "./gameobjects/base/GameObjectPool.h"
 #include "RaycasterConstants.h"
 
 namespace game
 {
-	std::unique_ptr<AI_Component> AI_ComponentBullet::Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap)
+	std::unique_ptr<AI_Component> AI_ComponentBullet::Update(GameObject& subject, GameObjectPool& pool, const GameMap& gameMap)
 	{
 		math::Vec2 direction = math::angle_to_vec(subject.m_transform.angle);
 		math::Vec2 velocity = direction * 1;
@@ -19,7 +20,7 @@ namespace game
 		}
 
 		// compare against enemies
-		for (auto& gameObject : gameObjects)
+		for (auto& gameObject : pool.GetPool())
 		{
 			if (!gameObject.m_active)
 				continue;

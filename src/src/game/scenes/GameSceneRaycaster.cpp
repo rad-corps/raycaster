@@ -11,6 +11,7 @@
 #include "Map.h"
 #include "Texture.h"
 #include "./gameobjects/base/GameObject.h"
+#include "./gameobjects/base/GameObjectPool.h"
 #include "RaycasterConstants.h"
 #include <vector>
 #include "RenderEngine.h"

@@ -26,6 +26,7 @@
     <ClCompile Include="src\framework\IGameScene.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\ai\AI_ComponentBullet.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\ai\AI_ComponentEnemyCabron.cpp" />
+    <ClCompile Include="src\game\raycaster\gameobjects\base\GameObjectPool.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\factory\GameObjectFactory.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\render\RenderComponentBullet.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\render\RenderComponentCabron.cpp" />
@@ -46,8 +47,10 @@
     <ClInclude Include="src\framework\IGameScene.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\ai\AI_ComponentBullet.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\ai\AI_ComponentEnemyCabron.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\base\AI_Component.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\base\EventRecipient.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\base\EventTypes.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\base\GameObjectPool.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\factory\GameObjectFactory.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\render\RenderComponentBullet.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\render\RenderComponentCabron.h" />
