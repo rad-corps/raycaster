@@ -32,7 +32,7 @@ namespace game
 			if (math::magnitude(gameObject.m_transform.pos - subject.m_transform.pos) < 3.f /* TODO: this shouldn't be a magic number*/)
 			{
 				gameObject.SendEnemyDamaged(EnemyDamagePayload{ 1.f });
-				gameObject.m_active = false;
+				subject.m_active = false;
 			}
 		}
 

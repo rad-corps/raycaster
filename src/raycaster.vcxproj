@@ -46,7 +46,6 @@
     <ClInclude Include="src\framework\IGameScene.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\ai\AI_ComponentBullet.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\ai\AI_ComponentEnemyCabron.h" />
-    <ClInclude Include="src\game\raycaster\gameobjects\base\AI_Component.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\base\EventRecipient.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\base\EventTypes.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\factory\GameObjectFactory.h" />
