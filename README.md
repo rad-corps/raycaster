@@ -16,36 +16,6 @@ Tab           | Display top down view
 Arrows        | Move/rotate player
 CTRL+Arrows   | Strafe
 
-### TODO
-- [ ] Fix project directory structure ./raycaster/src/game/src/game is not intuitive
-- [x] Better application structure
-  - [x] Currently two main components. It's not really clear where the responsibilities lie between these. 
-    - [x] GameSceneRaycaster - much simpler
-    - [x] RaycastEngine - Now only does raycast calculations (no rendering)
-    - [x] Create a unified place for rendering
-  - [x] Add a Sprite component (POC currently lives in GameSceneRaycaster)
-    - [x] don't draw sprites behind walls
-      - [x]consider sprites partially covered by walls
-    - [ ] animate sprites based on viewing angle (sides and back of enemies)
-    - [x] Sprite scaling
-    - [ ] Fisheye correction
-    - [x] Sort sprites furthest to nearest (so closest sprites are drawn last)
-    - [ ] bug: sprites clipped too early off LHS of screen
-  - [ ] Add a cordoned off section for proof of concepts
-- [ ] Maps
-  - [ ] Load a map from disk
-    - [ ] import from some pre-existing filetype (Tiled editor maybe?)
-  - [ ] Define:
-    - [ ] wall tiles
-    - [ ] floor tiles
-    - [ ] enemy types and positions
-    - [ ] pickup types and positions
-    - [ ] rules?
-  - [ ] Randomly generate a map
-  - [ ] Move any map specifics out of GameSceneRaycaster
-- [ ] Raycasting
-  - [x] ~~Go back to software/pixel raycasting? The performance of rendering gpu texture column strips may not be worth the issues it presents~~
-- [ ] Bug: FixedUpdate attempts to catch up if FPS target is not being reached
+GameObjectPool
 
-
-![GameObjectPool](https://www.plantuml.com/plantuml/svg/JOn12W9130JlUKK-i1yGaLqlUX45Nn37PXdDP7IIFUpl7V7YfQ2efaSFQR4KvOCKd6yFfBZKgkJFR2zfKlWQgu8zMaxVuN_1Uu4bdE0kCoRDinLOSEf0euc77UzvmqUergxRuQUPY4ROlTzz0000 "GameObjectPool")
+![GameObjectPool](https://www.plantuml.com/plantuml/svg/hLJHJi8m57tlLzpmG01XaLU215HYY34Or0-esqMgMzkqPGd1_RjrtQ0h15_SozPxJi-zz_HsKsseCjiiXGUQuVBz4sFpB4HAYFvYN595CqWPHxEJ24APZI0aJgdM9VybHeuhkekfDgWyu2W4UmBskPebIUU8jDjT5twJ2JNOgLOhv0cgUgLDCXhbbYtK-BXrGegJH7MIIshtDACVEC-HcphqoD8KaqReLL6krq9bvN8mMzo9J0fk6JqNSQ9Uj22Cs-RND4OefLOOCydi1wcgofbrcAQmvAw6JXVsHGYvMXpaIteLX7fLjvwh_S1y6tYYijs56xXkg0PTXCgLSrBaVJ2r8ttGKZ63UeDeQabt4dEEsSvjicEmRzeF8aUbM88kxBaG0WSF3a2Tu7Ph4VDtXaP1imK9vkB_IhcaNH1oUZcWDMn1Rr2-mgiMt9ZMC8eY_iiUU5H2cjC5us-B--Dn3WyFcWG1nsgUtrbAS0B4I-nfM5jEW8DXNf_GY_pIOGJIA9W4ZB2GcaMc5h3_h1y0 "GameObjectPool")
