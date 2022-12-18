@@ -1,12 +1,12 @@
 #include "GameObject.h"
-#include "./gameobjects/base/AI.h"
+#include "./gameobjects/base/AI_Component.h"
 #include <iostream>
 #include <algorithm>
 #include <cassert>
 
 namespace game
 {
-	GameObject::GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI> ai, std::unique_ptr<RenderingComponent> rc)
+	GameObject::GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI_Component> ai, std::unique_ptr<RenderComponent> rc)
 		: m_spritesheet{ spritesheet }
 		, m_transform{ transform }
 		, m_ai{ std::move(ai) }
@@ -30,7 +30,7 @@ namespace game
 	{
 		if (!m_active) return;
 
-		std::unique_ptr<AI> newAI = m_ai->Update(*this, gameObjects, map);
+		std::unique_ptr<AI_Component> newAI = m_ai->Update(*this, gameObjects, map);
 		if (newAI)
 		{
 			m_ai = std::move(newAI);

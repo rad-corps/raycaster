@@ -1,10 +1,10 @@
-#include "CabronAI.h"
+#include "AI_ComponentEnemyCabron.h"
 #include "./gameobjects/base/GameObject.h"
 #include <iostream>
 
 namespace game
 {
-	std::unique_ptr<AI> AI_WaypointFollow::Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap)
+	std::unique_ptr<AI_Component> AI_WaypointFollow::Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap)
 	{
 		// get current position
 		const math::Vec2& currentPos = subject.m_transform.pos;
@@ -30,7 +30,7 @@ namespace game
 		return nullptr;
 	}
 
-	std::unique_ptr<AI> AI_Empty::Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap)
+	std::unique_ptr<AI_Component> AI_Empty::Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap)
 	{
 		return nullptr;
 	}

@@ -1,10 +1,10 @@
-#include "BulletAI.h"
+#include "AI_ComponentBullet.h"
 #include "./gameobjects/base/GameObject.h"
 #include "RaycasterConstants.h"
 
 namespace game
 {
-	std::unique_ptr<AI> BulletBehavior::Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap)
+	std::unique_ptr<AI_Component> AI_ComponentBullet::Update(GameObject& subject, std::vector<GameObject>& gameObjects, const GameMap& gameMap)
 	{
 		math::Vec2 direction = math::angle_to_vec(subject.m_transform.angle);
 		math::Vec2 velocity = direction * 1;
@@ -32,8 +32,6 @@ namespace game
 			if (math::magnitude(gameObject.m_transform.pos - subject.m_transform.pos) < 3.f /* TODO: this shouldn't be a magic number*/)
 			{
 				gameObject.SendEnemyDamaged(EnemyDamagePayload{ 1.f });
-				gameObject.SendEnemyDeath(EnemyDeathPayload{});
-				gameObject.m_active = false;
 				subject.m_active = false;
 			}
 		}

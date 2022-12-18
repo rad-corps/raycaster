@@ -46,3 +46,6 @@ CTRL+Arrows   | Strafe
 - [ ] Raycasting
   - [x] ~~Go back to software/pixel raycasting? The performance of rendering gpu texture column strips may not be worth the issues it presents~~
 - [ ] Bug: FixedUpdate attempts to catch up if FPS target is not being reached
+
+
+![GameObjectPool](https://www.plantuml.com/plantuml/svg/JOn12W9130JlUKK-i1yGaLqlUX45Nn37PXdDP7IIFUpl7V7YfQ2efaSFQR4KvOCKd6yFfBZKgkJFR2zfKlWQgu8zMaxVuN_1Uu4bdE0kCoRDinLOSEf0euc77UzvmqUergxRuQUPY4ROlTzz0000 "GameObjectPool")

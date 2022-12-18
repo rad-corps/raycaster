@@ -1,0 +1,71 @@
+@startuml GameObjectPool
+
+skinparam linetype ortho
+
+class GameSceneRaycaster
+class GameObjectPool {
+    +Add(GameObject&&)
+    +Update()
+    +Render()
+    +std::vector<GameObject>
+}
+class GameObject {
+    +Update()
+    +Render()
+    +DamageEvent()
+    +KilledEvent()
+    +Transform
+    -AIComponent*
+    -RenderComponent*
+}
+interface EventRecipient
+{
+    +virtual OnDamage() {}
+    +virtual OnKilled() {}
+}
+interface AIComponent
+{
+    +virtual Update(GameObject&, GameObjectPool&, Map&) = 0
+}
+interface RenderComponent
+{
+    +virtual Render(pov, transform, spritesheet) = 0
+}
+class EnemyRenderer
+{
+    +Render() override
+    +OnDamage() override
+    +OnKilled() override
+}
+class BulletRenderer
+{
+    +Render() override
+}
+class EnemyAI
+{
+    +Update() override
+    +OnDamage() override
+    +OnKilled() override
+}
+class BulletAI
+{
+    +Update() override
+}
+
+GameSceneRaycaster "1" *- "1" GameObjectPool
+
+GameObjectPool "1...n" *-- GameObject
+
+EventRecipient <|-- AIComponent
+EventRecipient <|-- RenderComponent
+
+RenderComponent <|-- EnemyRenderer
+RenderComponent <|-- BulletRenderer
+
+AIComponent <|-- EnemyAI
+AIComponent <|-- BulletAI
+
+GameObject *. AIComponent : ptr >
+GameObject *. RenderComponent : ptr >
+
+@enduml
