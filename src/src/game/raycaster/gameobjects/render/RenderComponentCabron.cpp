@@ -1,6 +1,7 @@
 #include "RenderComponentCabron.h"
 #include "RCGFMath.h"
 #include <cassert>
+#include "gameobjects/base/GameObject.h"
 
 using math::PI;
 
@@ -31,11 +32,11 @@ namespace game
 		return -1;
 	}
 
-	void RenderComponentCabron::Render(const RenderEngine& re, const math::Transform& pov, const math::Transform& objTransform, rcgf::SpriteSheet* spriteSheet)
+	void RenderComponentCabron::Render(const RenderEngine& re, const math::Transform& pov, GameObject& gameObject, rcgf::SpriteSheet* spriteSheet)
 	{
-		const math::Vec2 povToSprite = objTransform.pos - pov.pos;
-		const math::Vec2 spriteForwardVec = math::angle_to_vec(objTransform.angle);
+		const math::Vec2 povToSprite = gameObject.m_transform.pos - pov.pos;
+		const math::Vec2 spriteForwardVec = math::angle_to_vec(gameObject.m_transform.angle);
 		const int animID = CalculateSpriteAnimationID(math::angle(povToSprite, spriteForwardVec));
-		re.RenderSprite(pov, objTransform, spriteSheet, animID);
+		re.RenderSprite(pov, gameObject.m_transform, spriteSheet, animID, 64);
 	}
 }

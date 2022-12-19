@@ -2,8 +2,8 @@
 
 namespace game
 {
-	void RenderComponentBullet::Render(const RenderEngine& re, const math::Transform& pov, const math::Transform& objTransform, rcgf::SpriteSheet* spriteSheet)
+	void RenderComponentBullet::Render(const RenderEngine& re, const math::Transform& pov, GameObject& gameObject, rcgf::SpriteSheet* spriteSheet)
 	{
-		re.RenderSprite(pov, objTransform, spriteSheet, 0);
+		re.RenderSprite(pov, gameObject.m_transform, spriteSheet, 0, 16);
 	}
 }

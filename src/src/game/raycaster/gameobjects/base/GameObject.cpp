@@ -28,7 +28,7 @@ namespace game
 
 	void GameObject::Update(GameObjectPool& gameObjects, const game::GameMap& map)
 	{
-		if (!m_active) return;
+		if (!m_active || !m_ai) return;
 
 		std::unique_ptr<AI_Component> newAI = m_ai->Update(*this, gameObjects, map);
 		if (newAI)
@@ -37,11 +37,11 @@ namespace game
 		}
 	}
 
-	void GameObject::Render(const game::RenderEngine& re, const math::Transform& pov) const
+	void GameObject::Render(const game::RenderEngine& re, const math::Transform& pov) 
 	{
 		if (!m_active) return;
 
-		m_rc->Render(re, pov, m_transform, m_spritesheet);
+		m_rc->Render(re, pov, *this, m_spritesheet);
 	}
 }
 

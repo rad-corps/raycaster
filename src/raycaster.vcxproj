@@ -29,6 +29,7 @@
     <ClCompile Include="src\game\raycaster\gameobjects\base\GameObjectPool.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\factory\GameObjectFactory.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\render\RenderComponentBullet.cpp" />
+    <ClCompile Include="src\game\raycaster\gameobjects\render\RenderComponentBulletHitFX.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\render\RenderComponentCabron.cpp" />
     <ClCompile Include="src\game\raycaster\Map.cpp" />
     <ClCompile Include="src\game\raycaster\Player.cpp" />
@@ -53,6 +54,7 @@
     <ClInclude Include="src\game\raycaster\gameobjects\base\GameObjectPool.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\factory\GameObjectFactory.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\render\RenderComponentBullet.h" />
+    <ClInclude Include="src\game\raycaster\gameobjects\render\RenderComponentBulletHitFX.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\render\RenderComponentCabron.h" />
     <ClInclude Include="src\game\raycaster\Map.h" />
     <ClInclude Include="src\game\raycaster\Player.h" />

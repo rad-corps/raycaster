@@ -2,6 +2,7 @@
 #include "./gameobjects/base/GameObject.h"
 #include "./gameobjects/base/GameObjectPool.h"
 #include "RaycasterConstants.h"
+#include "./gameobjects/factory/GameObjectFactory.h"
 
 namespace game
 {
@@ -14,8 +15,16 @@ namespace game
 		// check for collision with map
 		if (isWall((int)subject.m_transform.pos.x, (int)subject.m_transform.pos.y, &gameMap))
 		{
+			// march it back the velocity delta so its not inside the wall
+			math::Transform fxTransform = subject.m_transform;
+			fxTransform.pos -= velocity;
+
+			// create a bullet hit FX
+			pool.Add(factory::CreatePlayerBulletHitFX(fxTransform));
+			
 			// we hit a wall. deactivate
 			subject.m_active = false;
+
 			return nullptr;
 		}
 

@@ -8,10 +8,12 @@
 
 namespace game
 {
+	class GameObject;
+
 	class RenderComponent : public EventRecipient
 	{
 	public:
 		virtual ~RenderComponent() = default;
-		virtual void Render(const game::RenderEngine& re, const math::Transform& pov, const math::Transform& objTransform, rcgf::SpriteSheet* spriteSheet) = 0;
+		virtual void Render(const game::RenderEngine& re, const math::Transform& pov, GameObject& gameObject, rcgf::SpriteSheet* spriteSheet) = 0;
 	};
 }

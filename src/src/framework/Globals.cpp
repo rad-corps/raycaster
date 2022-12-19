@@ -2,11 +2,10 @@
 #include <cstdio>
 #include <cassert>
 #include "SpriteSheet.h"
+#include <chrono>
 
 namespace
 {
-	//TTF_Font* font;
-	//SDL_Renderer* renderer;
 	std::unique_ptr<rcgf::SpriteSheet> monoText;
 
 	TTF_Font* loadFont(const char* font_, int fontSz)
@@ -16,14 +15,13 @@ namespace
 		return ret;
 	}
 
-	//void setRenderer(SDL_Renderer* renderer_)
-	//{
-	//	renderer = renderer_;
-	//}
-	//void setFont(TTF_Font* font_)
-	//{
-	//	font = font_;
-	//}
+	
+	// deltatime calculation.. hacky :(
+	std::chrono::steady_clock::time_point prevTime;
+	std::chrono::steady_clock::time_point currTime;
+	double elapsed_time_ms = 0.0;
+
+	
 }
 
 void SDL_SetRenderDrawColor(SDL_Renderer* renderer, Color color)
@@ -33,7 +31,20 @@ void SDL_SetRenderDrawColor(SDL_Renderer* renderer, Color color)
 
 namespace global
 {
-	Global instance;
+	double Global::calculateDeltaTime_DO_NOT_CALL()
+	{
+		currTime = std::chrono::high_resolution_clock::now();
+		elapsed_time_ms = std::chrono::duration<double, std::milli>(currTime - prevTime).count();
+		prevTime = currTime;
+		return elapsed_time_ms;
+	}
+
+	double Global::getDeltaTime()
+	{
+		return elapsed_time_ms;
+	}
+
+	//Global instance;
 	SDL_Global Global::init()
 	{
 		SDL_Global ret{};

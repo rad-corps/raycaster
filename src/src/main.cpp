@@ -52,6 +52,7 @@ int main(int argc, char* args[])
 	//While application is running
 	while (!quit)
 	{
+		global::Global::calculateDeltaTime_DO_NOT_CALL();
 		fpsPerfCounter.Start();
 
 		time1 = std::chrono::high_resolution_clock::now();
