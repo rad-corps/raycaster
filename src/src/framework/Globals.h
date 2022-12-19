@@ -35,6 +35,11 @@ namespace global
 		//TTF_Font* getFont();
 		//SDL_Renderer* getRenderer();
 		static void renderMonospaceText(const std::string& inp, int x, int y);
+		
+		// warning! only call once per render!!!
+		static double calculateDeltaTime_DO_NOT_CALL();
+
+		static double getDeltaTime();
 	};
 
 	// extern Global instance;

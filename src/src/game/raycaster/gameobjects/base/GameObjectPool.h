@@ -15,7 +15,8 @@ namespace game
 
 		// GameObject is move only (no copy construction)
 		void Add(GameObject&& go);
-		void Update(const game::GameMap& map);
+
+		void Update(const game::GameMap& map); // fixed update (60 per second)
 		void Render(const math::Transform& pov);
 		std::vector<GameObject>& GetPool();
 

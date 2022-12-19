@@ -172,6 +172,11 @@ float calculate_fisheye_corrected_distance(const math::Vec2& povToSprite, float 
 
 namespace game
 {
+	SDL_Renderer* RenderEngine::GetRenderer()
+	{
+		return m_renderer;
+	}
+
 	void RenderEngine::RenderWalls()
 	{
 		// hacky to do this here. but we need to guaruntee it is called every frame.
@@ -235,7 +240,7 @@ namespace game
 		SDL_RenderDrawLine(m_renderer, (int)pov.pos.x * TOP_DOWN_SCALE, (int)pov.pos.y * TOP_DOWN_SCALE, (int)(pov.pos.x + scaledPlayerDir.x) * TOP_DOWN_SCALE, (int)(pov.pos.y + scaledPlayerDir.y) * TOP_DOWN_SCALE);
 	}
 
-	void RenderEngine::RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, rcgf::SpriteSheet* spriteSheet, int spriteSheetIdx) const
+	void RenderEngine::RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, rcgf::SpriteSheet* spriteSheet, int spriteSheetIdx, int spriteSz) const
 	{
 		const math::Vec2 povToSprite = spriteTransform.pos - povTransform.pos;
 		const float leftFovToSpriteAngle = calculate_sprite_angle_from_left_fov(povTransform.angle, povToSprite);
@@ -253,7 +258,9 @@ namespace game
 			return; // avoid divide by 0
 		}
 
-		const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / correctedDistanceToSprite * DIST_PROJECTION_PLANE);
+		const float szMultiplier = spriteSz / 64.f;
+
+		const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / correctedDistanceToSprite * DIST_PROJECTION_PLANE * szMultiplier);
 
 		// now we have an angle in radians from the player to the sprite that is 0 at far left of FOV, and FOV at far right.
 		// convert angle to screen space
@@ -278,7 +285,7 @@ namespace game
 			screenSpaceSpriteHeight
 		};
 
-		RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, correctedDistanceToSprite, 64 /* TODO: fix magic number */);
+		RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, correctedDistanceToSprite, spriteSz);
 
 		// completely obstructed. Bail
 		if (!rectContainer.display)

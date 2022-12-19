@@ -85,9 +85,6 @@ namespace game
 		GameObjectPool m_gameObjects;
 		//std::vector<GameObject> m_gameObjects;
 
-		GameObjectFactory m_factory;
-
-
 		std::map<SDL_Keycode, bool> keyStates = {
 			{SDLK_w, false},
 			{SDLK_a, false},
@@ -104,12 +101,14 @@ namespace game
 			, wallTexture{ renderer, "./img/wall_64.png" }
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
-			, m_factory{renderer}
 			, m_gameObjects(GAME_OBJECT_ACTIVE_POOL_SZ, m_renderEngine)
 		{
 			srand((unsigned int)time(NULL));
+			
+			// TODO: cleanup texture memory on exit
+			factory::Init(m_renderer);
 
-			m_gameObjects.Add(m_factory.CreateCabron(math::Transform{ 92.7399f, 150.433f, 0.f }));
+			m_gameObjects.Add(factory::CreateCabron(math::Transform{ 92.7399f, 150.433f, 0.f }));
 		}
 		Pimpl() = delete;
 	};
@@ -217,7 +216,7 @@ namespace game
 			break;
 		}
 		case SDLK_LALT:
-			m_impl->m_gameObjects.Add(m_impl->m_factory.CreatePlayerBullet(m_impl->player.transform));
+			m_impl->m_gameObjects.Add(factory::CreatePlayerBullet(m_impl->player.transform));
 			break;
 		}
 

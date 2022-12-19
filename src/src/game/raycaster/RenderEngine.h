@@ -26,7 +26,8 @@ namespace game
 
 		void RenderWalls();
 		void RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, bool showRays);
-		void RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, rcgf::SpriteSheet* spriteSheet, int spriteSheetIdx) const;
+		void RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, rcgf::SpriteSheet* spriteSheet, int spriteSheetIdx, int spriteSz) const;
+		SDL_Renderer* GetRenderer();
 
 	private:
 		SDL_Renderer* m_renderer;

@@ -62,7 +62,7 @@ namespace game
 			return false;
 			});
 
-		for (const auto& go : m_gameObjects)
+		for (auto& go : m_gameObjects)
 		{
 			go.Render(m_renderEngine, pov);
 		}
