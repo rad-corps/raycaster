@@ -22,7 +22,7 @@ namespace game::factory
 		m_renderer = renderer;
 		{
 			auto txEnemy01 = std::make_unique<rcgf::Texture>(renderer, "img/CabronTileset.png");
-			ssEnemy01 = std::make_unique<rcgf::SpriteSheet>(std::move(txEnemy01), 64, 64, 1, 4);
+			ssEnemy01 = std::make_unique<rcgf::SpriteSheet>(std::move(txEnemy01), 64, 64, 8, 8);
 		}
 
 		{
@@ -34,6 +34,13 @@ namespace game::factory
 	GameObject CreateCabron(const math::Transform& transform)
 	{
 		auto ai = std::make_unique<AI_Empty>();
+		auto rc = std::make_unique<RenderComponentCabron>();
+		return GameObject{ ssEnemy01.get(), transform, std::move(ai), std::move(rc) };
+	}
+
+	GameObject CreateCabron(const math::Transform& transform, const std::vector<math::Vec2>& waypoints)
+	{
+		auto ai = std::make_unique<AI_WaypointFollow>(waypoints);
 		auto rc = std::make_unique<RenderComponentCabron>();
 		return GameObject{ ssEnemy01.get(), transform, std::move(ai), std::move(rc) };
 	}

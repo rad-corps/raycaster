@@ -2,12 +2,21 @@
 #include "RCGFMath.h"
 #include <cassert>
 #include "gameobjects/base/GameObject.h"
+#include <iostream>
 
 using math::PI;
 
+namespace
+{
+	constexpr int SPRITESHEET_ROWS = 8;
+	constexpr int SPRITESHEET_COLS = 8;
+	constexpr double WALK_SPEED_MS = 350.0;
+}
+
 namespace game
 {
-	int RenderComponentCabron::CalculateSpriteAnimationID(float angle)
+	// column = rotation
+	int RenderComponentCabron::CalculateSpriteAnimationIDColumn(float angle)
 	{
 		// 0: front, 1: right, 2: back, 3: left
 
@@ -32,11 +41,25 @@ namespace game
 		return -1;
 	}
 
-	void RenderComponentCabron::Render(const RenderEngine& re, const math::Transform& pov, GameObject& gameObject, rcgf::SpriteSheet* spriteSheet)
+	// row = walk cycle animation
+	int RenderComponentCabron::CalculateSpriteAnimationIDRow()
 	{
+		return 1;
+	}
+
+	void RenderComponentCabron::Render(const RenderEngine& re, const math::Transform& pov, GameObject& gameObject, rcgf::SpriteSheet* spriteSheet, double deltatime)
+	{
+		animationTimer += deltatime;
+		if (animationTimer > WALK_SPEED_MS)
+		{
+			animationTimer = 0.0;
+			walkAnimationID = ++walkAnimationID > 4 ? 1 : walkAnimationID;
+		}
 		const math::Vec2 povToSprite = gameObject.m_transform.pos - pov.pos;
 		const math::Vec2 spriteForwardVec = math::angle_to_vec(gameObject.m_transform.angle);
-		const int animID = CalculateSpriteAnimationID(math::angle(povToSprite, spriteForwardVec));
+		const int animIDColumn = CalculateSpriteAnimationIDColumn(math::angle(povToSprite, spriteForwardVec));
+		const int animID = walkAnimationID * SPRITESHEET_COLS + animIDColumn;
+		
 		re.RenderSprite(pov, gameObject.m_transform, spriteSheet, animID, 64);
 	}
 }

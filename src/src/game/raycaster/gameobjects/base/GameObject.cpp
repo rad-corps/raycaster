@@ -37,11 +37,11 @@ namespace game
 		}
 	}
 
-	void GameObject::Render(const game::RenderEngine& re, const math::Transform& pov) 
+	void GameObject::Render(const game::RenderEngine& re, const math::Transform& pov, double deltatime) 
 	{
 		if (!m_active) return;
 
-		m_rc->Render(re, pov, *this, m_spritesheet);
+		m_rc->Render(re, pov, *this, m_spritesheet, deltatime);
 	}
 }
 

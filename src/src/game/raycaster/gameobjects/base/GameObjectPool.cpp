@@ -49,7 +49,7 @@ namespace game
 		}
 	}
 
-	void GameObjectPool::Render(const math::Transform& pov)
+	void GameObjectPool::Render(const math::Transform& pov, double deltatime)
 	{
 		// sort before render
 		const auto& playerPos = pov.pos;
@@ -64,7 +64,7 @@ namespace game
 
 		for (auto& go : m_gameObjects)
 		{
-			go.Render(m_renderEngine, pov);
+			go.Render(m_renderEngine, pov, deltatime);
 		}
 	}
 }

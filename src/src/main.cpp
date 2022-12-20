@@ -45,15 +45,22 @@ int main(int argc, char* args[])
 	std::chrono::steady_clock::time_point time1 = std::chrono::high_resolution_clock::now();
 	std::chrono::steady_clock::time_point time2 = std::chrono::high_resolution_clock::now();
 
-	SimplePerfCounter renderPerfCounter;
 	SimplePerfCounter fpsPerfCounter;
+
+	// TODO: this should be the same variable as fpsPerfCounter
+	// but there is currently no method to stop and get both the 
+	// ms and fps in one go
+	SimplePerfCounter deltaTimeCalculator; 
+
+
 	std::string fps;
+	double deltatime = 0.0;
 
 	//While application is running
 	while (!quit)
 	{
-		global::Global::calculateDeltaTime_DO_NOT_CALL();
 		fpsPerfCounter.Start();
+		deltaTimeCalculator.Start();
 
 		time1 = std::chrono::high_resolution_clock::now();
 		// handle events on queue
@@ -90,11 +97,8 @@ int main(int argc, char* args[])
 		else
 		{
 			// all drawing should happen here
-			gameState->render();
+			gameState->render(deltatime);
 		}
-
-		//Update screen
-		renderPerfCounter.Start();
 
 		// show fps
 		global::Global::renderMonospaceText("fps:   " + fps, SCREEN_WIDTH - 160, 0);
@@ -113,6 +117,7 @@ int main(int argc, char* args[])
 		}
 
 		fps = fpsPerfCounter.StopFPS();
+		deltatime = deltaTimeCalculator.StopMs();
 	}
 
 	return 0;

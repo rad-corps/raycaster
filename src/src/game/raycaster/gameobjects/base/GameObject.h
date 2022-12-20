@@ -32,7 +32,7 @@ namespace game
 		GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI_Component> ai, std::unique_ptr<RenderComponent> rc);
 
 		void Update(GameObjectPool& gameObjects, const game::GameMap& map); // fixed update (60 per second)
-		void Render(const game::RenderEngine& re, const math::Transform& pov);
+		void Render(const game::RenderEngine& re, const math::Transform& pov, double deltatime);
 
 		
 		// send events

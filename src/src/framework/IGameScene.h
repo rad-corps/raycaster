@@ -15,7 +15,7 @@ namespace rcgf
 		// return nullptr on no change. 
 		virtual void fixedUpdate() = 0;
 		virtual void update() = 0;
-		virtual void render() = 0;
+		virtual void render(double deltatime) = 0;
 		virtual void keyDown(SDL_Keycode) = 0;
 		virtual void keyUp(SDL_Keycode) = 0;
 		virtual void mouseDown(int button, int x, int y) 

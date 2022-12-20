@@ -42,7 +42,7 @@ namespace game
 		
 	}
 
-	void GameSceneMain::render()
+	void GameSceneMain::render(double deltatime)
 	{
 		//Render current frame
 		m_impl->bgTex->render(

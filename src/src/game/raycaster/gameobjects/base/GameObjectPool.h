@@ -17,7 +17,7 @@ namespace game
 		void Add(GameObject&& go);
 
 		void Update(const game::GameMap& map); // fixed update (60 per second)
-		void Render(const math::Transform& pov);
+		void Render(const math::Transform& pov, double deltatime);
 		std::vector<GameObject>& GetPool();
 
 	private:

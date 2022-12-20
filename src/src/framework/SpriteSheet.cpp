@@ -66,9 +66,14 @@ namespace rcgf
 	void SpriteSheet::render(int animIdx, SDL_Rect* srcRect, SDL_Rect* dstRect)
 	{
 		// discover row and col
-		const int col = animIdx % m_cols;
+		const int col = animIdx % m_rows;
 		const int row = animIdx / m_cols;
+		render(col, row, srcRect, dstRect);
 
+	}
+
+	void SpriteSheet::render(int col, int row, SDL_Rect* srcRect, SDL_Rect* dstRect )
+	{
 		// discover x position (col)
 		const int spriteSheetX = col * m_pxSpriteWidth + srcRect->x;
 

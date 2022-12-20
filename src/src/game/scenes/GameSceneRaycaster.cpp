@@ -108,7 +108,15 @@ namespace game
 			// TODO: cleanup texture memory on exit
 			factory::Init(m_renderer);
 
-			m_gameObjects.Add(factory::CreateCabron(math::Transform{ 92.7399f, 150.433f, 0.f }));
+			m_gameObjects.Add(
+				factory::CreateCabron(
+					math::Transform{ 228.849f, 151.799f, 3.15316f }, 
+					{ 
+						math::Vec2{45.2609f, 149.675f}, 
+						math::Vec2{ 228.849f, 151.799f} 
+					}
+				)
+			);
 		}
 		Pimpl() = delete;
 	};
@@ -150,7 +158,7 @@ namespace game
 		if (keyStates[SDLK_s] || keyStates[SDLK_DOWN])  player.move(PI, &map);
 	}
 
-	void GameSceneRaycaster::render()
+	void GameSceneRaycaster::render(double deltatime)
 	{
 		const math::Transform& playerTransform = m_impl->player.transform;
 		auto& gameObjects = m_impl->m_gameObjects;
@@ -163,7 +171,7 @@ namespace game
 		m_impl->m_renderEngine.RenderWalls();
 
 		// render all gameobjects
-		gameObjects.Render(playerTransform);
+		gameObjects.Render(playerTransform, deltatime);
 
 		if (m_impl->showTopDown)
 		{

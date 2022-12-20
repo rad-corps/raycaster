@@ -22,7 +22,7 @@ namespace game
 		subject.m_transform.angle = math::vec_to_angle(direction);
 
 		// check destination reached
-		if (math::magnitude(delta) < 0.5f /* TODO: un-magic number this epsilon */)
+		if (math::magnitude(delta) < 1.f /* TODO: un-magic number this epsilon */)
 		{
 			m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
 		}

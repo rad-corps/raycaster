@@ -31,19 +31,6 @@ void SDL_SetRenderDrawColor(SDL_Renderer* renderer, Color color)
 
 namespace global
 {
-	double Global::calculateDeltaTime_DO_NOT_CALL()
-	{
-		currTime = std::chrono::high_resolution_clock::now();
-		elapsed_time_ms = std::chrono::duration<double, std::milli>(currTime - prevTime).count();
-		prevTime = currTime;
-		return elapsed_time_ms;
-	}
-
-	double Global::getDeltaTime()
-	{
-		return elapsed_time_ms;
-	}
-
 	//Global instance;
 	SDL_Global Global::init()
 	{

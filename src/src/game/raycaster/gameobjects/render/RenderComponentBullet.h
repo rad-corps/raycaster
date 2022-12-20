@@ -8,6 +8,6 @@ namespace game
 	class RenderComponentBullet : public RenderComponent
 	{
 	public:
-		void Render(const game::RenderEngine& re, const math::Transform& pov, GameObject& objTransform, rcgf::SpriteSheet* spriteSheet) override;
+		void Render(const game::RenderEngine& re, const math::Transform& pov, GameObject& objTransform, rcgf::SpriteSheet* spriteSheet, double deltatime) override;
 	};
 }

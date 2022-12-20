@@ -3,6 +3,9 @@
 // warning C4514: 'SimplePerfCounter::Start': unreferenced inline function has been removed
 #pragma warning( disable: 4515 )
 
+// unfortunately this gets in the way when throwing away params for some derived/overridden functions. 
+#pragma warning( disable : 4100 ) // unreferenced formal parameter
+
 #include <SDL.h>
 #include <SDL_log.h>
 #include <SDL_mouse.h>
@@ -18,7 +21,6 @@ constexpr int SCREEN_WIDTH = 1920;
 constexpr int CENTER_X = SCREEN_WIDTH / 2;
 constexpr int SCREEN_HEIGHT = 1080;
 constexpr int CENTER_Y = SCREEN_HEIGHT / 2;
-//constexpr float PI = 3.14159265359f;
 
 namespace global
 {
@@ -35,11 +37,6 @@ namespace global
 		//TTF_Font* getFont();
 		//SDL_Renderer* getRenderer();
 		static void renderMonospaceText(const std::string& inp, int x, int y);
-		
-		// warning! only call once per render!!!
-		static double calculateDeltaTime_DO_NOT_CALL();
-
-		static double getDeltaTime();
 	};
 
 	// extern Global instance;

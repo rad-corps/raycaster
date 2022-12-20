@@ -53,6 +53,13 @@ namespace rcgf
 			SDL_Rect* dstRect
 		);
 
+		void render(
+			int col,
+			int row,
+			SDL_Rect* srcRect,
+			SDL_Rect* dstRect
+		);
+
 	private:
 		std::unique_ptr<Texture> m_texture;
 		int m_pxSpriteWidth;

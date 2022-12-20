@@ -9,9 +9,9 @@ namespace
 
 namespace game
 {
-	void RenderComponentBulletHitFX::Render(const RenderEngine& re, const math::Transform& pov, GameObject& gameObject, rcgf::SpriteSheet* spriteSheet)
+	void RenderComponentBulletHitFX::Render(const RenderEngine& re, const math::Transform& pov, GameObject& gameObject, rcgf::SpriteSheet* spriteSheet, double deltatime)
 	{
-		m_timer += global::Global::getDeltaTime();
+		m_timer += deltatime;
 		if (m_timer > FX_ANIM_SPEED_MS)
 		{
 			m_timer -= FX_ANIM_SPEED_MS;
