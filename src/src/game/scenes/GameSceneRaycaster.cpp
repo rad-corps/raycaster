@@ -108,15 +108,8 @@ namespace game
 			// TODO: cleanup texture memory on exit
 			factory::Init(m_renderer);
 
-			m_gameObjects.Add(
-				factory::CreateCabron(
-					math::Transform{ 228.849f, 151.799f, 3.15316f }, 
-					{ 
-						math::Vec2{45.2609f, 149.675f}, 
-						math::Vec2{ 228.849f, 151.799f} 
-					}
-				)
-			);
+			GameObject cabron = factory::CreateCabron({ 228.849f, 151.799f, 3.15316f }, { {45.2609f, 149.675f}, { 228.849f, 151.799f} });
+			m_gameObjects.Add(std::move(cabron));
 		}
 		Pimpl() = delete;
 	};
