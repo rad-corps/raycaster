@@ -10,12 +10,6 @@
 
 namespace game
 {
-	bool facingDown(float angle_);
-	bool facingUp(float angle_);
-	bool facingRight(float angle_);
-	bool facingLeft(float angle_);
-	unsigned char getFacing(float angle_);
-
 	class RaycastEngine
 	{
 	public:
@@ -25,8 +19,7 @@ namespace game
 		{
 			return wallData;
 		}
-		RayWallCollision FindWallHitPos(const math::Transform& transform, float rayAngle, GameMap* map);
-
+		
 	private:	
 		ColumnRenderData DoRayTest(const math::Transform& transform, float rayAngle, int pxCol, GameMap* map, rcgf::Texture* wallTexture);
 		

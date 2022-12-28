@@ -131,7 +131,7 @@ namespace game
 		Player& player = m_impl->player;
 		auto& keyStates = m_impl->keyStates;
 
-		m_impl->m_gameObjects.Update(map);
+		m_impl->m_gameObjects.Update(map, { player.transform });
 
 		if (!keyStates[SDLK_LCTRL])
 		{

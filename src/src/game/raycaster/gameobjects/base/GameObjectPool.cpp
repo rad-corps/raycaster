@@ -41,11 +41,11 @@ namespace game
 		}
 	}
 
-	void GameObjectPool::Update(const game::GameMap& map)
+	void GameObjectPool::Update(const game::GameMap& map, const std::vector<math::Transform> playerTransforms)
 	{
 		for (auto& go : m_gameObjects)
 		{
-			go.Update(*this, map);
+			go.Update(*this, map, playerTransforms);
 		}
 	}
 

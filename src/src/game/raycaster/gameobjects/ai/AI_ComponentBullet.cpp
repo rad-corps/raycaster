@@ -6,7 +6,7 @@
 
 namespace game
 {
-	std::unique_ptr<AI_Component> AI_ComponentBullet::Update(GameObject& subject, GameObjectPool& pool, const GameMap& gameMap)
+	std::unique_ptr<AI_Component> AI_ComponentBullet::Update(GameObject& subject, GameObjectPool& pool, const GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
 	{
 		math::Vec2 direction = math::angle_to_vec(subject.m_transform.angle);
 		math::Vec2 velocity = direction * 1;

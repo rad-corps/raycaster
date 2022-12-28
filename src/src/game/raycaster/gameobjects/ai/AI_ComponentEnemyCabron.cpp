@@ -4,12 +4,12 @@
 
 namespace game
 {
-	std::unique_ptr<AI_Component> AI_WaypointFollow::Update(GameObject& subject, GameObjectPool& pool, const GameMap& gameMap)
+	std::unique_ptr<AI_Component> AI_WaypointFollow::Update(GameObject& subject, GameObjectPool& pool, const GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
 	{
-		// get current position
+		// get current position of this npc
 		const math::Vec2& currentPos = subject.m_transform.pos;
 
-		// get next position
+		// get next position of this npc
 		const math::Vec2& nextPos = m_waypointPositions[m_waypointIndex];
 
 		// calculate direction to travel
@@ -27,10 +27,41 @@ namespace game
 			m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
 		}
 
+
+		// can we see the player?
+		for (const math::Transform& playerTransform : playerTransforms)
+		{
+			// get direction from subject to playerTransform.pos
+			const math::Vec2 enemyToPlayerDelta = playerTransform.pos - subject.m_transform.pos;
+			const math::Vec2 enemyToPlayerDir = math::normalize(enemyToPlayerDelta);
+			
+
+			// get distance to wall from subject position using direction
+			const RayWallCollision collisionData = FindWallHitPos(subject.m_transform, math::vec_to_angle(enemyToPlayerDir), &gameMap);
+
+
+			// get distance from subject to playerTransform.pos
+			const float enemyToPlayerDist = math::magnitude(enemyToPlayerDelta);
+
+			// if wall dist > dist to player
+				// can see!
+			// else
+				// can not see
+			if (collisionData.distance > enemyToPlayerDist)
+			{
+				std::cout << "can see player!" << std::endl;
+			}
+			else
+			{
+				std::cout << "can not see player!" << std::endl;
+			}
+		}
+
+
 		return nullptr;
 	}
 
-	std::unique_ptr<AI_Component> AI_Empty::Update(GameObject& subject, GameObjectPool& gameObjects, const GameMap& gameMap)
+	std::unique_ptr<AI_Component> AI_Empty::Update(GameObject& subject, GameObjectPool& gameObjects, const GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
 	{
 		return nullptr;
 	}

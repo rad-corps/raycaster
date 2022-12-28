@@ -26,11 +26,11 @@ namespace game
 		if (m_rc) m_rc->OnEnemyDeath(payload);
 	}
 
-	void GameObject::Update(GameObjectPool& gameObjects, const game::GameMap& map)
+	void GameObject::Update(GameObjectPool& gameObjects, const game::GameMap& map, const std::vector<math::Transform> playerTransforms)
 	{
 		if (!m_active || !m_ai) return;
 
-		std::unique_ptr<AI_Component> newAI = m_ai->Update(*this, gameObjects, map);
+		std::unique_ptr<AI_Component> newAI = m_ai->Update(*this, gameObjects, map, playerTransforms);
 		if (newAI)
 		{
 			m_ai = std::move(newAI);
