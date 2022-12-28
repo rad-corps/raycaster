@@ -10,14 +10,6 @@
 
 namespace game
 {
-	enum Facing : unsigned char
-	{
-		UP = 0x0001,
-		RIGHT = 0x0002,
-		DOWN = 0x0004,
-		LEFT = 0x0008,
-	};
-
 	bool facingDown(float angle_);
 	bool facingUp(float angle_);
 	bool facingRight(float angle_);
@@ -33,10 +25,12 @@ namespace game
 		{
 			return wallData;
 		}
+		RayWallCollision FindWallHitPos(const math::Transform& transform, float rayAngle, GameMap* map);
 
 	private:	
-		ColumnRenderData doRayTest(const math::Transform& transform, float rayAngle, int pxCol, GameMap* map, rcgf::Texture* wallTexture);
-		void drawFloorColumn(SDL_Renderer* renderer, const math::Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx);
+		ColumnRenderData DoRayTest(const math::Transform& transform, float rayAngle, int pxCol, GameMap* map, rcgf::Texture* wallTexture);
+		
+		void DrawFloorColumn(SDL_Renderer* renderer, const math::Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx);
 		
 		std::vector<ColumnRenderData> wallData;
 	};

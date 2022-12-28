@@ -56,7 +56,7 @@ namespace game
 			const float rayAngle = math::sum_angle(playerTransform.angle, angle);
 
 			// cast the ray to calculate wall height for this column
-			wallData[screenColumnNumber] = doRayTest(playerTransform, rayAngle, screenColumnNumber, map, wallTexture);
+			wallData[screenColumnNumber] = DoRayTest(playerTransform, rayAngle, screenColumnNumber, map, wallTexture);
 
 #ifdef RENDER_FLOORS
 			raycast_engine::drawFloorColumn(m_renderer, m_impl->player.transform, crd, screenColumnNumber, rayAngle, &m_impl->wallTexture);
@@ -70,32 +70,17 @@ namespace game
 		
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="x">player x position</param>
-	/// <param name="y">player y position</param>
-	/// <param name="rayAngle">individual ray angle (0 - 2*PI)</param>
-	/// <param name="playerAngle">player angle (0 - 2*PI)</param>
-	/// <param name="pxCol"></param>
-	/// <param name="pxWidth"></param>
-	/// <param name="map"></param>
-	/// <returns></returns>
-	ColumnRenderData RaycastEngine::doRayTest(const math::Transform& transform, float rayAngle, int pxCol, GameMap* map, rcgf::Texture* wallTexture)
+	RayWallCollision RaycastEngine::FindWallHitPos(const math::Transform& transform, float rayAngle, GameMap* map)
 	{
+		RayWallCollision ret{};
+
 		const float& x = transform.pos.x;
 		const float& y = transform.pos.y;
 		const float& playerAngle = transform.angle;
+		const unsigned char facing = getFacing(rayAngle);
 
-		unsigned char facing = getFacing(rayAngle);
-		
 		float rowIntersectDistance = 10000000.f;
 		float colIntersectDistance = 10000000.f;
-		float distance = 10000000.f;
-		float xIntersect = 10000000.f;
-		float yIntersect = 10000000.f;
-		float positionAlongWall = 0; // between 0-1
-		char faceDirection = std::numeric_limits<char>::max();
 
 		// check horizontals
 		// TODO: collapse LEFT and RIGHT branches together
@@ -109,20 +94,19 @@ namespace game
 			const float yOffset = tan(tempAngle) * MAP_CELL_PX;
 			float checkX = (float)firstColIntersect;
 			float checkY = oppLen + y;
-				
 
 			while (!isWall(checkX, checkY, map))
 			{
 				checkX += xOffset; checkY += yOffset;
 			}
 			colIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
-			distance = colIntersectDistance;
-			xIntersect = checkX;
-			yIntersect = checkY;
-				
-			positionAlongWall = std::fmodf(yIntersect, (float)MAP_CELL_PX);
-			positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
-			faceDirection = Facing::RIGHT;
+			ret.distance = colIntersectDistance;
+			ret.xHitPos = checkX;
+			ret.yHitPos = checkY;
+
+			ret.positionAlongWall = std::fmodf(ret.yHitPos, (float)MAP_CELL_PX);
+			ret.positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
+			ret.wallFaceDir = Facing::RIGHT;
 		}
 		else if (facing & Facing::LEFT)
 		{
@@ -140,13 +124,13 @@ namespace game
 				checkX += xOffset; checkY += yOffset;
 			}
 			colIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
-			distance = colIntersectDistance;
-			xIntersect = checkX;
-			yIntersect = checkY;
+			ret.distance = colIntersectDistance;
+			ret.xHitPos = checkX;
+			ret.yHitPos = checkY;
 
-			positionAlongWall = std::fmodf(yIntersect, (float)MAP_CELL_PX);
-			positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
-			faceDirection = Facing::LEFT;
+			ret.positionAlongWall = std::fmodf(ret.yHitPos, (float)MAP_CELL_PX);
+			ret.positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
+			ret.wallFaceDir = Facing::LEFT;
 		}
 		// check verticals
 		// TODO: collapse UP and DOWN branches together
@@ -167,13 +151,13 @@ namespace game
 			rowIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
 			if (rowIntersectDistance < colIntersectDistance)
 			{
-				distance = rowIntersectDistance;
-				xIntersect = checkX;
-				yIntersect = checkY;
+				ret.distance = rowIntersectDistance;
+				ret.xHitPos = checkX;
+				ret.yHitPos = checkY;
 
-				positionAlongWall = std::fmodf(xIntersect, (float)MAP_CELL_PX);
-				positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
-				faceDirection = Facing::UP;
+				ret.positionAlongWall = std::fmodf(ret.xHitPos, (float)MAP_CELL_PX);
+				ret.positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
+				ret.wallFaceDir = Facing::UP;
 			}
 		}
 		else if (facing & Facing::DOWN)
@@ -193,42 +177,57 @@ namespace game
 			rowIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
 			if (rowIntersectDistance < colIntersectDistance)
 			{
-				distance = rowIntersectDistance;
-				xIntersect = checkX;
-				yIntersect = checkY;
+				ret.distance = rowIntersectDistance;
+				ret.xHitPos = checkX;
+				ret.yHitPos = checkY;
 
-				positionAlongWall = std::fmodf(xIntersect, (float)MAP_CELL_PX);
-				positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
-				faceDirection = Facing::DOWN;
+				ret.positionAlongWall = std::fmodf(ret.xHitPos, (float)MAP_CELL_PX);
+				ret.positionAlongWall *= WALL_TEXTURE_SZ / MAP_CELL_PX;
+				ret.wallFaceDir = Facing::DOWN;
 			}
 		}
 
+		// fisheye correction https://permadi.com/1996/05/ray-casting-tutorial-8/		
+		const float angleDifference = rayAngle - playerAngle;
+		ret.distance *= cos(angleDifference);
+
+		return ret;
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="x">player x position</param>
+	/// <param name="y">player y position</param>
+	/// <param name="rayAngle">individual ray angle (0 - 2*PI)</param>
+	/// <param name="playerAngle">player angle (0 - 2*PI)</param>
+	/// <param name="pxCol"></param>
+	/// <param name="pxWidth"></param>
+	/// <param name="map"></param>
+	/// <returns></returns>
+	ColumnRenderData RaycastEngine::DoRayTest(const math::Transform& transform, float rayAngle, int pxCol, GameMap* map, rcgf::Texture* wallTexture)
+	{
+		RayWallCollision rayWallCollision = FindWallHitPos(transform, rayAngle, map);
+
 		ColumnRenderData ret;
-		ret.distance = distance;
+		ret.distance = rayWallCollision.distance;
 		ret.columnTexture = wallTexture;
-		ret.srcRect = SDL_Rect{ (int)positionAlongWall,0,1,WALL_TEXTURE_SZ };
-		ret.ray.start.x = (int)x;
-		ret.ray.start.y = (int)y;
-		ret.ray.end.x = (int)xIntersect;
-		ret.ray.end.y = (int)yIntersect;
-
-		// fisheye correction https://permadi.com/1996/05/ray-casting-tutorial-8/
-		{
-			const float angleDifference = rayAngle - playerAngle;
-			distance = distance * cos(angleDifference);
-		}
-
+		ret.srcRect = SDL_Rect{ (int)rayWallCollision.positionAlongWall,0,1,WALL_TEXTURE_SZ };
+		ret.ray.start.x = (int)transform.pos.x;
+		ret.ray.start.y = (int)transform.pos.y;
+		ret.ray.end.x = (int)rayWallCollision.xHitPos;
+		ret.ray.end.y = (int)rayWallCollision.yHitPos;
 		ret.dstRect.x = pxCol;
 		ret.dstRect.w = X_PX_STEP;
 
 		// wall height https://permadi.com/1996/05/ray-casting-tutorial-9/
-		ret.dstRect.h = static_cast<int>(MAP_CELL_PX / distance * DIST_PROJECTION_PLANE);
+		ret.dstRect.h = static_cast<int>(MAP_CELL_PX / rayWallCollision.distance * DIST_PROJECTION_PLANE);
 		ret.dstRect.y = (SCREEN_HEIGHT - ret.dstRect.h) / 2;
 
 		return ret;
 	}
 
-	void RaycastEngine::drawFloorColumn(SDL_Renderer* renderer, const math::Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx)
+	void RaycastEngine::DrawFloorColumn(SDL_Renderer* renderer, const math::Transform& playerTransform, const ColumnRenderData& crd, int screenColumnNumber, float rayAngle, rcgf::Texture* tx)
 	{
 		// draw floors https://github.com/permadi-com/ray-cast/blob/master/demo/4/sample4.js
 		// 1. start from the bottom of the wall

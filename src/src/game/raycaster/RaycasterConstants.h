@@ -39,7 +39,33 @@ namespace game
 		rcgf::Texture* columnTexture;
 		SDL_Rect srcRect;
 		SDL_Rect dstRect;
-		Line ray;
 		float distance;
+
+		// ray is currently only used for rendering the rays in the top down view. 
+		// This could be removed entirely. Or set as a debug macro
+		Line ray; 
+	};
+
+	enum Facing : unsigned char
+	{
+		UP = 0x0001,
+		RIGHT = 0x0002,
+		DOWN = 0x0004,
+		LEFT = 0x0008,
+	};
+
+	struct RayWallCollision
+	{
+		float distance = 10000000.f;
+		float positionAlongWall = 0.f; // between 0-1
+		
+		// wallFaceDir is currently unused, but may be needed 
+		// if we change to rendering polys instead of columns
+		Facing wallFaceDir = Facing::UP;
+		
+		// xHitPos and yHitPos technically not required, 
+		// currently being used for displaying player rays in top down map
+		float xHitPos = 0.f;
+		float yHitPos = 0.f;
 	};
 }
