@@ -60,6 +60,12 @@ struct Line
 	SDL_Point end;
 };
 
+struct TopDownLine
+{
+	Line line;
+	Color color;
+}; 
+
 struct SimplePerfCounter
 {
 	void Start()

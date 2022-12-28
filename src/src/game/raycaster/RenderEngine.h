@@ -26,16 +26,16 @@ namespace game
 
 		void RenderWalls();
 
-		struct TopDownLine
-		{
-			Line line;
-			Color color;
-		};
-
 		void PushTopDownMapData(const TopDownLine& tdl) const 
 		{
 			if ( m_topDownMapActive ) topdownLineData.push_back(tdl);
 		}
+
+		void ClearTopDownMapData() const
+		{
+			if (m_topDownMapActive) topdownLineData.clear();
+		}
+
 		void SetTopDownMapActive(bool active)
 		{
 			m_topDownMapActive = active;

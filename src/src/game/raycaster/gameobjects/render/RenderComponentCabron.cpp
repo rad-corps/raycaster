@@ -62,19 +62,15 @@ namespace game
 		
 		re.RenderSprite(pov, gameObject.m_transform, spriteSheet, animID, 64);
 
-		for (const Line& line: queue)
+		for (const TopDownLine& tdl: m_queue)
 		{
-			RenderEngine::TopDownLine tdl;
-			tdl.line = line;
-			tdl.color = Color{ 255, 255, 255, 255 };
-
 			re.PushTopDownMapData(tdl);
 		}
-		queue.clear();
+		m_queue.clear();
 	}
 
-	void RenderComponentCabron::OnLineDraw(const Line& line)
+	void RenderComponentCabron::OnLineDraw(const TopDownLine& tdl)
 	{
-		queue.push_back(line);
+		m_queue.push_back(tdl);
 	}
 }

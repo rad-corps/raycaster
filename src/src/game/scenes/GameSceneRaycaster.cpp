@@ -128,6 +128,8 @@ namespace game
 
 	void GameSceneRaycaster::fixedUpdate()
 	{
+		m_impl->m_renderEngine.ClearTopDownMapData();
+
 		Player& player = m_impl->player;
 		auto& keyStates = m_impl->keyStates;
 

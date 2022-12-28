@@ -207,8 +207,9 @@ namespace game
 
 		const math::Vec2 povForwardVec = math::angle_to_vec(pov.angle);
 		math::Vec2 scaledPlayerDir = math::scale(povForwardVec, 100.f);
-		SDL_SetRenderDrawColor(m_renderer, 255, 100, 0, 0xFF);
+		
 		// draw player forward vector
+		SDL_SetRenderDrawColor(m_renderer, 0, 255, 0, 0xFF);
 		SDL_RenderDrawLine(m_renderer, (int)pov.pos.x * TOP_DOWN_SCALE, (int)pov.pos.y * TOP_DOWN_SCALE, (int)(pov.pos.x + scaledPlayerDir.x) * TOP_DOWN_SCALE, (int)(pov.pos.y + scaledPlayerDir.y) * TOP_DOWN_SCALE);
 
 		// draw the queued data
@@ -224,8 +225,6 @@ namespace game
 			);
 
 		}
-		// clear the queued data
-		topdownLineData.clear();
 	}
 
 	void RenderEngine::RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, rcgf::SpriteSheet* spriteSheet, int spriteSheetIdx, int spriteSz) const

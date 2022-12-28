@@ -34,19 +34,13 @@ namespace game
 			// get direction from subject to playerTransform.pos
 			const math::Vec2 enemyToPlayerDelta = playerTransform.pos - subject.m_transform.pos;
 			const math::Vec2 enemyToPlayerDir = math::normalize(enemyToPlayerDelta);
-			
+			float enemyToPlayerAngle = math::vec_to_angle_pos(enemyToPlayerDir);
 
 			// get distance to wall from subject position using direction
-			const RayWallCollision collisionData = FindWallHitPos(subject.m_transform, math::vec_to_angle(enemyToPlayerDir), &gameMap);
-
-
-			// get distance from subject to playerTransform.pos
+			const RayWallCollision collisionData = FindWallHitPos(subject.m_transform, enemyToPlayerAngle, &gameMap);
+			
 			const float enemyToPlayerDist = math::magnitude(enemyToPlayerDelta);
 
-			// if wall dist > dist to player
-				// can see!
-			// else
-				// can not see
 			if (collisionData.distance > enemyToPlayerDist)
 			{
 				std::cout << "can see player!" << std::endl;
@@ -55,12 +49,17 @@ namespace game
 			{
 				std::cout << "can not see player!" << std::endl;
 			}
-			Line l;
-			l.start.x = (int)subject.m_transform.pos.x;
-			l.start.y = (int)subject.m_transform.pos.y;
-			l.end.x = (int)collisionData.xHitPos;
-			l.end.y = (int)collisionData.yHitPos;
-			subject.SendLineDraw(l);
+			
+			// send line from enemy to collisionData
+			{
+				TopDownLine l;
+				l.line.start.x = (int)subject.m_transform.pos.x;
+				l.line.start.y = (int)subject.m_transform.pos.y;
+				l.line.end.x = (int)collisionData.xHitPos;
+				l.line.end.y = (int)collisionData.yHitPos;
+				l.color = { 255,0,0,255 };
+				subject.SendLineDraw(l);
+			}
 		}
 
 

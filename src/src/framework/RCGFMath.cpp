@@ -113,6 +113,16 @@ namespace math
 		return atan2f(vec.y, vec.x);
 	}
 
+	float vec_to_angle_pos(const Vec2& vec)
+	{
+		float temp = vec_to_angle(vec);
+		if (temp < 0.f)
+		{
+			temp = 2 * math::PI + temp;
+		}
+		return temp;
+	}
+
 	Vec2 normalize(const Vec2& vec)
 	{
 		float mag = magnitude(vec);

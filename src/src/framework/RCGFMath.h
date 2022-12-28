@@ -35,7 +35,8 @@ namespace math
 	Mat2 invert(const Mat2& mat);
 	Mat2 scale(const Mat2& mat, float scalar);
 	Vec2 angle_to_vec(float angle);
-	float vec_to_angle(const Vec2& vec);
+	float vec_to_angle(const Vec2& vec); // returns range (-PI to PI)
+	float vec_to_angle_pos(const Vec2& vec); // returns range (0 to 2 * PI)
 	Vec2 normalize(const Vec2& vec);
 	float sum_angle(float angle1, float angle);
 
