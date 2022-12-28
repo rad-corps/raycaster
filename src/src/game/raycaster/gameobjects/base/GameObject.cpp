@@ -26,6 +26,12 @@ namespace game
 		if (m_rc) m_rc->OnEnemyDeath(payload);
 	}
 
+	void GameObject::SendLineDraw(const Line& line)
+	{
+		if (m_ai) m_ai->OnLineDraw(line);
+		if (m_rc) m_rc->OnLineDraw(line);
+	}
+
 	void GameObject::Update(GameObjectPool& gameObjects, const game::GameMap& map, const std::vector<math::Transform> playerTransforms)
 	{
 		if (!m_active || !m_ai) return;

@@ -25,13 +25,30 @@ namespace game
 		{}
 
 		void RenderWalls();
-		void RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, bool showRays);
+
+		struct TopDownLine
+		{
+			Line line;
+			Color color;
+		};
+
+		void PushTopDownMapData(const TopDownLine& tdl) const 
+		{
+			if ( m_topDownMapActive ) topdownLineData.push_back(tdl);
+		}
+		void SetTopDownMapActive(bool active)
+		{
+			m_topDownMapActive = active;
+		}
+		void RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, bool showRays) const;
 		void RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, rcgf::SpriteSheet* spriteSheet, int spriteSheetIdx, int spriteSz) const;
 		SDL_Renderer* GetRenderer();
 
 	private:
+		mutable std::vector<TopDownLine> topdownLineData;
 		SDL_Renderer* m_renderer;
 		const std::vector<ColumnRenderData>& crdVec;
+		bool m_topDownMapActive = false;
 	};
 }
 

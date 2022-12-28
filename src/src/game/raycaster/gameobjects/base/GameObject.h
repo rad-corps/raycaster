@@ -38,6 +38,7 @@ namespace game
 		// send events
 		void SendEnemyDamaged(const EnemyDamagePayload& payload);
 		void SendEnemyDeath(const EnemyDeathPayload& payload);
+		void SendLineDraw(const Line& line);
 		
 		math::Transform m_transform;
 

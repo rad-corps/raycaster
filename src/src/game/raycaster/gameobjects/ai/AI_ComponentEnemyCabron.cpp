@@ -55,6 +55,12 @@ namespace game
 			{
 				std::cout << "can not see player!" << std::endl;
 			}
+			Line l;
+			l.start.x = (int)subject.m_transform.pos.x;
+			l.start.y = (int)subject.m_transform.pos.y;
+			l.end.x = (int)collisionData.xHitPos;
+			l.end.y = (int)collisionData.yHitPos;
+			subject.SendLineDraw(l);
 		}
 
 

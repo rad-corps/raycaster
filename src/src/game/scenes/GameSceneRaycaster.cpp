@@ -165,11 +165,7 @@ namespace game
 
 		// render all gameobjects
 		gameObjects.Render(playerTransform, deltatime);
-
-		if (m_impl->showTopDown)
-		{
-			renderEngine.RenderTopDownMap(map, playerTransform, m_impl->showRays);
-		}
+		renderEngine.RenderTopDownMap(map, playerTransform, m_impl->showRays);
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
@@ -203,6 +199,7 @@ namespace game
 		case SDLK_TAB:
 			m_impl->showTopDown = !m_impl->showTopDown;
 			m_impl->showRays = m_impl->showTopDown;
+			m_impl->m_renderEngine.SetTopDownMapActive(m_impl->showTopDown);
 			break;
 		case SDLK_BACKQUOTE:
 			if (m_impl->showTopDown)

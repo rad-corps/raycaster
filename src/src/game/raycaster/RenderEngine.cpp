@@ -7,23 +7,6 @@ namespace
 {
 	using math::PI;
 
-	struct TopDownLine
-	{
-		TopDownLine(math::Vec2 point, math::Vec2 velocity, Color color) :point{ point }, velocity{ velocity }, color{ color }{}
-		math::Vec2 point;
-		math::Vec2 velocity;
-		Color color;
-	};
-	std::vector<TopDownLine> topDownLines;
-	void RegisterTransitiveTopDownData(TopDownLine tdl)
-	{
-		topDownLines.push_back(tdl);
-	}
-	void ResetTransitiveTopDownData()
-	{
-		topDownLines.clear();
-	}
-
 	bool IsObstructed(const std::vector<game::ColumnRenderData>& crdVec, const SDL_Rect& screenSpaceSprite, float distanceToSprite)
 	{
 		const int lBound = std::max(screenSpaceSprite.x, 0);
@@ -179,17 +162,19 @@ namespace game
 
 	void RenderEngine::RenderWalls()
 	{
-		// hacky to do this here. but we need to guaruntee it is called every frame.
-		ResetTransitiveTopDownData();
-
 		for (const ColumnRenderData& crd : crdVec)
 		{
 			crd.columnTexture->render2(&crd.srcRect, &crd.dstRect);
 		}
 	}
 
-	void RenderEngine::RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, bool showRays)
+	void RenderEngine::RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, bool showRays) const
 	{
+		if (!m_topDownMapActive)
+		{
+			topdownLineData.clear();
+			return;
+		}
 		// draw the map
 		SDL_SetRenderDrawColor(m_renderer, 0, 128, 0, 0xFF);
 		for (int row = 0; row < MAP_ROWS; ++row)
@@ -220,24 +205,27 @@ namespace game
 			}
 		}
 
-		// draw line from player to enemy
-		for (auto& tdl : topDownLines)
-		{
-			SDL_SetRenderDrawColor(m_renderer, tdl.color);
-			SDL_RenderDrawLineF(
-			m_renderer, 
-				tdl.point.x * TOP_DOWN_SCALE, 
-				tdl.point.y * TOP_DOWN_SCALE, 
-				(tdl.point.x + tdl.velocity.x) * TOP_DOWN_SCALE,
-				(tdl.point.y + tdl.velocity.y) * TOP_DOWN_SCALE
-			);
-		}
-
 		const math::Vec2 povForwardVec = math::angle_to_vec(pov.angle);
 		math::Vec2 scaledPlayerDir = math::scale(povForwardVec, 100.f);
 		SDL_SetRenderDrawColor(m_renderer, 255, 100, 0, 0xFF);
 		// draw player forward vector
 		SDL_RenderDrawLine(m_renderer, (int)pov.pos.x * TOP_DOWN_SCALE, (int)pov.pos.y * TOP_DOWN_SCALE, (int)(pov.pos.x + scaledPlayerDir.x) * TOP_DOWN_SCALE, (int)(pov.pos.y + scaledPlayerDir.y) * TOP_DOWN_SCALE);
+
+		// draw the queued data
+		for (const auto& tdl : topdownLineData)
+		{
+			SDL_SetRenderDrawColor(m_renderer, tdl.color);
+			SDL_RenderDrawLine(
+				m_renderer,
+				tdl.line.start.x * TOP_DOWN_SCALE,
+				tdl.line.start.y * TOP_DOWN_SCALE,
+				tdl.line.end.x * TOP_DOWN_SCALE,
+				tdl.line.end.y * TOP_DOWN_SCALE
+			);
+
+		}
+		// clear the queued data
+		topdownLineData.clear();
 	}
 
 	void RenderEngine::RenderSprite(const math::Transform& povTransform, const math::Transform& spriteTransform, rcgf::SpriteSheet* spriteSheet, int spriteSheetIdx, int spriteSz) const
