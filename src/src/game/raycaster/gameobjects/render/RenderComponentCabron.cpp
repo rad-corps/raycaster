@@ -61,16 +61,5 @@ namespace game
 		const int animID = walkAnimationID * SPRITESHEET_COLS + animIDColumn;
 		
 		re.RenderSprite(pov, gameObject.m_transform, spriteSheet, animID, 64);
-
-		for (const TopDownLine& tdl: m_queue)
-		{
-			re.PushTopDownMapData(tdl);
-		}
-		m_queue.clear();
-	}
-
-	void RenderComponentCabron::OnLineDraw(const TopDownLine& tdl)
-	{
-		m_queue.push_back(tdl);
 	}
 }

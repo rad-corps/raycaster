@@ -34,11 +34,9 @@ namespace game
 		void Update(GameObjectPool& gameObjects, const game::GameMap& map, const std::vector<math::Transform> playerTransforms); // fixed update (60 per second)
 		void Render(const game::RenderEngine& re, const math::Transform& pov, double deltatime);
 
-		
 		// send events
 		void SendEnemyDamaged(const EnemyDamagePayload& payload);
 		void SendEnemyDeath(const EnemyDeathPayload& payload);
-		void SendLineDraw(const TopDownLine& tdl);
 		
 		math::Transform m_transform;
 

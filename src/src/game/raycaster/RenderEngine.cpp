@@ -1,6 +1,7 @@
 #include "RenderEngine.h"
 #include <cassert>
 #include <iostream>
+#include "EventSystem.h"
 
 
 namespace
@@ -155,6 +156,17 @@ float calculate_fisheye_corrected_distance(const math::Vec2& povToSprite, float 
 
 namespace game
 {
+	RenderEngine::RenderEngine(SDL_Renderer* renderer, const std::vector<ColumnRenderData>& crdVec)
+		: m_renderer{ renderer }
+		, crdVec{ crdVec }
+	{
+		events::subscribe(events::EventAddTopDownLine::type, [this](const events::Event& event)
+		{
+			const events::EventAddTopDownLine& derivedEvent = static_cast<const events::EventAddTopDownLine&>(event);
+			topdownLineData.push_back(derivedEvent.tdl);
+		});
+	}
+
 	SDL_Renderer* RenderEngine::GetRenderer()
 	{
 		return m_renderer;

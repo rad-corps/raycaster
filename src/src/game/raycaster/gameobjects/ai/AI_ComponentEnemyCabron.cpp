@@ -1,6 +1,7 @@
 #include "AI_ComponentEnemyCabron.h"
 #include "./gameobjects/base/GameObject.h"
 #include <iostream>
+#include "EventSystem.h"
 
 namespace game
 {
@@ -43,11 +44,11 @@ namespace game
 
 			if (collisionData.distance > enemyToPlayerDist)
 			{
-				std::cout << "can see player!" << std::endl;
+				//std::cout << "can see player!" << std::endl;
 			}
 			else
 			{
-				std::cout << "can not see player!" << std::endl;
+				//std::cout << "can not see player!" << std::endl;
 			}
 			
 			// send line from enemy to collisionData
@@ -58,7 +59,8 @@ namespace game
 				l.line.end.x = (int)collisionData.xHitPos;
 				l.line.end.y = (int)collisionData.yHitPos;
 				l.color = { 255,0,0,255 };
-				subject.SendLineDraw(l);
+				//subject.SendLineDraw(l);
+				events::publish(events::EventAddTopDownLine{ l });
 			}
 		}
 

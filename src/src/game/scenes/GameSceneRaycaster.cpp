@@ -22,6 +22,7 @@
 
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
+#include "EventSystem.h"
 //#include "AIComponent.h"
 
 
@@ -112,6 +113,10 @@ namespace game
 			m_gameObjects.Add(std::move(cabron));
 		}
 		Pimpl() = delete;
+		~Pimpl()
+		{
+			events::clear();
+		}
 	};
 
 

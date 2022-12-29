@@ -10,6 +10,5 @@ namespace game
 		virtual ~EventRecipient() = default;
 		virtual void OnEnemyDamage(const EnemyDamagePayload&) {}
 		virtual void OnEnemyDeath(const EnemyDeathPayload&) {}
-		virtual void OnLineDraw(const TopDownLine& tdl) {}
 	};
 }

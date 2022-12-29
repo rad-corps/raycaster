@@ -18,11 +18,7 @@ namespace game
 		RenderEngine(RenderEngine&&) = delete;
 		RenderEngine& operator=(const RenderEngine&) = delete;
 		RenderEngine& operator=(RenderEngine&&) = delete;
-
-		RenderEngine(SDL_Renderer* renderer, const std::vector<ColumnRenderData>& crdVec) 
-			: m_renderer{ renderer }
-			, crdVec{crdVec}
-		{}
+		RenderEngine(SDL_Renderer* renderer, const std::vector<ColumnRenderData>& crdVec);
 
 		void RenderWalls();
 
