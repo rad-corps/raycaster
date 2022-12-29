@@ -56,15 +56,21 @@ void SDL_SetRenderDrawColor(SDL_Renderer* renderer, Color color);
 
 struct Line
 {
-	SDL_Point start;
-	SDL_Point end;
+	SDL_FPoint start;
+	SDL_FPoint end;
 };
 
-struct TopDownLine
+struct ColouredLine
 {
 	Line line;
 	Color color;
 }; 
+
+struct ColouredRect
+{
+	SDL_FRect rect;
+	Color color;
+};
 
 struct SimplePerfCounter
 {

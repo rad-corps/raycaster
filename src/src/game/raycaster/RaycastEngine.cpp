@@ -62,10 +62,10 @@ namespace game
 		ret.distance = rayWallCollision.distance;
 		ret.columnTexture = wallTexture;
 		ret.srcRect = SDL_Rect{ (int)rayWallCollision.positionAlongWall,0,1,WALL_TEXTURE_SZ };
-		ret.ray.start.x = (int)transform.pos.x;
-		ret.ray.start.y = (int)transform.pos.y;
-		ret.ray.end.x = (int)rayWallCollision.xHitPos;
-		ret.ray.end.y = (int)rayWallCollision.yHitPos;
+		ret.ray.start.x = transform.pos.x;
+		ret.ray.start.y = transform.pos.y;
+		ret.ray.end.x = rayWallCollision.xHitPos;
+		ret.ray.end.y = rayWallCollision.yHitPos;
 		ret.dstRect.x = pxCol;
 		ret.dstRect.w = X_PX_STEP;
 

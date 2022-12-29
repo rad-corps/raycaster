@@ -51,16 +51,27 @@ namespace game
 				//std::cout << "can not see player!" << std::endl;
 			}
 			
-			// send line from enemy to collisionData
+			
 			{
-				TopDownLine l;
-				l.line.start.x = (int)subject.m_transform.pos.x;
-				l.line.start.y = (int)subject.m_transform.pos.y;
-				l.line.end.x = (int)collisionData.xHitPos;
-				l.line.end.y = (int)collisionData.yHitPos;
-				l.color = { 255,0,0,255 };
-				//subject.SendLineDraw(l);
-				events::publish(events::EventAddTopDownLine{ l });
+				// line from enemy to collisionData sent to RenderEngine to draw top down map
+				Color color = { 255,0,0,255 };
+				ColouredLine l;
+				l.line.start.x = subject.m_transform.pos.x;
+				l.line.start.y = subject.m_transform.pos.y;
+				l.line.end.x = collisionData.xHitPos;
+				l.line.end.y = collisionData.yHitPos;
+				l.color = color;
+				events::publish(events::ColouredLineEvent{ l });
+
+				// line from enemy to collisionData sent to RenderEngine to draw top down map
+				ColouredRect cr;
+				cr.color = color;
+				constexpr int sz = 6;
+				cr.rect.x = l.line.start.x - sz / 2;
+				cr.rect.y = l.line.start.y - sz / 2;
+				cr.rect.w = sz;
+				cr.rect.h = sz;
+				events::publish(events::ColouredRectEvent{ cr });
 			}
 		}
 

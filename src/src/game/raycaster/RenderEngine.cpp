@@ -160,19 +160,49 @@ namespace game
 		: m_renderer{ renderer }
 		, crdVec{ crdVec }
 	{
-		events::subscribe(events::EventAddTopDownLine::type, [this](const events::Event& event)
+		events::subscribe(events::ColouredLineEvent::type, [this](const events::Event& event)
 		{
-			const events::EventAddTopDownLine& derivedEvent = static_cast<const events::EventAddTopDownLine&>(event);
-			topdownLineData.push_back(derivedEvent.tdl);
+			const events::ColouredLineEvent& derivedEvent = static_cast<const events::ColouredLineEvent&>(event);
+			queuedColouredLines.push_back(derivedEvent.tdl);
+		});
+
+		events::subscribe(events::ColouredRectEvent::type, [this](const events::Event& event)
+		{
+			const events::ColouredRectEvent& derivedEvent = static_cast<const events::ColouredRectEvent&>(event);
+			queuedColouredRects.push_back(derivedEvent.colouredRect);
 		});
 	}
 
-	SDL_Renderer* RenderEngine::GetRenderer()
+	void RenderEngine::PushColouredLine(const ColouredLine& tdl)
+	{
+		if (m_topDownMapActive) queuedColouredLines.push_back(tdl);
+	}
+
+	void RenderEngine::PushColouredRect(const ColouredRect& cr)
+	{
+		if (m_topDownMapActive) queuedColouredRects.push_back(cr);
+	}
+
+	void RenderEngine::ClearTopDownMapData()
+	{
+		if (m_topDownMapActive)
+		{
+			queuedColouredLines.clear();
+			queuedColouredRects.clear();
+		}
+	}
+
+	void RenderEngine::SetTopDownMapActive(bool active)
+	{
+		m_topDownMapActive = active;
+	}
+
+	SDL_Renderer* RenderEngine::GetRenderer() const
 	{
 		return m_renderer;
 	}
 
-	void RenderEngine::RenderWalls()
+	void RenderEngine::RenderWalls() const
 	{
 		for (const ColumnRenderData& crd : crdVec)
 		{
@@ -180,11 +210,11 @@ namespace game
 		}
 	}
 
-	void RenderEngine::RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, bool showRays) const
+	void RenderEngine::RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, bool showRays)
 	{
 		if (!m_topDownMapActive)
 		{
-			topdownLineData.clear();
+			queuedColouredLines.clear();
 			return;
 		}
 		// draw the map
@@ -213,29 +243,51 @@ namespace game
 			if (showRays)
 			{
 				SDL_SetRenderDrawColor(m_renderer, 133, 133, 173, 255);
-				SDL_RenderDrawLine(m_renderer, crd.ray.start.x * TOP_DOWN_SCALE, crd.ray.start.y * TOP_DOWN_SCALE, crd.ray.end.x * TOP_DOWN_SCALE, crd.ray.end.y * TOP_DOWN_SCALE);
+				SDL_RenderDrawLineF(m_renderer, crd.ray.start.x * TOP_DOWN_SCALE, crd.ray.start.y * TOP_DOWN_SCALE, crd.ray.end.x * TOP_DOWN_SCALE, crd.ray.end.y * TOP_DOWN_SCALE);
 			}
 		}
 
+		// get player direction as a scaled vector
 		const math::Vec2 povForwardVec = math::angle_to_vec(pov.angle);
-		math::Vec2 scaledPlayerDir = math::scale(povForwardVec, 100.f);
+		math::Vec2 scaledPlayerDir = math::scale(povForwardVec, 10.f);
 		
 		// draw player forward vector
 		SDL_SetRenderDrawColor(m_renderer, 0, 255, 0, 0xFF);
-		SDL_RenderDrawLine(m_renderer, (int)pov.pos.x * TOP_DOWN_SCALE, (int)pov.pos.y * TOP_DOWN_SCALE, (int)(pov.pos.x + scaledPlayerDir.x) * TOP_DOWN_SCALE, (int)(pov.pos.y + scaledPlayerDir.y) * TOP_DOWN_SCALE);
+		SDL_RenderDrawLineF(m_renderer, pov.pos.x * TOP_DOWN_SCALE, pov.pos.y * TOP_DOWN_SCALE, (pov.pos.x + scaledPlayerDir.x) * TOP_DOWN_SCALE, (pov.pos.y + scaledPlayerDir.y) * TOP_DOWN_SCALE);
+
+		// draw a box around player
+		{
+			constexpr int sz = 6 * TOP_DOWN_SCALE;
+			const SDL_FRect playerBox{
+				pov.pos.x * TOP_DOWN_SCALE - sz / 2, // x
+				pov.pos.y * TOP_DOWN_SCALE - sz / 2, // y
+				sz,             // w
+				sz              // h
+			};
+			SDL_RenderFillRectF(m_renderer, &playerBox);
+		}
 
 		// draw the queued data
-		for (const auto& tdl : topdownLineData)
+		for (const auto& tdl : queuedColouredLines)
 		{
 			SDL_SetRenderDrawColor(m_renderer, tdl.color);
-			SDL_RenderDrawLine(
+			SDL_RenderDrawLineF(
 				m_renderer,
 				tdl.line.start.x * TOP_DOWN_SCALE,
 				tdl.line.start.y * TOP_DOWN_SCALE,
 				tdl.line.end.x * TOP_DOWN_SCALE,
 				tdl.line.end.y * TOP_DOWN_SCALE
 			);
+		}
 
+		for (ColouredRect cr : queuedColouredRects)
+		{
+			cr.rect.x *= TOP_DOWN_SCALE;
+			cr.rect.y *= TOP_DOWN_SCALE;
+			cr.rect.w *= TOP_DOWN_SCALE;
+			cr.rect.h *= TOP_DOWN_SCALE;
+			SDL_SetRenderDrawColor(m_renderer, cr.color);
+			SDL_RenderFillRectF(m_renderer, &cr.rect);
 		}
 	}
 
