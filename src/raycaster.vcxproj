@@ -37,6 +37,7 @@
     <ClCompile Include="src\game\raycaster\RaycastEngine.cpp" />
     <ClCompile Include="src\game\raycaster\RenderEngine.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\base\GameObject.cpp" />
+    <ClCompile Include="src\game\raycaster\Spatial.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneMain.cpp" />
     <ClCompile Include="src\game\scenes\GameSceneRaycaster.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -65,6 +66,7 @@
     <ClInclude Include="src\game\raycaster\RenderEngine.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\base\GameObject.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\base\RenderComponent.h" />
+    <ClInclude Include="src\game\raycaster\Spatial.h" />
     <ClInclude Include="src\game\scenes\GameSceneMain.h" />
     <ClInclude Include="src\game\scenes\GameSceneRaycaster.h" />
     <ClInclude Include="src\game\scenes\GameSceneRotating.h" />

@@ -15,7 +15,6 @@
 #include "RaycasterConstants.h"
 #include <vector>
 #include "RenderEngine.h"
-//#include "RenderingComponent.h"
 #include "./gameobjects/factory/GameObjectFactory.h"
 
 #include <algorithm> // std::sort
@@ -23,7 +22,6 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include "EventSystem.h"
-//#include "AIComponent.h"
 
 
 #define RENDER_DEBUG_VALUES
@@ -33,43 +31,6 @@ using math::PI;
 namespace
 {
 	SimplePerfCounter perfCounter;
-
-	// TODO: move this to Map.h or Map.cpp
-	game::GameMap map =
-	{
-		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,
-		1,0,0,0,0,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,
-		1,0,0,0,0,0,0,1,1,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,1,0,1,0,1,0,0,1,
-		1,0,0,0,0,0,0,1,1,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,1,0,1,0,1,0,0,1,
-		1,0,0,0,0,1,0,1,1,1,1,0,1,1,0,1,1,1,0,0,0,1,0,1,1,1,1,0,1,1,0,1,
-		1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	};
 }
 
 namespace game
@@ -109,7 +70,22 @@ namespace game
 			// TODO: cleanup texture memory on exit
 			factory::Init(m_renderer);
 
-			GameObject cabron = factory::CreateCabron({ 228.849f, 151.799f, 3.15316f }, { {45.2609f, 149.675f}, { 228.849f, 151.799f} });
+			GameObject cabron = factory::CreateCabron(
+				{ 228.849f, 151.799f, 3.15316f }, 
+				{
+					{223.661f, 113.27f},
+					{169.576f, 107.703f},
+					{142.766f, 44.0217f},
+					{99.6444f, 89.271f},
+					{99.5096f, 146.271f},
+					{38.0722f, 155.339f},
+					{43.3761f, 211.787f},
+					{117.929f, 217.882f},
+					{175.284f, 235.681f},
+					{184.17f, 212.622f},
+					{226.004f, 151.912f}
+				}
+			);
 			m_gameObjects.Add(std::move(cabron));
 		}
 		Pimpl() = delete;
@@ -138,7 +114,7 @@ namespace game
 		Player& player = m_impl->player;
 		auto& keyStates = m_impl->keyStates;
 
-		m_impl->m_gameObjects.Update(map, { player.transform });
+		m_impl->m_gameObjects.Update(getMap(), { player.transform });
 
 		if (!keyStates[SDLK_LCTRL])
 		{
@@ -149,13 +125,13 @@ namespace game
 		else
 		{
 			// strafe
-			if (keyStates[SDLK_d] || keyStates[SDLK_RIGHT]) player.move(PI / 2.f, &map);
-			if (keyStates[SDLK_a] || keyStates[SDLK_LEFT])  player.move(PI + PI * 0.5f, &map);
+			if (keyStates[SDLK_d] || keyStates[SDLK_RIGHT]) player.move(PI / 2.f, &getMap());
+			if (keyStates[SDLK_a] || keyStates[SDLK_LEFT])  player.move(PI + PI * 0.5f, &getMap());
 		}
 
 		// forward and backward movement
-		if (keyStates[SDLK_w] || keyStates[SDLK_UP])    player.move(0.f, &map);
-		if (keyStates[SDLK_s] || keyStates[SDLK_DOWN])  player.move(PI, &map);
+		if (keyStates[SDLK_w] || keyStates[SDLK_UP])    player.move(0.f, &getMap());
+		if (keyStates[SDLK_s] || keyStates[SDLK_DOWN])  player.move(PI, &getMap());
 	}
 
 	void GameSceneRaycaster::render(double deltatime)
@@ -165,14 +141,14 @@ namespace game
 		auto& renderEngine = m_impl->m_renderEngine;
 		
 		// generate wall data
-		m_impl->raycastEngine.generateWallRenderData(playerTransform, &map, &m_impl->wallTexture);
+		m_impl->raycastEngine.generateWallRenderData(playerTransform, &getMap(), &m_impl->wallTexture);
 
 		// render walls
 		m_impl->m_renderEngine.RenderWalls();
 
 		// render all gameobjects
 		gameObjects.Render(playerTransform, deltatime);
-		renderEngine.RenderTopDownMap(map, playerTransform, m_impl->showRays);
+		renderEngine.RenderTopDownMap(getMap(), playerTransform, m_impl->showRays);
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)

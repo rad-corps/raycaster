@@ -18,6 +18,7 @@ namespace game
 	bool isWall(float x, float y, const GameMap* map);
 	bool isWall(int x, int y, const GameMap* map);
 	bool isInWall(const SDL_Rect* playerVolume, const GameMap* map);
+	const GameMap& getMap();
 
-	RayWallCollision FindWallHitPos(const math::Transform& transform, float rayAngle, const GameMap* map);
+	RayWallCollision FindWallHitPos(const math::Vec2& pos, float rayAngle, const GameMap* map);
 }

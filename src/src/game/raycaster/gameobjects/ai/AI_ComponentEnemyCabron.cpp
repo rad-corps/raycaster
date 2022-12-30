@@ -2,6 +2,7 @@
 #include "./gameobjects/base/GameObject.h"
 #include <iostream>
 #include "EventSystem.h"
+#include "Spatial.h" // game::line_of_sight
 
 namespace game
 {
@@ -18,61 +19,50 @@ namespace game
 		const math::Vec2 direction = math::normalize(delta);
 		const math::Vec2 velocity = direction * ACTOR_VELOCITY;
 
-		// travel
-		subject.m_transform.pos += velocity;
-		subject.m_transform.angle = math::vec_to_angle(direction);
-
-		// check destination reached
-		if (math::magnitude(delta) < 1.f /* TODO: un-magic number this epsilon */)
-		{
-			m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
-		}
-
-
 		// can we see the player?
 		for (const math::Transform& playerTransform : playerTransforms)
-		{
-			// get direction from subject to playerTransform.pos
-			const math::Vec2 enemyToPlayerDelta = playerTransform.pos - subject.m_transform.pos;
-			const math::Vec2 enemyToPlayerDir = math::normalize(enemyToPlayerDelta);
-			float enemyToPlayerAngle = math::vec_to_angle_pos(enemyToPlayerDir);
-
-			// get distance to wall from subject position using direction
-			const RayWallCollision collisionData = FindWallHitPos(subject.m_transform, enemyToPlayerAngle, &gameMap);
-			
-			const float enemyToPlayerDist = math::magnitude(enemyToPlayerDelta);
-
-			if (collisionData.distance > enemyToPlayerDist)
+		{			
+			if (line_of_sight(subject.m_transform.pos, playerTransform.pos))
 			{
-				//std::cout << "can see player!" << std::endl;
+				subject.m_transform.pos += velocity * 2;
 			}
 			else
 			{
-				//std::cout << "can not see player!" << std::endl;
+				subject.m_transform.pos += velocity;
 			}
-			
-			
-			{
-				// line from enemy to collisionData sent to RenderEngine to draw top down map
-				Color color = { 255,0,0,255 };
-				ColouredLine l;
-				l.line.start.x = subject.m_transform.pos.x;
-				l.line.start.y = subject.m_transform.pos.y;
-				l.line.end.x = collisionData.xHitPos;
-				l.line.end.y = collisionData.yHitPos;
-				l.color = color;
-				events::publish(events::ColouredLineEvent{ l });
 
-				// line from enemy to collisionData sent to RenderEngine to draw top down map
-				ColouredRect cr;
-				cr.color = color;
-				constexpr int sz = 6;
-				cr.rect.x = l.line.start.x - sz / 2;
-				cr.rect.y = l.line.start.y - sz / 2;
-				cr.rect.w = sz;
-				cr.rect.h = sz;
-				events::publish(events::ColouredRectEvent{ cr });
+			subject.m_transform.angle = math::vec_to_angle(direction);
+
+
+			// check destination reached
+			if (math::magnitude(delta) < 1.f /* TODO: un-magic number this epsilon */)
+			{
+				m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
 			}
+			
+			
+			//#FFFF00 yello
+			const Color color = { 0xFF, 0xFF, 0x0, 0xFF };
+
+			// line from enemy to collisionData sent to RenderEngine to draw top down map
+			ColouredRect cr;
+			cr.color = color;
+			constexpr int sz = 6;
+			cr.rect.x = subject.m_transform.pos.x - sz / 2;
+			cr.rect.y = subject.m_transform.pos.y - sz / 2;
+			cr.rect.w = sz;
+			cr.rect.h = sz;
+			events::publish(events::ColouredRectEvent{ cr });
+
+			// draw line indicating enemy direction
+			ColouredLine cl;
+			cl.color = color;
+			// get direction as a scaled vector
+			const math::Vec2 forwardVec = math::angle_to_vec(subject.m_transform.angle);
+			math::Vec2 scaledDir = math::scale(forwardVec, 10.f);
+			cl.line.start = { subject.m_transform.pos.x, subject.m_transform.pos.y };
+			cl.line.end = { subject.m_transform.pos.x + scaledDir.x, subject.m_transform.pos.y + scaledDir.y };
+			events::publish(events::ColouredLineEvent{ cl });
 		}
 
 
