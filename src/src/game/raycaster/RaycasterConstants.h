@@ -5,6 +5,7 @@
 #include "Globals.h"
 #include "RCGFMath.h"
 #include "Texture.h"
+#include <iostream>
 
 // #define RENDER_FLOORS
 

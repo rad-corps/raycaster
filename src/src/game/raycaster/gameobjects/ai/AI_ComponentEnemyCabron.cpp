@@ -1,6 +1,7 @@
 #include "AI_ComponentEnemyCabron.h"
 #include "./gameobjects/base/GameObject.h"
 #include <iostream>
+#include <iomanip> // std::setprecision
 #include "EventSystem.h"
 #include "Spatial.h" // game::line_of_sight
 
@@ -15,35 +16,41 @@ namespace game
 		const math::Vec2& nextPos = m_waypointPositions[m_waypointIndex];
 
 		// calculate direction to travel
-		const math::Vec2 delta = nextPos - currentPos;
-		const math::Vec2 direction = math::normalize(delta);
+		const math::Vec2 movementDelta = nextPos - currentPos;
+		const math::Vec2 direction = math::normalize(movementDelta);
+		subject.m_transform.angle = math::vec_to_angle(direction);
 		const math::Vec2 velocity = direction * ACTOR_VELOCITY;
+
+		//#FFFF00 yello
+		Color color = { 0xFF, 0xFF, 0x0, 0xFF };
 
 		// can we see the player?
 		for (const math::Transform& playerTransform : playerTransforms)
 		{			
-			if (line_of_sight(subject.m_transform.pos, playerTransform.pos))
+			if (within_frustum(subject.m_transform, playerTransform.pos))
 			{
-				subject.m_transform.pos += velocity * 2;
+				if (line_of_sight(subject.m_transform.pos, playerTransform.pos))
+				{
+					color = { 0xFF, 0x0, 0x0, 0xFF };
+					subject.m_transform.pos += velocity * 0.5f;
+				}
+				else
+				{
+					subject.m_transform.pos += velocity;
+				}
 			}
 			else
 			{
 				subject.m_transform.pos += velocity;
 			}
-
-			subject.m_transform.angle = math::vec_to_angle(direction);
-
+			
 
 			// check destination reached
-			if (math::magnitude(delta) < 1.f /* TODO: un-magic number this epsilon */)
+			if (math::magnitude(movementDelta) < 1.f /* TODO: un-magic number this epsilon */)
 			{
 				m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
 			}
 			
-			
-			//#FFFF00 yello
-			const Color color = { 0xFF, 0xFF, 0x0, 0xFF };
-
 			// line from enemy to collisionData sent to RenderEngine to draw top down map
 			ColouredRect cr;
 			cr.color = color;

@@ -1,7 +1,7 @@
 #include "Spatial.h"
-#include "RaycasterConstants.h"
 #include "Map.h" // FindWallHitPos
 #include "EventSystem.h"
+
 
 namespace game
 {
@@ -33,6 +33,49 @@ namespace game
 		l.line.end.y = collisionData.yHitPos;
 		l.color = color;
 		events::publish(events::ColouredLineEvent{ l });
+
+		return ret;
+	}
+
+	bool within_frustum(const math::Transform& pov, const math::Vec2& subject, float frustum)
+	{
+		// check frustum 
+		const math::Vec2 povToSubject = subject - pov.pos;
+
+		const float playerAngleFromEnemy = math::vec_to_angle_pos(povToSubject);
+		float directionPlayerDifference = math::sum_angle(-playerAngleFromEnemy, pov.angle);
+		if (directionPlayerDifference > math::PI)
+			directionPlayerDifference -= 2 * math::PI;		
+
+		Color color = { 0xFF, 0xFF, 0x0, 0xFF }; // yellow
+		bool ret = false;
+		if (abs(directionPlayerDifference) < frustum / 2.f)
+		{
+			color = { 0xFF, 0x0, 0x0, 0xFF }; // red
+			ret = true;
+		}
+
+		// draw the frustum
+		{
+
+			float leftAngle = math::sum_angle(pov.angle, -frustum / 2.f);
+			float rightAngle = math::sum_angle(pov.angle, frustum / 2.f);
+			math::Vec2 leftFrustumVec = math::scale(math::angle_to_vec(leftAngle), 200.f);
+			math::Vec2 rightFrustumVec = math::scale(math::angle_to_vec(rightAngle), 200.f);
+
+			ColouredLine l;
+			l.color = color;
+			l.line.start.x = pov.pos.x;
+			l.line.start.y = pov.pos.y;
+			l.line.end.x = pov.pos.x + leftFrustumVec.x;
+			l.line.end.y = pov.pos.y + leftFrustumVec.y;
+			events::publish(events::ColouredLineEvent{ l });
+
+			l.line.end.x = pov.pos.x + rightFrustumVec.x;
+			l.line.end.y = pov.pos.y + rightFrustumVec.y;
+			events::publish(events::ColouredLineEvent{ l });
+		}
+
 
 		return ret;
 	}
