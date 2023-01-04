@@ -92,6 +92,67 @@ namespace game
 		return mapIndex;
 	}
 
+	int toMapIndex(const math::Vec2& pos)
+	{
+		return toMapIndex(static_cast<int>(pos.x), static_cast<int>(pos.y));
+	}
+
+	std::array<int, 8> getAdjacentMapIndices(int idx)
+	{
+		/**
+		*  [0][1][2]
+		*  [3]idx[4]
+		*  [5][6][7]
+		*/
+
+		//                       0   1   2   3   4   5   6   7
+		std::array<int, 8> ret{ -1, -1, -1, -1, -1, -1, -1, -1 };
+
+		// [0][1][2]
+		if (idx >= MAP_COLS) // not the top row
+		{
+			if (idx % MAP_COLS != 0) // not the left most column
+			{
+				ret[0] = idx - MAP_COLS - 1;
+			}
+			
+			ret[1] = idx - MAP_COLS;
+
+			if ((idx + 1) % MAP_COLS != 0) // not the right most column
+			{
+				ret[2] = idx - MAP_COLS + 1;
+			}
+		}
+
+		// [3]idx[4]
+		if (idx % MAP_COLS != 0) // not the left most column
+		{
+			ret[3] = idx - 1;
+		}
+		
+		if ((idx + 1) % MAP_COLS != 0) // not the right most column
+		{
+			ret[4] = idx + 1;
+		}
+
+		// [5][6][7]
+		if (idx + MAP_COLS < MAP_SZ)
+		{
+			if (idx % MAP_COLS != 0) // not the left most column
+			{
+				ret[5] = idx + MAP_COLS - 1;
+			}
+			
+			ret[6] = idx + MAP_COLS;
+			
+			if ((idx + 1) % MAP_COLS != 0) // not the right most column
+			{
+				ret[7] = idx + MAP_COLS + 1;
+			}
+		}
+		return ret;
+	}
+
 	// TODO: Remove?
 	bool isWall(float x, float y, const GameMap* map)
 	{

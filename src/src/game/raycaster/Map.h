@@ -13,7 +13,15 @@ namespace game
 	bool facingLeft(float angle_);
 	unsigned char getFacing(float angle_);
 
-	int toMapIndex(float x, float y);
+	/**
+	*  [0][1][2]
+	*  [3]idx[4]
+	*  [5][6][7]
+	*/
+	// return -1 for unnavailable tiles
+	std::array<int, 8> getAdjacentMapIndices(int idx);
+
+	int toMapIndex(const math::Vec2& pos);
 	int toMapIndex(int x, int y);
 	bool isWall(float x, float y, const GameMap* map);
 	bool isWall(int x, int y, const GameMap* map);

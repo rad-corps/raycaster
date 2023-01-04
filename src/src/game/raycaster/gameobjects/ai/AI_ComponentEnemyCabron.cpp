@@ -4,6 +4,26 @@
 #include <iomanip> // std::setprecision
 #include "EventSystem.h"
 #include "Spatial.h" // game::line_of_sight
+#include "Map.h"
+
+namespace
+{
+	void calculate_path(const math::Vec2& startingPos, const math::Vec2& goalPos, const game::GameMap& gameMap)
+	{
+		// convert startingPos and goalPos into map indices
+		//int startingPosIdx = game::toMapIndex(startingPos);
+		//int goalPosIdx = game::toMapIndex(goalPos);
+		auto adjacentMapIndices = game::getAdjacentMapIndices(0);
+
+		for (auto idx : adjacentMapIndices)
+		{
+			std::cout << idx << std::endl;
+		}
+
+
+
+	}
+}
 
 namespace game
 {
@@ -14,6 +34,9 @@ namespace game
 
 		// get next position of this npc
 		const math::Vec2& nextPos = m_waypointPositions[m_waypointIndex];
+
+		// wip: this will replace the dumb moving towards goal disregarding walls
+		calculate_path(currentPos, nextPos, gameMap);
 
 		// calculate direction to travel
 		const math::Vec2 movementDelta = nextPos - currentPos;
