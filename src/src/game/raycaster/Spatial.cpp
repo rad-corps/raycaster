@@ -48,8 +48,8 @@ namespace
 		PathfindingGridCell* parent;
 
 		int mapIndex;
-		float g = 0; // cummulative edge cost
-		float f = 0; // heuristic (distance from current to goal)
+		float g = 0.f; // cummulative edge cost
+		float f = 10000000.f; // heuristic (distance from current to goal)
 		std::array<int, 8> adjacentCells;
 	};
 
@@ -229,6 +229,7 @@ namespace game::spatial
 					}
 				}
 			}
+			
 		}
 
 		//reconstruct the path	
