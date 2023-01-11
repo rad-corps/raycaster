@@ -22,6 +22,7 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include "EventSystem.h"
+#include "Spatial.h"
 
 
 #define RENDER_DEBUG_VALUES
@@ -69,7 +70,9 @@ namespace game
 			
 			// TODO: cleanup texture memory on exit
 			factory::Init(m_renderer);
+			spatial::init_path_finding();
 
+			// initialise level by adding an enemy with a waypoint path
 			GameObject cabron = factory::CreateCabron(
 				{ 228.849f, 151.799f, 3.15316f }, 
 				{
@@ -114,7 +117,7 @@ namespace game
 		Player& player = m_impl->player;
 		auto& keyStates = m_impl->keyStates;
 
-		m_impl->m_gameObjects.Update(getMap(), { player.transform });
+		m_impl->m_gameObjects.Update(map::get_map(), { player.transform });
 
 		if (!keyStates[SDLK_LCTRL])
 		{
@@ -125,13 +128,13 @@ namespace game
 		else
 		{
 			// strafe
-			if (keyStates[SDLK_d] || keyStates[SDLK_RIGHT]) player.move(PI / 2.f, &getMap());
-			if (keyStates[SDLK_a] || keyStates[SDLK_LEFT])  player.move(PI + PI * 0.5f, &getMap());
+			if (keyStates[SDLK_d] || keyStates[SDLK_RIGHT]) player.move(PI / 2.f, &map::get_map());
+			if (keyStates[SDLK_a] || keyStates[SDLK_LEFT])  player.move(PI + PI * 0.5f, &map::get_map());
 		}
 
 		// forward and backward movement
-		if (keyStates[SDLK_w] || keyStates[SDLK_UP])    player.move(0.f, &getMap());
-		if (keyStates[SDLK_s] || keyStates[SDLK_DOWN])  player.move(PI, &getMap());
+		if (keyStates[SDLK_w] || keyStates[SDLK_UP])    player.move(0.f, &map::get_map());
+		if (keyStates[SDLK_s] || keyStates[SDLK_DOWN])  player.move(PI, &map::get_map());
 	}
 
 	void GameSceneRaycaster::render(double deltatime)
@@ -141,14 +144,14 @@ namespace game
 		auto& renderEngine = m_impl->m_renderEngine;
 		
 		// generate wall data
-		m_impl->raycastEngine.generateWallRenderData(playerTransform, &getMap(), &m_impl->wallTexture);
+		m_impl->raycastEngine.generateWallRenderData(playerTransform, &map::get_map(), &m_impl->wallTexture);
 
 		// render walls
 		m_impl->m_renderEngine.RenderWalls();
 
 		// render all gameobjects
 		gameObjects.Render(playerTransform, deltatime);
-		renderEngine.RenderTopDownMap(getMap(), playerTransform, m_impl->showRays);
+		renderEngine.RenderTopDownMap(map::get_map(), playerTransform, m_impl->showRays);
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)

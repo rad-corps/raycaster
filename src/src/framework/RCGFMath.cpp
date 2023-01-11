@@ -65,6 +65,11 @@ namespace math
 		return sqrt(vec.x * vec.x + vec.y * vec.y);
 	}
 
+	float distance(const Vec2& from, const Vec2& to)
+	{
+		return magnitude(from - to);
+	}
+
 	Vec2 scale(const Vec2& vec, float scale)
 	{
 		Vec2 ret{vec.x * scale, vec.y * scale};

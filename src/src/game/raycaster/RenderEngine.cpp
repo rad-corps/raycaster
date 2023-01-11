@@ -210,7 +210,7 @@ namespace game
 		}
 	}
 
-	void RenderEngine::RenderTopDownMap(const game::GameMap& map, const math::Transform& pov, bool showRays)
+	void RenderEngine::RenderTopDownMap(const map::GameMap& map, const math::Transform& pov, bool showRays)
 	{
 		if (!m_topDownMapActive)
 		{

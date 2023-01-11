@@ -45,6 +45,8 @@ namespace global
 
 struct Color
 {
+	Color() = default;
+	Color(Uint8 r, Uint8 g, Uint8 b, Uint8 a) : r{ r }, g{ g }, b{ b }, a{ a } {}
 	Uint8 r;
 	Uint8 g;
 	Uint8 b;

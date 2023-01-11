@@ -26,7 +26,7 @@ namespace game
 		if (m_rc) m_rc->OnEnemyDeath(payload);
 	}
 
-	void GameObject::Update(GameObjectPool& gameObjects, const game::GameMap& map, const std::vector<math::Transform> playerTransforms)
+	void GameObject::Update(GameObjectPool& gameObjects, const map::GameMap& map, const std::vector<math::Transform> playerTransforms)
 	{
 		if (!m_active || !m_ai) return;
 
