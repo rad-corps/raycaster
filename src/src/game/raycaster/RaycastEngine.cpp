@@ -9,7 +9,7 @@ using math::PI;
 
 namespace game
 {
-	const std::vector<ColumnRenderData>& RaycastEngine::generateWallRenderData(const math::Transform& playerTransform, const GameMap* map, rcgf::Texture* wallTexture)
+	const std::vector<ColumnRenderData>& RaycastEngine::generateWallRenderData(const math::Transform& playerTransform, const map::GameMap* map, rcgf::Texture* wallTexture)
 	{
 		// render the 3D world from the player perspective
 
@@ -54,9 +54,9 @@ namespace game
 	/// <param name="pxWidth"></param>
 	/// <param name="map"></param>
 	/// <returns></returns>
-	ColumnRenderData RaycastEngine::DoRayTest(const math::Transform& transform, float rayAngle, int pxCol, const GameMap* map, rcgf::Texture* wallTexture)
+	ColumnRenderData RaycastEngine::DoRayTest(const math::Transform& transform, float rayAngle, int pxCol, const map::GameMap* map, rcgf::Texture* wallTexture)
 	{
-		RayWallCollision rayWallCollision = FindWallHitPos(transform.pos, rayAngle, map);
+		RayWallCollision rayWallCollision = map::find_wall_hit_pos(transform.pos, rayAngle);
 
 		ColumnRenderData ret;
 		ret.distance = rayWallCollision.distance;

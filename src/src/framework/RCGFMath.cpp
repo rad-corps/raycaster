@@ -5,6 +5,16 @@ namespace math
 {	
 	Vec2::Vec2(float x, float y) : x{ x }, y{ y }{}
 
+	bool Vec2::operator==(const Vec2& rhs)
+	{
+		return rhs.x == x && rhs.y == y;
+	}
+
+	bool Vec2::operator!=(const Vec2& rhs)
+	{
+		return !(operator==(rhs));
+	}
+
 	Vec2& Vec2::operator+=(const Vec2& rhs)
 	{
 		x += rhs.x;
@@ -63,6 +73,11 @@ namespace math
 	float magnitude(const Vec2& vec)
 	{
 		return sqrt(vec.x * vec.x + vec.y * vec.y);
+	}
+
+	float distance(const Vec2& from, const Vec2& to)
+	{
+		return magnitude(from - to);
 	}
 
 	Vec2 scale(const Vec2& vec, float scale)

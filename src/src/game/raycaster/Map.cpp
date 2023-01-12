@@ -6,7 +6,8 @@ using math::PI;
 
 namespace
 {
-	const game::GameMap globalMap =
+	// todo: we need to be able to replace the map
+	const game::map::GameMap globalMap =
 	{
 		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 		1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,
@@ -43,9 +44,9 @@ namespace
 	};
 }
 
-namespace game
+namespace game::map
 {
-	const GameMap& getMap()
+	const GameMap& get_map()
 	{
 		return globalMap;
 	}
@@ -76,7 +77,14 @@ namespace game
 		return ret;
 	}
 
-	int toMapIndex(int x, int y)
+	math::Vec2 to_world_position(int mapIndex)
+	{
+		int yIndex = mapIndex / MAP_COLS;
+		int xIndex = mapIndex % MAP_COLS;
+		return math::Vec2{ static_cast<float>(xIndex * MAP_CELL_PX + MAP_CELL_PX / 2), static_cast<float>(yIndex * MAP_CELL_PX + MAP_CELL_PX / 2) };
+	}
+
+	int to_map_index(int x, int y)
 	{
 		const int xIndex = x / MAP_CELL_PX;
 		const int yIndex = y / MAP_CELL_PX;
@@ -92,12 +100,12 @@ namespace game
 		return mapIndex;
 	}
 
-	int toMapIndex(const math::Vec2& pos)
+	int to_map_index(const math::Vec2& pos)
 	{
-		return toMapIndex(static_cast<int>(pos.x), static_cast<int>(pos.y));
+		return to_map_index(static_cast<int>(pos.x), static_cast<int>(pos.y));
 	}
 
-	std::array<int, 8> getAdjacentMapIndices(int idx)
+	std::array<int, 8> get_adjacent_map_indices(int idx)
 	{
 		/**
 		*  [0][1][2]
@@ -154,38 +162,46 @@ namespace game
 	}
 
 	// TODO: Remove?
-	bool isWall(float x, float y, const GameMap* map)
+	bool is_wall(float x, float y)
 	{
-		return isWall(static_cast<int>(x), static_cast<int>(y), map);
+		return is_wall(static_cast<int>(x), static_cast<int>(y));
 	}
 
-	bool isWall(int x, int y, const GameMap* map)
+	bool is_wall(int x, int y)
 	{
-		const int mapIndex = toMapIndex(x, y);
+		const int mapIndex = to_map_index(x, y);
 
 		// deal with -1 return value
 		if (mapIndex == -1)
 			return true;
 
 		assert(0 <= mapIndex && mapIndex < MAP_SZ);
-		return 0 < (*map)[mapIndex];
+		return globalMap[mapIndex] > 0;
 	}
 
-	bool isInWall(const SDL_Rect* playerVolume, const GameMap* map)
+	bool is_wall(int index)
+	{
+		assert(0 <= index && index < MAP_SZ);
+		return globalMap[index] > 0;
+	}
+
+
+
+	bool is_in_wall(const SDL_Rect* playerVolume)
 	{
 		// player volume must be smaller than map cell size for this optimization to work
 		assert(playerVolume->w <= MAP_CELL_PX && playerVolume->h <= MAP_CELL_PX);
 		
 		// check the 4 corners of the rect? 
-		if (isWall(playerVolume->x, playerVolume->y, map))                                     return true; // TL
-		if (isWall(playerVolume->x + playerVolume->w, playerVolume->y, map))                   return true; // TR
-		if (isWall(playerVolume->x + playerVolume->w, playerVolume->y + playerVolume->h, map)) return true; // BR
-		if (isWall(playerVolume->x, playerVolume->y + playerVolume->h, map))                   return true; // BL
+		if (is_wall(playerVolume->x, playerVolume->y))                                     return true; // TL
+		if (is_wall(playerVolume->x + playerVolume->w, playerVolume->y))                   return true; // TR
+		if (is_wall(playerVolume->x + playerVolume->w, playerVolume->y + playerVolume->h)) return true; // BR
+		if (is_wall(playerVolume->x, playerVolume->y + playerVolume->h))                   return true; // BL
 
 		return false;
 	}
 
-	RayWallCollision FindWallHitPos(const math::Vec2& pos, float rayAngle, const GameMap* map)
+	RayWallCollision find_wall_hit_pos(const math::Vec2& pos, float rayAngle)
 	{
 		RayWallCollision ret{};
 
@@ -210,7 +226,7 @@ namespace game
 			float checkX = (float)firstColIntersect;
 			float checkY = oppLen + y;
 
-			while (!isWall(checkX, checkY, map))
+			while (!is_wall(checkX, checkY))
 			{
 				checkX += xOffset; checkY += yOffset;
 			}
@@ -234,7 +250,7 @@ namespace game
 			float checkX = (float)firstColIntersect - 0.1f;
 			float checkY = oppLen + y;
 
-			while (!isWall(checkX, checkY, map))
+			while (!is_wall(checkX, checkY))
 			{
 				checkX += xOffset; checkY += yOffset;
 			}
@@ -259,7 +275,7 @@ namespace game
 			const float yOffset = -MAP_CELL_PX;
 			float checkX = oppLen + x;
 			float checkY = (float)firstRowIntersect - 0.1f;
-			while (!isWall(checkX, checkY, map))
+			while (!is_wall(checkX, checkY))
 			{
 				checkX += xOffset; checkY += yOffset;
 			}
@@ -285,7 +301,7 @@ namespace game
 			const float yOffset = MAP_CELL_PX;
 			float checkX = oppLen + x;
 			float checkY = (float)firstRowIntersect;
-			while (!isWall(checkX, checkY, map))
+			while (!is_wall(checkX, checkY))
 			{
 				checkX += xOffset; checkY += yOffset;
 			}

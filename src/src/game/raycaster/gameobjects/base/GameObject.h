@@ -31,12 +31,13 @@ namespace game
 
 		GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI_Component> ai, std::unique_ptr<RenderComponent> rc);
 
-		void Update(GameObjectPool& gameObjects, const game::GameMap& map, const std::vector<math::Transform> playerTransforms); // fixed update (60 per second)
+		void Update(GameObjectPool& gameObjects, const map::GameMap& map, const std::vector<math::Transform> playerTransforms); // fixed update (60 per second)
 		void Render(const game::RenderEngine& re, const math::Transform& pov, double deltatime);
 
 		// send events
 		void SendEnemyDamaged(const EnemyDamagePayload& payload);
 		void SendEnemyDeath(const EnemyDeathPayload& payload);
+		void SendAlert(const math::Vec2& alertPos);
 		
 		math::Transform m_transform;
 

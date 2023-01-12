@@ -54,7 +54,7 @@ namespace game
 	// relativeAngle = PI            : move backward
 	// relativeAngle = PI / 2.f      : strafe right
 	// relativeAngle = PI + PI / 2.f : strafe left
-	void Player::move(float relativeAngle, const GameMap* map)
+	void Player::move(float relativeAngle, const map::GameMap* gameMap)
 	{
 		float movementAngle = transform.angle + relativeAngle;
 		if (movementAngle > PI * 2) movementAngle -= PI * 2;
@@ -63,7 +63,7 @@ namespace game
 		const float yDelta = sin(movementAngle) * MOVEMENT_SPEED;
 		transform.pos.y += yDelta;
 		wallCollisionBox.y = static_cast<int>(transform.pos.y) - HALF_WALL_COLLISION_BOX_SZ;
-		if (isInWall(&wallCollisionBox, map))
+		if (map::is_in_wall(&wallCollisionBox))
 		{
 			transform.pos.y -= yDelta;
 			wallCollisionBox.y = static_cast<int>(transform.pos.y) - HALF_WALL_COLLISION_BOX_SZ;
@@ -72,7 +72,7 @@ namespace game
 		const float xDelta = cos(movementAngle) * MOVEMENT_SPEED;
 		transform.pos.x += xDelta;
 		wallCollisionBox.x = static_cast<int>(transform.pos.x) - HALF_WALL_COLLISION_BOX_SZ;
-		if (isInWall(&wallCollisionBox, map))
+		if (map::is_in_wall(&wallCollisionBox))
 		{
 			transform.pos.x -= xDelta;
 			wallCollisionBox.x = static_cast<int>(transform.pos.x) - HALF_WALL_COLLISION_BOX_SZ;

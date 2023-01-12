@@ -6,14 +6,14 @@
 
 namespace game
 {
-	std::unique_ptr<AI_Component> AI_ComponentBullet::Update(GameObject& subject, GameObjectPool& pool, const GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
+	std::unique_ptr<AI_Component> AI_ComponentBullet::Update(GameObject& subject, GameObjectPool& pool, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
 	{
 		math::Vec2 direction = math::angle_to_vec(subject.m_transform.angle);
 		math::Vec2 velocity = direction * 1;
 		subject.m_transform.pos += velocity;
 
 		// check for collision with map
-		if (isWall((int)subject.m_transform.pos.x, (int)subject.m_transform.pos.y, &gameMap))
+		if (map::is_wall((int)subject.m_transform.pos.x, (int)subject.m_transform.pos.y))
 		{
 			// march it back the velocity delta so its not inside the wall
 			math::Transform fxTransform = subject.m_transform;

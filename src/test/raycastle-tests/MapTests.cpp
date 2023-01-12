@@ -7,7 +7,7 @@
 *  [5][6][7]
 */
 TEST(TestMapIndices, TopLeftIndex) {
-	auto ret = game::getAdjacentMapIndices(0);
+	auto ret = game::map::get_adjacent_map_indices(0);
 	EXPECT_EQ(ret[0], -1);
 	EXPECT_EQ(ret[1], -1);
 	EXPECT_EQ(ret[2], -1);
@@ -19,7 +19,7 @@ TEST(TestMapIndices, TopLeftIndex) {
 }
 
 TEST(TestMapIndices, RightTopIndex) {
-	auto ret = game::getAdjacentMapIndices(31);
+	auto ret = game::map::get_adjacent_map_indices(31);
 	EXPECT_EQ(ret[0], -1);
 	EXPECT_EQ(ret[1], -1);
 	EXPECT_EQ(ret[2], -1);
@@ -32,7 +32,7 @@ TEST(TestMapIndices, RightTopIndex) {
 
 TEST(TestMapIndices, RightBottomIndex) {
 	constexpr int idx = game::MAP_SZ - 1;
-	auto ret = game::getAdjacentMapIndices(idx);
+	auto ret = game::map::get_adjacent_map_indices(idx);
 	EXPECT_EQ(ret[0], idx - 32 - 1);
 	EXPECT_EQ(ret[1], idx - 32);
 	EXPECT_EQ(ret[2], -1);
@@ -45,7 +45,7 @@ TEST(TestMapIndices, RightBottomIndex) {
 
 TEST(TestMapIndices, LeftBottomIndex) {
 	constexpr int idx = (game::MAP_ROWS - 1) * game::MAP_COLS;
-	auto ret = game::getAdjacentMapIndices(idx);
+	auto ret = game::map::get_adjacent_map_indices(idx);
 	EXPECT_EQ(ret[0], -1);
 	EXPECT_EQ(ret[1], idx - 32);
 	EXPECT_EQ(ret[2], idx - 32 + 1);
@@ -58,7 +58,7 @@ TEST(TestMapIndices, LeftBottomIndex) {
 
 TEST(TestMapIndices, MiddleIndex) {
 	constexpr int idx = game::MAP_SZ / 2 + game::MAP_ROWS / 2;
-	auto ret = game::getAdjacentMapIndices(idx);
+	auto ret = game::map::get_adjacent_map_indices(idx);
 	EXPECT_EQ(ret[0], idx - 32 - 1);
 	EXPECT_EQ(ret[1], idx - 32);
 	EXPECT_EQ(ret[2], idx - 32 + 1);

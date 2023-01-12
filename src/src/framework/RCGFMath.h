@@ -13,6 +13,8 @@ namespace math
 		Vec2() = default;
 		Vec2(float x, float y); 
 		
+		bool operator==(const Vec2& rhs);
+		bool operator!=(const Vec2& rhs);
 		Vec2& operator+=(const Vec2& rhs);
 		Vec2& operator-=(const Vec2& rhs);
 		Vec2 operator+(const Vec2& vec1) const;
@@ -26,6 +28,7 @@ namespace math
 	float dot(const Vec2& vec1, const Vec2& Vec2);
 	float angle(const Vec2& vec1, const Vec2& Vec2);  // returns range (0 to 2 * PI)
 	float magnitude(const Vec2& vec);
+	float distance(const Vec2& from, const Vec2& to);
 	Vec2 angle_to_vec(float angle);
 	float vec_to_angle(const Vec2& vec);              // returns range (-PI to PI)
 	float vec_to_angle_pos(const Vec2& vec);          // returns range (0 to 2 * PI)

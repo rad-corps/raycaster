@@ -15,6 +15,6 @@ namespace game
 	{
 	public:
 		virtual ~AI_Component() {}
-		virtual std::unique_ptr<AI_Component> Update(GameObject& subject, GameObjectPool& pool, const GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) = 0;
+		virtual std::unique_ptr<AI_Component> Update(GameObject& subject, GameObjectPool& pool, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) = 0;
 	};
 }
