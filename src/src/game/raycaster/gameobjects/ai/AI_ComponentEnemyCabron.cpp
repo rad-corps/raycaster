@@ -33,15 +33,26 @@ namespace game
 		const math::Vec2 velocity = direction * ACTOR_VELOCITY;
 
 		// draw debug waypoints
+		const math::Vec2* prevWaypoint = nullptr;
 		for (const math::Vec2& waypoint : m_waypointPositions)
 		{
+			if (prevWaypoint != nullptr)
+			{
+				// draw a line from prevWaypoint to this waypoint
+				events::publish(events::ColouredLineEvent(
+					ColouredLine(prevWaypoint->x, prevWaypoint->y, waypoint.x, waypoint.y, Color{0xFF, 0xFF, 0xFF, 0xFF})
+				));
+			}
+
 			ColouredRect cr;
-			cr.color = Color{ 0x00,0x00,0x00,0xFF };
-			cr.rect.w = 6;
-			cr.rect.h = 6;
-			cr.rect.x = waypoint.x;
-			cr.rect.y = waypoint.y;
+			cr.color = Color{ 0xFF,0xFF,0xFF,0xFF };
+			cr.rect.w = 2;
+			cr.rect.h = 2;
+			cr.rect.x = waypoint.x - 1;
+			cr.rect.y = waypoint.y - 1;
 			events::publish(events::ColouredRectEvent{ cr });
+
+			prevWaypoint = &waypoint;
 		}
 
 		//#FFFF00 yello

@@ -193,14 +193,12 @@ namespace game::spatial
 			currentGridCell = currentGridCell->parent;
 		}
 
-		// erase last parent (starting point)
-		// ret.erase(ret.end() - 1);
+		std::reverse(ret.begin(), ret.end());
 
 		// need to cleanup what we have done to the pathfinding data. 
 		// todo: look for optimisation opportunity here. 
 		init_path_finding();
-
-
+		
 		return ret;
 	}
 }

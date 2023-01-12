@@ -58,12 +58,22 @@ void SDL_SetRenderDrawColor(SDL_Renderer* renderer, Color color);
 
 struct Line
 {
+	Line() = default;
+	Line(float startX, float startY, float endX, float endY)
+		: start{startX, startY}
+		, end{endX, endY}
+	{}
 	SDL_FPoint start;
 	SDL_FPoint end;
 };
 
 struct ColouredLine
 {
+	ColouredLine() = default;
+	ColouredLine(float startX, float startY, float endX, float endY, Color color)
+		: line{ startX, startY, endX, endY }
+		, color{ color }
+	{}
 	Line line;
 	Color color;
 }; 
