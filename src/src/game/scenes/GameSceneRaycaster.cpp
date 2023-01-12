@@ -202,7 +202,16 @@ namespace game
 		case SDLK_LALT:
 			m_impl->m_gameObjects.Add(factory::CreatePlayerBullet(m_impl->player.transform));
 			break;
+		case SDLK_RETURN:
+			std::vector<GameObject>& gameObjects = m_impl->m_gameObjects.GetPool();
+			for (auto& gameObject : gameObjects)
+			{
+				gameObject.SendAlert(m_impl->player.transform.pos);
+			}
+			break;
+
 		}
+
 
 	}
 

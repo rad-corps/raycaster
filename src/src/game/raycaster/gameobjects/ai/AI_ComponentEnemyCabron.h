@@ -13,6 +13,8 @@ namespace game
 		{}
 
 		std::unique_ptr<AI_Component> Update(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) override;
+		void OnAlert(const math::Vec2& pos, const math::Vec2& alertPos) override;
+
 		float m_timer = 10.f;
 
 	private:
@@ -27,5 +29,6 @@ namespace game
 		std::unique_ptr<AI_Component> Update(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) override;
 		void OnEnemyDamage(const EnemyDamagePayload& payload) override;
 		void OnEnemyDeath(const EnemyDeathPayload& payload) override;
+		
 	};
 }

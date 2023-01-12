@@ -73,9 +73,6 @@ namespace game
 						std::cout << "recalculated waypoint path. " << m_waypointPositions.size() << " waypoints in new path" << std::endl;
 						m_waypointIndex = 0;
 						m_timer = 0.f;
-
-						
-
 					}
 
 					color = { 0xFF, 0x0, 0x0, 0xFF };
@@ -119,7 +116,6 @@ namespace game
 			events::publish(events::ColouredLineEvent{ cl });
 		}
 
-
 		return nullptr;
 	}
 
@@ -127,6 +123,13 @@ namespace game
 	{
 		m_waypointIndex = 0;
 		m_waypointPositions = waypointPositions;
+	}
+
+	void AI_WaypointFollow::OnAlert(const math::Vec2& pos, const math::Vec2& alertPos)
+	{
+		m_waypointPositions = game::spatial::do_pathfinding(pos, alertPos);
+		m_waypointIndex = 0;
+		m_timer = 0.f;
 	}
 
 	std::unique_ptr<AI_Component> AI_Empty::Update(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
@@ -143,4 +146,6 @@ namespace game
 	{
 		std::cout << "AI_Empty::OnEnemyDeath" << std::endl;
 	}
+
+
 }

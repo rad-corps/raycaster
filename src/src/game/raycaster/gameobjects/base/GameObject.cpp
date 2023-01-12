@@ -26,6 +26,12 @@ namespace game
 		if (m_rc) m_rc->OnEnemyDeath(payload);
 	}
 
+	void GameObject::SendAlert(const math::Vec2& alertPos)
+	{
+		if (m_ai) m_ai->OnAlert(m_transform.pos, alertPos);
+		if (m_rc) m_rc->OnAlert(m_transform.pos, alertPos);
+	}
+
 	void GameObject::Update(GameObjectPool& gameObjects, const map::GameMap& map, const std::vector<math::Transform> playerTransforms)
 	{
 		if (!m_active || !m_ai) return;

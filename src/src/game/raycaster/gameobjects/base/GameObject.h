@@ -37,6 +37,7 @@ namespace game
 		// send events
 		void SendEnemyDamaged(const EnemyDamagePayload& payload);
 		void SendEnemyDeath(const EnemyDeathPayload& payload);
+		void SendAlert(const math::Vec2& alertPos);
 		
 		math::Transform m_transform;
 
