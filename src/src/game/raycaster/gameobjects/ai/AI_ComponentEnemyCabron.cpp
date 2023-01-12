@@ -8,30 +8,140 @@
 
 namespace
 {
+	constexpr float FrameTime = 0.01666f;
 }
 
 namespace game
 {
-	std::unique_ptr<AI_Component> AI_WaypointFollow::Update(GameObject& subject, GameObjectPool& pool, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
+	void AI_WaypointFollow::InitPatrol(GameObject& subject)
 	{
-		// advance time forward 16ms
-		m_timer += 0.01666f;
+		std::cout << "Patrol" << std::endl;
+		m_waypointPositions = m_patrolWaypointPositions;
+		m_waypointIndex = 0;
+		m_behaviour = Behaviour::PATROL;
+	}
+	
+	void AI_WaypointFollow::InitEngage(GameObject& subject, const math::Vec2& engagePos)
+	{
+		std::cout << "Engage" << std::endl;
+		m_waypointPositions = game::spatial::do_pathfinding(subject.m_transform.pos, engagePos);
+		m_waypointIndex = 0;
+		m_firetimer = 0.f;
+		m_behaviour = Behaviour::ENGAGE;
+	}
 
-		// get current position of this npc
+	void AI_WaypointFollow::InitDisengage(GameObject& subject)
+	{
+		std::cout << "Disengage" << std::endl;
+		m_waypointPositions = game::spatial::do_pathfinding(subject.m_transform.pos, m_patrolWaypointPositions[0]);
+		m_waypointIndex = 0;
+		m_behaviour = Behaviour::DISENGAGE;
+	}
+
+	void AI_WaypointFollow::DoPatrol(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
+	{
 		const math::Vec2& currentPos = subject.m_transform.pos;
-
-		// get next position of this npc
 		const math::Vec2& nextPos = m_waypointPositions[m_waypointIndex];
-
-		// wip: this will replace the dumb moving towards goal disregarding walls
-		// calculate_path(currentPos, nextPos, gameMap);
-
-		// calculate direction to travel
 		const math::Vec2 movementDelta = nextPos - currentPos;
 		const math::Vec2 direction = math::normalize(movementDelta);
-		subject.m_transform.angle = math::vec_to_angle(direction);
 		const math::Vec2 velocity = direction * ACTOR_VELOCITY;
 
+		subject.m_transform.angle = math::vec_to_angle(direction);
+		subject.m_transform.pos += velocity;
+
+		// can we see the player?
+		if (CanSeePlayer(subject, playerTransforms))
+		{
+			// todo: unhardcode playerTransforms[0]
+			InitEngage(subject, playerTransforms[0].pos);
+		}
+
+		// check destination reached
+		if (math::magnitude(movementDelta) < 1.f /* TODO: un-magic number this epsilon */)
+		{
+			m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
+		}
+		
+	}
+	void AI_WaypointFollow::DoEngage(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
+	{
+		m_firetimer += FrameTime;
+		const math::Vec2& currentPos = subject.m_transform.pos;
+		const math::Vec2& nextPos = m_waypointPositions[m_waypointIndex];
+		const math::Vec2 movementDelta = nextPos - currentPos;
+		const math::Vec2 direction = math::normalize(movementDelta);
+		const math::Vec2 velocity = direction * ACTOR_VELOCITY;
+
+		subject.m_transform.angle = math::vec_to_angle(direction);
+		subject.m_transform.pos += velocity;
+
+		// can we see the player?
+		if (CanSeePlayer(subject, playerTransforms))
+		{
+			// todo: fix m_timer magic number
+			// only recalculate once every five seconds
+			if (m_firetimer > 1.f)
+			{
+				m_firetimer = 0.f;
+				// todo: unhardcode playerTransforms[0]
+				std::cout << "fire" << std::endl;
+			}
+		}
+
+		// check destination reached
+		if (math::magnitude(movementDelta) < 1.f /* TODO: un-magic number this epsilon */)
+		{
+			// we have reached the end of our path. 
+			if (m_waypointIndex == m_waypointPositions.size() - 1)
+			{
+				// if we can see the player. RE-ENGAGE
+				if (CanSeePlayer(subject, playerTransforms))
+				{
+					InitEngage(subject, playerTransforms[0].pos);
+				}
+				else
+				{
+					InitDisengage(subject);
+				}
+			}
+			
+			// next waypoint, or cycle if at end
+			m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
+		}
+	}
+	void AI_WaypointFollow::DoDisengage(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
+	{
+		const math::Vec2& currentPos = subject.m_transform.pos;
+		const math::Vec2& nextPos = m_waypointPositions[m_waypointIndex];
+		const math::Vec2 movementDelta = nextPos - currentPos;
+		const math::Vec2 direction = math::normalize(movementDelta);
+		const math::Vec2 velocity = direction * ACTOR_VELOCITY;
+
+		subject.m_transform.angle = math::vec_to_angle(direction);
+		subject.m_transform.pos += velocity;
+
+		// can we see the player?
+		if (CanSeePlayer(subject, playerTransforms))
+		{
+			// todo: unhardcode playerTransforms[0]
+			InitEngage(subject, playerTransforms[0].pos);
+		}
+
+		// check destination reached
+		if (math::magnitude(movementDelta) < 1.f /* TODO: un-magic number this epsilon */)
+		{
+			++m_waypointIndex;
+			if (m_waypointIndex == m_waypointPositions.size() - 1)
+			{
+				// init patrol
+				InitPatrol(subject);
+			}
+		}
+	}
+	void AI_WaypointFollow::DoReturn(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) {}
+
+	void AI_WaypointFollow::DrawDebugWaypoints()
+	{
 		// draw debug waypoints
 		const math::Vec2* prevWaypoint = nullptr;
 		for (const math::Vec2& waypoint : m_waypointPositions)
@@ -40,7 +150,7 @@ namespace game
 			{
 				// draw a line from prevWaypoint to this waypoint
 				events::publish(events::ColouredLineEvent(
-					ColouredLine(prevWaypoint->x, prevWaypoint->y, waypoint.x, waypoint.y, Color{0xFF, 0xFF, 0xFF, 0xFF})
+					ColouredLine(prevWaypoint->x, prevWaypoint->y, waypoint.x, waypoint.y, Color{ 0xFF, 0xFF, 0xFF, 0xFF })
 				));
 			}
 
@@ -54,66 +164,39 @@ namespace game
 
 			prevWaypoint = &waypoint;
 		}
+	}
 
-		//#FFFF00 yello
-		Color color = { 0xFF, 0xFF, 0x0, 0xFF };
-
-		// can we see the player?
+	bool AI_WaypointFollow::CanSeePlayer(GameObject& subject, const std::vector<math::Transform>& playerTransforms)
+	{
 		for (const math::Transform& playerTransform : playerTransforms)
-		{			
+		{
 			if (spatial::within_frustum(subject.m_transform, playerTransform.pos))
 			{
 				if (spatial::line_of_sight(subject.m_transform.pos, playerTransform.pos))
 				{
-					// todo: fix m_timer magic number
-					// only recalculate once every five seconds
-					if (m_timer > 5.f )
-					{
-						m_waypointPositions = game::spatial::do_pathfinding(currentPos, playerTransform.pos);
-						std::cout << "recalculated waypoint path. " << m_waypointPositions.size() << " waypoints in new path" << std::endl;
-						m_waypointIndex = 0;
-						m_timer = 0.f;
-					}
-
-					color = { 0xFF, 0x0, 0x0, 0xFF };
-					subject.m_transform.pos += velocity * 0.5f;
-				}
-				else
-				{
-					subject.m_transform.pos += velocity;
+					return true;
 				}
 			}
-			else
-			{
-				subject.m_transform.pos += velocity;
-			}
-			
+		}
+		return false;
+	}
 
-			// check destination reached
-			if (math::magnitude(movementDelta) < 1.f /* TODO: un-magic number this epsilon */)
-			{
-				m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
-			}
-			
-			// line from enemy to collisionData sent to RenderEngine to draw top down map
-			ColouredRect cr;
-			cr.color = color;
-			constexpr int sz = 6;
-			cr.rect.x = subject.m_transform.pos.x - sz / 2;
-			cr.rect.y = subject.m_transform.pos.y - sz / 2;
-			cr.rect.w = sz;
-			cr.rect.h = sz;
-			events::publish(events::ColouredRectEvent{ cr });
 
-			// draw line indicating enemy direction
-			ColouredLine cl;
-			cl.color = color;
-			// get direction as a scaled vector
-			const math::Vec2 forwardVec = math::angle_to_vec(subject.m_transform.angle);
-			math::Vec2 scaledDir = math::scale(forwardVec, 10.f);
-			cl.line.start = { subject.m_transform.pos.x, subject.m_transform.pos.y };
-			cl.line.end = { subject.m_transform.pos.x + scaledDir.x, subject.m_transform.pos.y + scaledDir.y };
-			events::publish(events::ColouredLineEvent{ cl });
+	std::unique_ptr<AI_Component> AI_WaypointFollow::Update(GameObject& subject, GameObjectPool& pool, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
+	{
+		DrawDebugWaypoints();
+
+		switch (m_behaviour)
+		{
+		case Behaviour::PATROL:
+			DoPatrol(subject, pool, gameMap, playerTransforms);
+			break;
+		case Behaviour::ENGAGE:
+			DoEngage(subject, pool, gameMap, playerTransforms);
+			break;
+		case Behaviour::DISENGAGE:
+			DoDisengage(subject, pool, gameMap, playerTransforms);
+			break;
 		}
 
 		return nullptr;
@@ -129,7 +212,6 @@ namespace game
 	{
 		m_waypointPositions = game::spatial::do_pathfinding(pos, alertPos);
 		m_waypointIndex = 0;
-		m_timer = 0.f;
 	}
 
 	std::unique_ptr<AI_Component> AI_Empty::Update(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
