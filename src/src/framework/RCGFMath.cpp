@@ -5,6 +5,16 @@ namespace math
 {	
 	Vec2::Vec2(float x, float y) : x{ x }, y{ y }{}
 
+	bool Vec2::operator==(const Vec2& rhs)
+	{
+		return rhs.x == x && rhs.y == y;
+	}
+
+	bool Vec2::operator!=(const Vec2& rhs)
+	{
+		return !(operator==(rhs));
+	}
+
 	Vec2& Vec2::operator+=(const Vec2& rhs)
 	{
 		x += rhs.x;

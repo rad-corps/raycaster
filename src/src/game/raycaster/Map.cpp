@@ -79,8 +79,8 @@ namespace game::map
 
 	math::Vec2 to_world_position(int mapIndex)
 	{
-		int yIndex = mapIndex / MAP_CELL_PX;
-		int xIndex = mapIndex % MAP_CELL_PX;
+		int yIndex = mapIndex / MAP_COLS;
+		int xIndex = mapIndex % MAP_COLS;
 		return math::Vec2{ static_cast<float>(xIndex * MAP_CELL_PX), static_cast<float>(yIndex * MAP_CELL_PX) };
 	}
 

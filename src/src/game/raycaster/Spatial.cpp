@@ -7,66 +7,20 @@
 #include <cassert>
 
 namespace
-{
-	struct PathfindingGridCell
-	{
-		PathfindingGridCell(int mapIndex)
-			: mapIndex{ mapIndex }
-			, adjacentCells{ game::map::get_adjacent_map_indices(mapIndex) }
-			, parent{ nullptr }
-		{
-			assert(mapIndex >= 0);
-			assert(mapIndex < game::MAP_SZ);
-		}
-		PathfindingGridCell()
-			: mapIndex{ -1 }
-			, adjacentCells{ -1, -1, -1, -1, -1, -1, -1, -1 }
-		{}
-
-		int Cost()
-		{
-			if (game::map::is_wall(mapIndex))
-			{
-				return 1000000;
-			}
-			else
-			{
-				return 1;
-			}
-		}
-
-		math::Vec2 GetPos()
-		{
-			return game::map::to_world_position(mapIndex);
-		}
-
-		bool operator==(const PathfindingGridCell& pc)
-		{
-			return mapIndex == pc.mapIndex;
-		}
-
-		PathfindingGridCell* parent;
-
-		int mapIndex;
-		float g = 0.f; // cummulative edge cost
-		float f = 10000000.f; // heuristic (distance from current to goal)
-		std::array<int, 8> adjacentCells;
-	};
-
-	using PathfindingMap = std::array<PathfindingGridCell, game::MAP_SZ>;	
-	PathfindingMap pathfindingMap;
+{	
+	game::spatial::PathfindingMap pathfindingMap;
 	bool pathfindingInitialised = false;
+}
 
+namespace game::spatial
+{
 	PathfindingGridCell* get_pathfinding_grid_cell(int index)
 	{
 		assert(index >= 0);
 		assert(index < game::MAP_SZ);
 		return &pathfindingMap[index];
 	}
-}
 
-namespace game::spatial
-{
 	void init_path_finding()
 	{
 		for (int i = 0; i < MAP_SZ; ++i)
@@ -211,7 +165,7 @@ namespace game::spatial
 				if (std::find(closedList.begin(), closedList.end(), edgeGridCell) == closedList.end())
 				{
 					// calculate a tentative f cost of the edge's end node
-					float tentativeF = currentGridCell->g + edgeGridCell->Cost() + math::distance(edgeGridCell->GetPos(), destPos);
+					float tentativeF = currentGridCell->g + edgeGridCell->Cost() + math::distance(edgeGridCell->pos, destPos);
 
 					//if the tentative f cost is less than the edge node's current f cost, update its data
 					if (tentativeF < edgeGridCell->f)
@@ -235,7 +189,7 @@ namespace game::spatial
 		//reconstruct the path	
 		while (currentGridCell != nullptr)
 		{
-			ret.push_back(currentGridCell->GetPos());
+			ret.push_back(currentGridCell->pos);
 			currentGridCell = currentGridCell->parent;
 		}
 

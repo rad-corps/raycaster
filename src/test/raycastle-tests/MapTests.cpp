@@ -68,7 +68,3 @@ TEST(TestMapIndices, MiddleIndex) {
 	EXPECT_EQ(ret[6], idx + 32);
 	EXPECT_EQ(ret[7], idx + 32 + 1);
 }
-
-TEST(TestToMapIndex, Normal) {
-
-}
