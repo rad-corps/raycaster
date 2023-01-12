@@ -81,7 +81,7 @@ namespace game::map
 	{
 		int yIndex = mapIndex / MAP_COLS;
 		int xIndex = mapIndex % MAP_COLS;
-		return math::Vec2{ static_cast<float>(xIndex * MAP_CELL_PX), static_cast<float>(yIndex * MAP_CELL_PX) };
+		return math::Vec2{ static_cast<float>(xIndex * MAP_CELL_PX + MAP_CELL_PX / 2), static_cast<float>(yIndex * MAP_CELL_PX + MAP_CELL_PX / 2) };
 	}
 
 	int to_map_index(int x, int y)
