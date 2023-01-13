@@ -17,6 +17,7 @@ namespace game
 		void OnAlert(const math::Vec2& pos, const math::Vec2& alertPos) override;
 
 		float m_firetimer = 0.f;
+		float m_disengagetimer = 0.f;
 
 	private:
 		enum class Behaviour
@@ -36,6 +37,7 @@ namespace game
 		void InitPatrol(GameObject& subject);
 		void InitEngage(GameObject& subject, const math::Vec2& engagePos);
 		void InitDisengage(GameObject& subject);
+		void InitReturn(GameObject& subject);
 
 		void DoPatrol(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms);
 		void DoEngage(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms);
@@ -51,6 +53,7 @@ namespace game
 
 		// need to cache these so we can return to them later
 		std::vector<math::Vec2> m_patrolWaypointPositions;
+		int m_waypointIndexCache = 0; // required for returning to initial path
 		
 	};
 

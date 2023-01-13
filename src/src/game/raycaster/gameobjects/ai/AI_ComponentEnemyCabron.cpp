@@ -17,7 +17,7 @@ namespace game
 	{
 		std::cout << "Patrol" << std::endl;
 		m_waypointPositions = m_patrolWaypointPositions;
-		m_waypointIndex = 0;
+		m_waypointIndex = m_waypointIndexCache;
 		m_behaviour = Behaviour::PATROL;
 	}
 	
@@ -33,9 +33,31 @@ namespace game
 	void AI_WaypointFollow::InitDisengage(GameObject& subject)
 	{
 		std::cout << "Disengage" << std::endl;
-		m_waypointPositions = game::spatial::do_pathfinding(subject.m_transform.pos, m_patrolWaypointPositions[0]);
+		m_waypointPositions.clear();
 		m_waypointIndex = 0;
+		m_disengagetimer = 0.f;
 		m_behaviour = Behaviour::DISENGAGE;
+	}
+
+	void AI_WaypointFollow::InitReturn(GameObject& subject)
+	{
+		std::cout << "Return" << std::endl;
+
+		// find the closest waypoint 
+		float dist = 1000000.f;
+		for (int i = 0; i < m_patrolWaypointPositions.size(); ++i)
+		{
+			const float compareDist = math::distance(m_patrolWaypointPositions[i], subject.m_transform.pos);
+			if (compareDist < dist)
+			{
+				dist = compareDist;
+				m_waypointIndexCache = i;
+			}
+		}
+
+		m_waypointPositions = game::spatial::do_pathfinding(subject.m_transform.pos, m_patrolWaypointPositions[m_waypointIndexCache]);
+		m_waypointIndex = 0;
+		m_behaviour = Behaviour::RETURN;
 	}
 
 	void AI_WaypointFollow::DoPatrol(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
@@ -111,6 +133,14 @@ namespace game
 	}
 	void AI_WaypointFollow::DoDisengage(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
 	{
+		m_disengagetimer += FrameTime;
+		if (m_disengagetimer > 3.f)
+		{
+			InitReturn(subject);
+		}
+	}
+	void AI_WaypointFollow::DoReturn(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
+	{
 		const math::Vec2& currentPos = subject.m_transform.pos;
 		const math::Vec2& nextPos = m_waypointPositions[m_waypointIndex];
 		const math::Vec2 movementDelta = nextPos - currentPos;
@@ -138,7 +168,6 @@ namespace game
 			}
 		}
 	}
-	void AI_WaypointFollow::DoReturn(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) {}
 
 	void AI_WaypointFollow::DrawDebugWaypoints()
 	{
@@ -197,6 +226,9 @@ namespace game
 		case Behaviour::DISENGAGE:
 			DoDisengage(subject, pool, gameMap, playerTransforms);
 			break;
+		case Behaviour::RETURN:
+			DoReturn(subject, pool, gameMap, playerTransforms);
+			break;
 		}
 
 		return nullptr;
@@ -228,6 +260,4 @@ namespace game
 	{
 		std::cout << "AI_Empty::OnEnemyDeath" << std::endl;
 	}
-
-
 }
