@@ -311,11 +311,13 @@ namespace game
 
 		const float szMultiplier = spriteSz / 64.f;
 
-		const int screenSpaceSpriteHeight = static_cast<int>(MAP_CELL_PX / correctedDistanceToSprite * DIST_PROJECTION_PLANE * szMultiplier);
+		// one current limitation is sprite width must equal height
+		const float screenSpaceSpriteFullSz = MAP_CELL_PX / correctedDistanceToSprite * DIST_PROJECTION_PLANE;
+		const float screenSpaceSpriteSz = MAP_CELL_PX / correctedDistanceToSprite * DIST_PROJECTION_PLANE * szMultiplier;
 
 		// now we have an angle in radians from the player to the sprite that is 0 at far left of FOV, and FOV at far right.
 		// convert angle to screen space
-		const float screenXLeftOfSprite = ((leftFovToSpriteAngle / FOV) * SCREEN_WIDTH) - screenSpaceSpriteHeight / 2;
+		const float screenXLeftOfSprite = ((leftFovToSpriteAngle / FOV) * SCREEN_WIDTH) - screenSpaceSpriteSz / 2;
 
 		// ==========================================================================================================
 		//                         To calculate the screen Y pixel position of a sprite
@@ -326,14 +328,18 @@ namespace game
 		// distance from player to projection plane         screen y pixel position - center y screen pixel position
 		//
 		// 
+		
 		// solving for screen y pixel position below
-		const float screenYTopOfSprite = (((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / correctedDistanceToSprite) + CENTER_Y) - screenSpaceSpriteHeight;
+		// we are currently assuming that we want the height centered. For example, bullets are 16px in size, and we want their height centered. 
+		// This might need to be parameterised later.
+		const float screenYTopOfSprite = (((DIST_PROJECTION_PLANE * PLAYER_HEIGHT) / correctedDistanceToSprite) + CENTER_Y) - (screenSpaceSpriteFullSz / 2.f + screenSpaceSpriteSz / 2.f);
 
+		// TODO: this should be an SDL_FRect
 		SDL_Rect dstRect{
 			(int)screenXLeftOfSprite,
 			(int)screenYTopOfSprite,
-			screenSpaceSpriteHeight,
-			screenSpaceSpriteHeight
+			(int)screenSpaceSpriteSz,
+			(int)screenSpaceSpriteSz
 		};
 
 		RectContainer rectContainer = GetWallClippedSprite(crdVec, dstRect, correctedDistanceToSprite, spriteSz);
