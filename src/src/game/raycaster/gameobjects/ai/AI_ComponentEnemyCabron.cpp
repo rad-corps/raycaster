@@ -138,7 +138,6 @@ namespace game
 	void AI_WaypointFollow::DoDisengage(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
 	{
 		m_disengagetimer += FrameTime;
-
 		if (spatial::line_of_sight(subject.m_transform.pos, playerTransforms[0].pos))
 		{
 			InitEngage(subject, playerTransforms[0].pos);
