@@ -1,5 +1,7 @@
 #include "AI_ComponentEnemyCabron.h"
 #include "./gameobjects/base/GameObject.h"
+#include "./gameobjects/base/GameObjectPool.h"
+#include "./gameobjects/factory/GameObjectFactory.h"
 #include <iostream>
 #include <iomanip> // std::setprecision
 #include "EventSystem.h"
@@ -98,15 +100,17 @@ namespace game
 		subject.m_transform.pos += velocity;
 
 		// can we see the player?
-		if (CanSeePlayer(subject, playerTransforms))
+		if (spatial::line_of_sight(subject.m_transform.pos, playerTransforms[0].pos))
 		{
 			// todo: fix m_timer magic number
 			// only recalculate once every five seconds
-			if (m_firetimer > 1.f)
+			if (m_firetimer > 0.25f)
 			{
 				m_firetimer = 0.f;
-				// todo: unhardcode playerTransforms[0]
-				std::cout << "fire" << std::endl;
+				math::Transform bulletTransform = subject.m_transform;
+				math::Vec2 enemyToPlayer = playerTransforms[0].pos - subject.m_transform.pos;
+				bulletTransform.angle = math::vec_to_angle_pos(enemyToPlayer);
+				gameObjects.Add(game::factory::CreatePlayerBullet(bulletTransform, &subject));
 			}
 		}
 
@@ -134,7 +138,11 @@ namespace game
 	void AI_WaypointFollow::DoDisengage(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
 	{
 		m_disengagetimer += FrameTime;
-		if (m_disengagetimer > 3.f)
+		if (spatial::line_of_sight(subject.m_transform.pos, playerTransforms[0].pos))
+		{
+			InitEngage(subject, playerTransforms[0].pos);
+		}
+		else if (m_disengagetimer > 3.f)
 		{
 			InitReturn(subject);
 		}
@@ -160,12 +168,12 @@ namespace game
 		// check destination reached
 		if (math::magnitude(movementDelta) < 1.f /* TODO: un-magic number this epsilon */)
 		{
-			++m_waypointIndex;
 			if (m_waypointIndex == m_waypointPositions.size() - 1)
 			{
 				// init patrol
 				InitPatrol(subject);
 			}
+			++m_waypointIndex;
 		}
 	}
 

@@ -34,8 +34,8 @@ namespace game
 			if (!gameObject.m_active)
 				continue;
 
-			// are we looking at ourselves? disregard!
-			if (&subject == &gameObject)
+			// dont let the bullet collide with itself and dont collide the bullet with the GameObject that shot the bullet 
+			if (&subject == &gameObject || &gameObject == origin)
 				continue;
 
 			// get the distance from subject to gameObject
