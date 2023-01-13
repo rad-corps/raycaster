@@ -45,9 +45,9 @@ namespace game::factory
 		return GameObject{ ssEnemy01.get(), transform, std::move(ai), std::move(rc) };
 	}
 
-	GameObject CreatePlayerBullet(const math::Transform& transform)
+	GameObject CreatePlayerBullet(const math::Transform& transform, GameObject* origin)
 	{
-		auto ai = std::make_unique<AI_ComponentBullet>();
+		auto ai = std::make_unique<AI_ComponentBullet>(origin);
 		auto rc = std::make_unique<RenderComponentBullet>();
 		return GameObject{ ssBullet.get(), transform, std::move(ai), std::move(rc) };
 	}
