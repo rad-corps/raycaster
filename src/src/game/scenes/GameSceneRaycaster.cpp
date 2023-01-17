@@ -200,7 +200,7 @@ namespace game
 			break;
 		}
 		case SDLK_LALT:
-			m_impl->m_gameObjects.Add(factory::CreatePlayerBullet(m_impl->player.transform));
+			m_impl->m_gameObjects.Add(factory::CreatePlayerBullet(m_impl->player.transform, nullptr));
 			break;
 		case SDLK_RETURN:
 			std::vector<GameObject>& gameObjects = m_impl->m_gameObjects.GetPool();
