@@ -35,9 +35,11 @@ namespace game
 		void Render(const game::RenderEngine& re, const math::Transform& pov, double deltatime);
 
 		// send events
+		// TODO: event sending really needs to be generic, this is not fun to maintain
 		void SendEnemyDamaged(const EnemyDamagePayload& payload);
 		void SendEnemyDeath(const EnemyDeathPayload& payload);
 		void SendAlert(const math::Vec2& alertPos);
+		void SendAiAnimation(AiAnimation aiAnimation);
 		
 		math::Transform m_transform;
 

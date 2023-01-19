@@ -14,10 +14,11 @@ namespace game
 		{}
 
 		std::unique_ptr<AI_Component> Update(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) override;
+		void OnEnemyDamage(const EnemyDamagePayload& payload) override;
+		void OnEnemyDeath(const EnemyDeathPayload& payload) override;
 		void OnAlert(const math::Vec2& pos, const math::Vec2& alertPos) override;
 
-		float m_firetimer = 0.f;
-		float m_disengagetimer = 0.f;
+		float m_timer = 0.f;
 
 	private:
 		enum class Behaviour
@@ -27,8 +28,18 @@ namespace game
 			DISENGAGE,
 			RETURN
 		};
+
+		enum class EngageBehaviour
+		{
+			WALKING,
+			GUN_DRAW,
+			GUN_AIM,
+			GUN_FIRE,
+			GUN_FIRED // Might be identical to AIM, but logically needed to escape firing cycle
+		};
 		
 		Behaviour m_behaviour = Behaviour::PATROL;
+		EngageBehaviour m_engageBehaviour = EngageBehaviour::WALKING;
 
 
 		// TODO: This should be factored to somewhere shared by all AI

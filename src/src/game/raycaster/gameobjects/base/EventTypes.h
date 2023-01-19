@@ -11,4 +11,14 @@ namespace game
 	{
 
 	};
+
+	enum class AiAnimation
+	{
+		Walking,
+		GunDraw,
+		GunAim,
+		GunFire,
+		Hit,
+		Death
+	};
 }

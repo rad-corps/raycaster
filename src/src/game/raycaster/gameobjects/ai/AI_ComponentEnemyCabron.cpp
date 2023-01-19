@@ -20,6 +20,7 @@ namespace game
 		std::cout << "Patrol" << std::endl;
 		m_waypointPositions = m_patrolWaypointPositions;
 		m_waypointIndex = m_waypointIndexCache;
+		m_timer = 0.f;
 		m_behaviour = Behaviour::PATROL;
 	}
 	
@@ -28,7 +29,7 @@ namespace game
 		std::cout << "Engage" << std::endl;
 		m_waypointPositions = game::spatial::do_pathfinding(subject.m_transform.pos, engagePos);
 		m_waypointIndex = 0;
-		m_firetimer = 0.f;
+		m_timer = 0.f;
 		m_behaviour = Behaviour::ENGAGE;
 	}
 
@@ -37,13 +38,15 @@ namespace game
 		std::cout << "Disengage" << std::endl;
 		m_waypointPositions.clear();
 		m_waypointIndex = 0;
-		m_disengagetimer = 0.f;
+		m_timer = 0.f;
 		m_behaviour = Behaviour::DISENGAGE;
 	}
 
 	void AI_WaypointFollow::InitReturn(GameObject& subject)
 	{
 		std::cout << "Return" << std::endl;
+
+		m_timer = 0.f;
 
 		// find the closest waypoint 
 		float dist = 1000000.f;
@@ -89,60 +92,121 @@ namespace game
 	}
 	void AI_WaypointFollow::DoEngage(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
 	{
-		m_firetimer += FrameTime;
-		const math::Vec2& currentPos = subject.m_transform.pos;
-		const math::Vec2& nextPos = m_waypointPositions[m_waypointIndex];
-		const math::Vec2 movementDelta = nextPos - currentPos;
-		const math::Vec2 direction = math::normalize(movementDelta);
-		const math::Vec2 velocity = direction * ACTOR_VELOCITY;
-
-		subject.m_transform.angle = math::vec_to_angle(direction);
-		subject.m_transform.pos += velocity;
-
-		// can we see the player?
-		if (spatial::line_of_sight(subject.m_transform.pos, playerTransforms[0].pos))
+		m_timer += FrameTime;
+		
+		if (m_engageBehaviour == EngageBehaviour::WALKING)
 		{
-			// todo: fix m_timer magic number
-			// only recalculate once every five seconds
-			if (m_firetimer > 0.25f)
+			const math::Vec2& currentPos = subject.m_transform.pos;
+			const math::Vec2& nextPos = m_waypointPositions[m_waypointIndex];
+			const math::Vec2 movementDelta = nextPos - currentPos;
+			const math::Vec2 direction = math::normalize(movementDelta);
+			const math::Vec2 velocity = direction * ACTOR_VELOCITY;
+
+			subject.m_transform.angle = math::vec_to_angle(direction);
+			subject.m_transform.pos += velocity;
+
+			if (m_timer > 0.50f)
 			{
-				m_firetimer = 0.f;
-				math::Transform bulletTransform = subject.m_transform;
-				math::Vec2 enemyToPlayer = playerTransforms[0].pos - subject.m_transform.pos;
-				bulletTransform.angle = math::vec_to_angle_pos(enemyToPlayer);
-				gameObjects.Add(game::factory::CreatePlayerBullet(bulletTransform, &subject));
+				m_timer = 0.f;
+
+				if (spatial::line_of_sight(subject.m_transform.pos, playerTransforms[0].pos))
+				{
+					m_engageBehaviour = EngageBehaviour::GUN_DRAW;
+					subject.SendAiAnimation(AiAnimation::GunDraw);
+				}
+			}
+
+			// check destination reached
+			if (math::magnitude(movementDelta) < 1.f /* TODO: un-magic number this epsilon */)
+			{
+				// we have reached the end of our path. 
+				if (m_waypointIndex == m_waypointPositions.size() - 1)
+				{
+					// if we can see the player. RE-ENGAGE
+					if (CanSeePlayer(subject, playerTransforms))
+					{
+						InitEngage(subject, playerTransforms[0].pos);
+					}
+					else
+					{
+						InitDisengage(subject);
+					}
+				}
+
+				// next waypoint, or cycle if at end
+				m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
 			}
 		}
-
-		// check destination reached
-		if (math::magnitude(movementDelta) < 1.f /* TODO: un-magic number this epsilon */)
+		else if (m_engageBehaviour == EngageBehaviour::GUN_DRAW)
 		{
-			// we have reached the end of our path. 
-			if (m_waypointIndex == m_waypointPositions.size() - 1)
+			if (m_timer > 0.25f)
 			{
-				// if we can see the player. RE-ENGAGE
-				if (CanSeePlayer(subject, playerTransforms))
+				m_timer = 0.f;
+				m_engageBehaviour = EngageBehaviour::GUN_AIM;
+				subject.SendAiAnimation(AiAnimation::GunAim);
+			}
+		}
+		else if (m_engageBehaviour == EngageBehaviour::GUN_AIM)
+		{
+			if (m_timer > 0.25f)
+			{
+				m_timer = 0.f;
+				m_engageBehaviour = EngageBehaviour::GUN_FIRE;
+				subject.SendAiAnimation(AiAnimation::GunFire);
+			}
+		}
+		else if (m_engageBehaviour == EngageBehaviour::GUN_FIRE)
+		{
+			m_timer = 0.f;
+			math::Transform bulletTransform = subject.m_transform;
+			math::Vec2 enemyToPlayer = playerTransforms[0].pos - subject.m_transform.pos;
+			bulletTransform.angle = math::vec_to_angle_pos(enemyToPlayer);
+			gameObjects.Add(game::factory::CreatePlayerBullet(bulletTransform, &subject));
+			m_engageBehaviour = EngageBehaviour::GUN_FIRED;
+		}
+		else if (m_engageBehaviour == EngageBehaviour::GUN_FIRED)
+		{
+			// lets reuse the timer, little hacky, but simple
+			if (m_timer > 0.1f && m_timer < 0.99f)
+			{
+				m_timer = 1.f;
+				subject.SendAiAnimation(AiAnimation::GunAim);
+			}
+			else if (m_timer > 1.1f)
+			{
+				m_timer = 0.f;
+
+				// todo: random chance wether we walk or fire again
+				
+				// between 0.f and 1.f
+				if (static_cast <float> (rand()) / static_cast <float> (RAND_MAX) >= 0.5f)
 				{
-					InitEngage(subject, playerTransforms[0].pos);
+					m_engageBehaviour = EngageBehaviour::WALKING;
+					subject.SendAiAnimation(AiAnimation::Walking);
 				}
 				else
 				{
-					InitDisengage(subject);
+					m_engageBehaviour = EngageBehaviour::GUN_AIM;
+					subject.SendAiAnimation(AiAnimation::GunAim);
 				}
+				
 			}
-			
-			// next waypoint, or cycle if at end
-			m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
+		}
+
+		// can we see the player? (TODO timeout engage on x seconds without line of sight)
+		if (spatial::line_of_sight(subject.m_transform.pos, playerTransforms[0].pos))
+		{
+
 		}
 	}
 	void AI_WaypointFollow::DoDisengage(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
 	{
-		m_disengagetimer += FrameTime;
+		m_timer += FrameTime;
 		if (spatial::line_of_sight(subject.m_transform.pos, playerTransforms[0].pos))
 		{
 			InitEngage(subject, playerTransforms[0].pos);
 		}
-		else if (m_disengagetimer > 3.f)
+		else if (m_timer > 3.f)
 		{
 			InitReturn(subject);
 		}
@@ -248,6 +312,14 @@ namespace game
 		m_waypointPositions = waypointPositions;
 	}
 
+	void AI_WaypointFollow::OnEnemyDamage(const EnemyDamagePayload& payload)
+	{
+	}
+
+	void AI_WaypointFollow::OnEnemyDeath(const EnemyDeathPayload& payload)
+	{
+	}
+
 	void AI_WaypointFollow::OnAlert(const math::Vec2& pos, const math::Vec2& alertPos)
 	{
 		m_waypointPositions = game::spatial::do_pathfinding(pos, alertPos);
@@ -261,11 +333,9 @@ namespace game
 
 	void AI_Empty::OnEnemyDamage(const EnemyDamagePayload& payload)
 	{
-		std::cout << "AI_Empty::OnEnemyDamage: " << payload.damage << std::endl;
 	}
 
 	void AI_Empty::OnEnemyDeath(const EnemyDeathPayload& payload)
 	{
-		std::cout << "AI_Empty::OnEnemyDeath" << std::endl;
 	}
 }
