@@ -63,6 +63,7 @@ namespace game
 
 	void RenderComponentCabron::Render(const RenderEngine& re, const math::Transform& pov, GameObject& gameObject, rcgf::SpriteSheet* spriteSheet, double deltatime)
 	{
+		// TODO: animation timer should stop after death animation has complete
 		m_animationTimer += deltatime;
 
 		switch (m_aiAnimation)
@@ -72,12 +73,12 @@ namespace game
 			if (m_animationTimer > WALK_SPEED_MS)
 			{
 				m_animationTimer = 0.0;
-				m_walkAnimationID = ++m_walkAnimationID > 4 ? 1 : m_walkAnimationID;
+				m_animationID = ++m_animationID > 4 ? 1 : m_animationID;
 			}
 			const math::Vec2 povToSprite = gameObject.m_transform.pos - pov.pos;
 			const math::Vec2 spriteForwardVec = math::angle_to_vec(gameObject.m_transform.angle);
 			const int animIDColumn = CalculateSpriteAnimationIDColumn(math::angle(povToSprite, spriteForwardVec));
-			const int animID = m_walkAnimationID * SPRITESHEET_COLS + animIDColumn;
+			const int animID = m_animationID * SPRITESHEET_COLS + animIDColumn;
 
 			re.RenderSprite(pov, gameObject.m_transform, spriteSheet, animID, 64);
 			break;
@@ -104,7 +105,12 @@ namespace game
 		}
 		case AiAnimation::Death:
 		{
-			re.RenderSprite(pov, gameObject.m_transform, spriteSheet, 44, 64);
+			if (m_animationTimer > 150.0 && m_animationID < 4)
+			{
+				++m_animationID;
+				m_animationTimer = 0.0;
+			}
+			re.RenderSprite(pov, gameObject.m_transform, spriteSheet, 40 + m_animationID, 64);
 		}
 		}
 	}
@@ -124,5 +130,6 @@ namespace game
 	{
 		m_aiAnimation = AiAnimation::Death;
 		m_animationTimer = 0.0;
+		m_animationID = 0;
 	}
 }

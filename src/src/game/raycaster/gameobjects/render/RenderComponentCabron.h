@@ -16,7 +16,7 @@ namespace game
 		int CalculateSpriteAnimationIDRow();
 
 		double m_animationTimer;
-		int m_walkAnimationID = 1;
+		int m_animationID = 1;
 		AiAnimation m_aiAnimation = AiAnimation::Walking;
 		AiAnimation m_aiAnimationCache = AiAnimation::Walking;
 	};
