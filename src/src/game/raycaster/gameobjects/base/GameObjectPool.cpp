@@ -53,14 +53,15 @@ namespace game
 	{
 		// sort before render
 		const auto& playerPos = pov.pos;
-		std::sort(m_gameObjects.begin(), m_gameObjects.end(), [playerPos](const GameObject& a, const GameObject& b) {
+		std::sort(m_gameObjects.begin(), m_gameObjects.end(), [playerPos](const GameObject& a, const GameObject& b) 
+		{
 			// if both active, then sort by distance
 			if (a.m_active && b.m_active)
 				return math::magnitude(playerPos - a.m_transform.pos) > math::magnitude(playerPos - b.m_transform.pos);
 			else if (a.m_active)
 				return true;
 			return false;
-			});
+		});
 
 		for (auto& go : m_gameObjects)
 		{

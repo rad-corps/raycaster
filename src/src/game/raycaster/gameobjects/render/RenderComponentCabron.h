@@ -10,13 +10,13 @@ namespace game
 		void Render(const game::RenderEngine& re, const math::Transform& pov, GameObject& gameObject, rcgf::SpriteSheet* spriteSheet, double deltatime) override;
 		virtual void OnAnimationUpdate(AiAnimation aiAnimation) override;
 		void OnEnemyDamage(const EnemyDamagePayload& payload);
-		void OnEnemyDeath(const EnemyDeathPayload& payload);
+		void OnEnemyDeath();
 	private:
 		int CalculateSpriteAnimationIDColumn(float angle);
 		int CalculateSpriteAnimationIDRow();
 
 		double m_animationTimer;
-		int m_walkAnimationID = 1;
+		int m_animationID = 1;
 		AiAnimation m_aiAnimation = AiAnimation::Walking;
 		AiAnimation m_aiAnimationCache = AiAnimation::Walking;
 	};
