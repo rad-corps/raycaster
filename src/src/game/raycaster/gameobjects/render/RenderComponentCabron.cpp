@@ -102,6 +102,10 @@ namespace game
 			re.RenderSprite(pov, gameObject.m_transform, spriteSheet, 40, 64);
 			break;
 		}
+		case AiAnimation::Death:
+		{
+			re.RenderSprite(pov, gameObject.m_transform, spriteSheet, 44, 64);
+		}
 		}
 	}
 
@@ -116,7 +120,9 @@ namespace game
 		m_animationTimer = 0.0;
 	}
 
-	void RenderComponentCabron::OnEnemyDeath(const EnemyDeathPayload& payload)
+	void RenderComponentCabron::OnEnemyDeath()
 	{
+		m_aiAnimation = AiAnimation::Death;
+		m_animationTimer = 0.0;
 	}
 }

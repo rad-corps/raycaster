@@ -2,14 +2,12 @@
 
 namespace game
 {
+	class GameObject;
+
 	struct EnemyDamagePayload
 	{
 		float damage;
-	};
-
-	struct EnemyDeathPayload
-	{
-
+		GameObject* gameObject;
 	};
 
 	enum class AiAnimation

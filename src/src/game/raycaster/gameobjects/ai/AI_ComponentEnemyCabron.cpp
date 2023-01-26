@@ -161,7 +161,7 @@ namespace game
 			math::Transform bulletTransform = subject.m_transform;
 			math::Vec2 enemyToPlayer = playerTransforms[0].pos - subject.m_transform.pos;
 			bulletTransform.angle = math::vec_to_angle_pos(enemyToPlayer);
-			gameObjects.Add(game::factory::CreatePlayerBullet(bulletTransform, &subject));
+			game::factory::CreatePlayerBullet(bulletTransform, &subject);
 			m_engageBehaviour = EngageBehaviour::GUN_FIRED;
 		}
 		else if (m_engageBehaviour == EngageBehaviour::GUN_FIRED)
@@ -285,24 +285,17 @@ namespace game
 
 	std::unique_ptr<AI_Component> AI_WaypointFollow::Update(GameObject& subject, GameObjectPool& pool, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
 	{
-		DrawDebugWaypoints();
+		if (m_behaviour == Behaviour::DEAD) return nullptr;
 
 		switch (m_behaviour)
 		{
-		case Behaviour::PATROL:
-			DoPatrol(subject, pool, gameMap, playerTransforms);
-			break;
-		case Behaviour::ENGAGE:
-			DoEngage(subject, pool, gameMap, playerTransforms);
-			break;
-		case Behaviour::DISENGAGE:
-			DoDisengage(subject, pool, gameMap, playerTransforms);
-			break;
-		case Behaviour::RETURN:
-			DoReturn(subject, pool, gameMap, playerTransforms);
-			break;
+			case Behaviour::PATROL   : DoPatrol(subject, pool, gameMap, playerTransforms); break;
+			case Behaviour::ENGAGE   : DoEngage(subject, pool, gameMap, playerTransforms); break;
+			case Behaviour::DISENGAGE: DoDisengage(subject, pool, gameMap, playerTransforms); break;
+			case Behaviour::RETURN   : DoReturn(subject, pool, gameMap, playerTransforms); break;
 		}
 
+		DrawDebugWaypoints();
 		return nullptr;
 	}
 
@@ -314,28 +307,19 @@ namespace game
 
 	void AI_WaypointFollow::OnEnemyDamage(const EnemyDamagePayload& payload)
 	{
-	}
-
-	void AI_WaypointFollow::OnEnemyDeath(const EnemyDeathPayload& payload)
-	{
+		m_health -= 1.f;
+		if (m_health <= 0.f)
+		{
+			// TODO: send event to GameObject
+			payload.gameObject->SendEnemyDeath();
+			payload.gameObject->m_collidable = false;
+			m_behaviour = Behaviour::DEAD;
+		}
 	}
 
 	void AI_WaypointFollow::OnAlert(const math::Vec2& pos, const math::Vec2& alertPos)
 	{
 		m_waypointPositions = game::spatial::do_pathfinding(pos, alertPos);
 		m_waypointIndex = 0;
-	}
-
-	std::unique_ptr<AI_Component> AI_Empty::Update(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
-	{
-		return nullptr;
-	}
-
-	void AI_Empty::OnEnemyDamage(const EnemyDamagePayload& payload)
-	{
-	}
-
-	void AI_Empty::OnEnemyDeath(const EnemyDeathPayload& payload)
-	{
 	}
 }

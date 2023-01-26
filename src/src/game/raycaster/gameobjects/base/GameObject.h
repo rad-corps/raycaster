@@ -19,6 +19,7 @@ namespace game
 		GameObject()
 			: m_transform{ 0.f,0.f,0.f }
 			, m_active{false}
+			, m_name{"empty"}
 		{}
 		
 		// remove copy construction
@@ -29,7 +30,7 @@ namespace game
 		GameObject(GameObject&&) = default;
 		GameObject& operator=(GameObject&&) = default;
 
-		GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI_Component> ai, std::unique_ptr<RenderComponent> rc);
+		GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI_Component> ai, std::unique_ptr<RenderComponent> rc, const std::string& name, bool collidable);
 
 		void Update(GameObjectPool& gameObjects, const map::GameMap& map, const std::vector<math::Transform> playerTransforms); // fixed update (60 per second)
 		void Render(const game::RenderEngine& re, const math::Transform& pov, double deltatime);
@@ -37,7 +38,7 @@ namespace game
 		// send events
 		// TODO: event sending really needs to be generic, this is not fun to maintain
 		void SendEnemyDamaged(const EnemyDamagePayload& payload);
-		void SendEnemyDeath(const EnemyDeathPayload& payload);
+		void SendEnemyDeath();
 		void SendAlert(const math::Vec2& alertPos);
 		void SendAiAnimation(AiAnimation aiAnimation);
 		
@@ -45,11 +46,13 @@ namespace game
 
 		// todo make this private and make GameObjectPool a friend
 		bool m_active = false;
+		bool m_collidable = false;
 
 	private:
 		
 		rcgf::SpriteSheet* m_spritesheet;
 		std::unique_ptr<AI_Component> m_ai;
 		std::unique_ptr<RenderComponent> m_rc;
+		std::string m_name;
 	};
 } 

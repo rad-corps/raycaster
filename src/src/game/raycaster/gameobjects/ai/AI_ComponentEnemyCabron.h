@@ -15,7 +15,6 @@ namespace game
 
 		std::unique_ptr<AI_Component> Update(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) override;
 		void OnEnemyDamage(const EnemyDamagePayload& payload) override;
-		void OnEnemyDeath(const EnemyDeathPayload& payload) override;
 		void OnAlert(const math::Vec2& pos, const math::Vec2& alertPos) override;
 
 		float m_timer = 0.f;
@@ -26,7 +25,8 @@ namespace game
 			PATROL,
 			ENGAGE,
 			DISENGAGE,
-			RETURN
+			RETURN,
+			DEAD
 		};
 
 		enum class EngageBehaviour
@@ -66,14 +66,6 @@ namespace game
 		std::vector<math::Vec2> m_patrolWaypointPositions;
 		int m_waypointIndexCache = 0; // required for returning to initial path
 		
-	};
-
-	class AI_Empty : public AI_Component
-	{
-	public:
-		std::unique_ptr<AI_Component> Update(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) override;
-		void OnEnemyDamage(const EnemyDamagePayload& payload) override;
-		void OnEnemyDeath(const EnemyDeathPayload& payload) override;
-		
+		float m_health = 5.5f;
 	};
 }

@@ -20,7 +20,7 @@ namespace game
 			fxTransform.pos -= velocity;
 
 			// create a bullet hit FX
-			pool.Add(factory::CreatePlayerBulletHitFX(fxTransform));
+			factory::CreatePlayerBulletHitFX(fxTransform);
 			
 			// we hit a wall. deactivate
 			subject.m_active = false;
@@ -31,7 +31,7 @@ namespace game
 		// compare against enemies
 		for (auto& gameObject : pool.GetPool())
 		{
-			if (!gameObject.m_active)
+			if (!gameObject.m_active || !gameObject.m_collidable)
 				continue;
 
 			// dont let the bullet collide with itself and dont collide the bullet with the GameObject that shot the bullet 
@@ -41,7 +41,7 @@ namespace game
 			// get the distance from subject to gameObject
 			if (math::magnitude(gameObject.m_transform.pos - subject.m_transform.pos) < 3.f /* TODO: this shouldn't be a magic number*/)
 			{
-				gameObject.SendEnemyDamaged(EnemyDamagePayload{ 1.f });
+				gameObject.SendEnemyDamaged(EnemyDamagePayload{ 1.f, &gameObject });
 				subject.m_active = false;
 			}
 		}

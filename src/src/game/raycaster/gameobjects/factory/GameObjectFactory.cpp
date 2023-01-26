@@ -1,6 +1,7 @@
 #include "GameObjectFactory.h"
 #include "SpriteSheet.h"
 #include <memory>
+#include "./gameobjects/base/GameObjectPool.h"
 #include "./gameobjects/render/RenderComponentCabron.h"
 #include "./gameobjects/render/RenderComponentBullet.h"
 #include "./gameobjects/render/RenderComponentBulletHitFX.h"
@@ -13,12 +14,14 @@ namespace
 	std::unique_ptr<rcgf::SpriteSheet> ssEnemy01; // Cabron
 	std::unique_ptr<rcgf::SpriteSheet> ssBullet;
 	SDL_Renderer* m_renderer;
+	game::GameObjectPool* m_gameObjects;
 }
 
 namespace game::factory
 {
-	void Init(SDL_Renderer* renderer)
+	void Init(SDL_Renderer* renderer, GameObjectPool* gameObjects)
 	{
+		m_gameObjects = gameObjects;
 		m_renderer = renderer;
 		{
 			auto txEnemy01 = std::make_unique<rcgf::Texture>(renderer, "img/CabronTileset.png");
@@ -31,30 +34,23 @@ namespace game::factory
 		}
 	}
 
-	GameObject CreateCabron(const math::Transform& transform)
-	{
-		auto ai = std::make_unique<AI_Empty>();
-		auto rc = std::make_unique<RenderComponentCabron>();
-		return GameObject{ ssEnemy01.get(), transform, std::move(ai), std::move(rc) };
-	}
-
-	GameObject CreateCabron(const math::Transform& transform, const std::vector<math::Vec2>& waypoints)
+	void CreateCabron(const math::Transform& transform, const std::vector<math::Vec2>& waypoints)
 	{
 		auto ai = std::make_unique<AI_WaypointFollow>(waypoints);
 		auto rc = std::make_unique<RenderComponentCabron>();
-		return GameObject{ ssEnemy01.get(), transform, std::move(ai), std::move(rc) };
+		m_gameObjects->Add(GameObject{ ssEnemy01.get(), transform, std::move(ai), std::move(rc), "Cabron", true});
 	}
 
-	GameObject CreatePlayerBullet(const math::Transform& transform, GameObject* origin)
+	void CreatePlayerBullet(const math::Transform& transform, GameObject* origin)
 	{
 		auto ai = std::make_unique<AI_ComponentBullet>(origin);
 		auto rc = std::make_unique<RenderComponentBullet>();
-		return GameObject{ ssBullet.get(), transform, std::move(ai), std::move(rc) };
+		m_gameObjects->Add(GameObject{ ssBullet.get(), transform, std::move(ai), std::move(rc), "Bullet", false});
 	}
 
-	GameObject CreatePlayerBulletHitFX(const math::Transform& transform)
+	void CreatePlayerBulletHitFX(const math::Transform& transform)
 	{
 		auto rc = std::make_unique<RenderComponentBulletHitFX>();
-		return GameObject{ ssBullet.get(), transform, nullptr, std::move(rc) };
+		m_gameObjects->Add(GameObject{ ssBullet.get(), transform, nullptr, std::move(rc), "BulletHitFX", false});
 	}
 }

@@ -69,11 +69,11 @@ namespace game
 			srand((unsigned int)time(NULL));
 			
 			// TODO: cleanup texture memory on exit
-			factory::Init(m_renderer);
+			factory::Init(m_renderer, &m_gameObjects);
 			spatial::init_path_finding();
 
 			// initialise level by adding an enemy with a waypoint path
-			GameObject cabron = factory::CreateCabron(
+			factory::CreateCabron(
 				{ 228.849f, 151.799f, 3.15316f }, 
 				{
 					{223.661f, 113.27f},
@@ -89,7 +89,6 @@ namespace game
 					{226.004f, 151.912f}
 				}
 			);
-			m_gameObjects.Add(std::move(cabron));
 		}
 		Pimpl() = delete;
 		~Pimpl()
@@ -200,7 +199,7 @@ namespace game
 			break;
 		}
 		case SDLK_LALT:
-			m_impl->m_gameObjects.Add(factory::CreatePlayerBullet(m_impl->player.transform, nullptr));
+			factory::CreatePlayerBullet(m_impl->player.transform, nullptr);
 			break;
 		case SDLK_RETURN:
 			std::vector<GameObject>& gameObjects = m_impl->m_gameObjects.GetPool();

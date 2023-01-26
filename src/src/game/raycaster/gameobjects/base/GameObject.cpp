@@ -6,13 +6,16 @@
 
 namespace game
 {
-	GameObject::GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI_Component> ai, std::unique_ptr<RenderComponent> rc)
+	GameObject::GameObject(rcgf::SpriteSheet* spritesheet, math::Transform transform, std::unique_ptr<AI_Component> ai, std::unique_ptr<RenderComponent> rc, const std::string& name, bool collidable)
 		: m_spritesheet{ spritesheet }
 		, m_transform{ transform }
 		, m_ai{ std::move(ai) }
 		, m_rc{ std::move(rc) }
 		, m_active{true}
-	{}
+		, m_name{name}
+		, m_collidable{collidable}
+	{
+	}
 
 	void GameObject::SendEnemyDamaged(const EnemyDamagePayload& payload)
 	{
@@ -20,10 +23,10 @@ namespace game
 		if (m_rc) m_rc->OnEnemyDamage(payload);
 	}
 
-	void GameObject::SendEnemyDeath(const EnemyDeathPayload& payload)
+	void GameObject::SendEnemyDeath()
 	{
-		if (m_ai) m_ai->OnEnemyDeath(payload);
-		if (m_rc) m_rc->OnEnemyDeath(payload);
+		if (m_ai) m_ai->OnEnemyDeath();
+		if (m_rc) m_rc->OnEnemyDeath();
 	}
 
 	void GameObject::SendAlert(const math::Vec2& alertPos)

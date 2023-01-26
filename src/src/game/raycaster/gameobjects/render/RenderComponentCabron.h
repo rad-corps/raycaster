@@ -10,7 +10,7 @@ namespace game
 		void Render(const game::RenderEngine& re, const math::Transform& pov, GameObject& gameObject, rcgf::SpriteSheet* spriteSheet, double deltatime) override;
 		virtual void OnAnimationUpdate(AiAnimation aiAnimation) override;
 		void OnEnemyDamage(const EnemyDamagePayload& payload);
-		void OnEnemyDeath(const EnemyDeathPayload& payload);
+		void OnEnemyDeath();
 	private:
 		int CalculateSpriteAnimationIDColumn(float angle);
 		int CalculateSpriteAnimationIDRow();
