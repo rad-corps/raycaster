@@ -13,6 +13,9 @@ namespace
 {
 	std::unique_ptr<rcgf::SpriteSheet> ssEnemy01; // Cabron
 	std::unique_ptr<rcgf::SpriteSheet> ssBullet;
+	std::unique_ptr<rcgf::SpriteSheet> ssWeapons;
+
+	// WeaponsTileset.png
 	SDL_Renderer* m_renderer;
 	game::GameObjectPool* m_gameObjects;
 }
@@ -23,15 +26,14 @@ namespace game::factory
 	{
 		m_gameObjects = gameObjects;
 		m_renderer = renderer;
-		{
-			auto txEnemy01 = std::make_unique<rcgf::Texture>(renderer, "img/CabronTileset.png");
-			ssEnemy01 = std::make_unique<rcgf::SpriteSheet>(std::move(txEnemy01), 64, 64, 8, 8);
-		}
+		
+		auto txEnemy01 = std::make_unique<rcgf::Texture>(renderer, "./img/CabronTileset.png");
+		auto txBullet = std::make_unique<rcgf::Texture>(renderer, "./img/effects.png");
+		auto txWeapons = std::make_unique<rcgf::Texture>(renderer, "./img/WeaponsTileset.png");
 
-		{
-			auto txBullet = std::make_unique<rcgf::Texture>(renderer, "./img/effects.png");
-			ssBullet = std::make_unique<rcgf::SpriteSheet>(std::move(txBullet), 16, 16, 8, 8);
-		}
+		ssEnemy01 = std::make_unique<rcgf::SpriteSheet>(std::move(txEnemy01), 64, 64, 8, 8);
+		ssBullet = std::make_unique<rcgf::SpriteSheet>(std::move(txBullet), 16, 16, 8, 8);
+		ssWeapons = std::make_unique<rcgf::SpriteSheet>(std::move(txWeapons), 64, 64, 7, 7);
 	}
 
 	void CreateCabron(const math::Transform& transform, const std::vector<math::Vec2>& waypoints)
@@ -45,7 +47,7 @@ namespace game::factory
 	{
 		auto ai = std::make_unique<AI_ComponentBullet>(origin);
 		auto rc = std::make_unique<RenderComponentBullet>();
-		m_gameObjects->Add(GameObject{ ssBullet.get(), transform, std::move(ai), std::move(rc), "Bullet", false});
+		m_gameObjects->Add(GameObject{ ssWeapons.get(), transform, std::move(ai), std::move(rc), "Bullet", false});
 	}
 
 	void CreatePlayerBulletHitFX(const math::Transform& transform)

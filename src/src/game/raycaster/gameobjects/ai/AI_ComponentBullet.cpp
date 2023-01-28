@@ -4,12 +4,17 @@
 #include "RaycasterConstants.h"
 #include "./gameobjects/factory/GameObjectFactory.h"
 
+namespace
+{
+	constexpr float BULLET_SPEED = 3.f;
+}
+
 namespace game
 {
 	std::unique_ptr<AI_Component> AI_ComponentBullet::Update(GameObject& subject, GameObjectPool& pool, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms)
 	{
 		math::Vec2 direction = math::angle_to_vec(subject.m_transform.angle);
-		math::Vec2 velocity = direction * 1;
+		math::Vec2 velocity = direction * BULLET_SPEED;
 		subject.m_transform.pos += velocity;
 
 		// check for collision with map
