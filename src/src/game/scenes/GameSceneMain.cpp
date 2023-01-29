@@ -76,6 +76,20 @@ namespace game
 				fname = "default.csv";
 			}
 			m_mapName = "./rooms/" + fname;
+
+			break;
+		case SDLK_1:
+		case SDLK_KP_1:
+			std::cout << "Load Map" << std::endl;
+			std::string fname;
+			std::cout << "enter filename (leave blank for default.csv): " << fname;
+			std::getline(std::cin, fname);
+			if (fname.empty())
+			{
+				fname = "default.csv";
+			}
+			fname = "./rooms/" + fname;
+			game::map::set_map(fname);
 			break;
 		}
 	}
