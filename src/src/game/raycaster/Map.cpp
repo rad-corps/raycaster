@@ -100,12 +100,16 @@ namespace game::map
 					globalMap[mapIndex] = 0;
 				}
 
-				if (mapCellType > 0 && mapCellType < 5)
+				if (mapCellType >= 16 && mapCellType <= 23)
 				{
+					// calculate rotation
+					int quarterRotations = mapCellType - 16;
+					float rotation = quarterRotations * (PI / 4.f);
+
 					const math::Vec2 worldPos = to_world_position(mapIndex);
 					
 					// todo: convert mapCellType to angle
-					factory::CreateCabron(math::Transform{ worldPos, 0.f }, {});
+					factory::CreateCabron(math::Transform{ worldPos, rotation }, {});
 				}
 				++mapIndex;
 				++column;
