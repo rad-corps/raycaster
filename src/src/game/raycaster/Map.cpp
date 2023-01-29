@@ -1,13 +1,15 @@
 #include "Map.h"
 #include <cassert>
 #include "RCGFMath.h"
+#include <fstream>
+#include <sstream>
 
 using math::PI;
 
 namespace
 {
 	// todo: we need to be able to replace the map
-	const game::map::GameMap globalMap =
+	game::map::GameMap globalMap =
 	{
 		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 		1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,
@@ -46,6 +48,54 @@ namespace
 
 namespace game::map
 {
+	void set_map(const std::string& filename)
+	{
+		std::cout << "set_map: " << filename << std::endl;
+
+		// load file contents into string
+		std::fstream fin;
+
+		// Open an existing file
+		fin.open(filename, std::ios::in);
+
+		if (!fin)
+		{
+			std::cout << "Failed to load map file: " << filename << std::endl;
+			return;
+		}
+
+		int mapIndex = 0;
+
+		// Read the Data from the file
+		// as String Vector
+		std::string word, temp;
+
+		while (fin >> temp) {
+
+			// used for breaking words
+			std::stringstream s(temp);
+
+			// read every column data of a row and
+			// store it in a string variable, 'word'
+			int column = 0;
+			while (std::getline(s, word, ',')) {
+
+				// set the globalMap data
+				// hack: adding one as the map format saves -1 for no wall and 0 for wall. 
+				//       our existing memory format has 0 for no wall and 1 for wall. 
+				//       might be able to configure tiled to output differently? 
+				globalMap[mapIndex++] = stoi(word) + 1;
+				++column;
+			}
+			assert(column == MAP_COLS);
+		}
+
+		// protect against other sized maps
+		assert(mapIndex == MAP_SZ);
+
+		std::cout << mapIndex << std::endl;
+	}
+
 	const GameMap& get_map()
 	{
 		return globalMap;

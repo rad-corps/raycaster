@@ -20,7 +20,6 @@ namespace rcgf
 		virtual void keyUp(SDL_Keycode) = 0;
 		virtual void mouseDown(int button, int x, int y) 
 		{
-			printf("mouseDown not implemented button %i, x %i, y %i\n", button, x, y);
 		}
 
 		void pushPendingState(std::unique_ptr<IGameScene>);

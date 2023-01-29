@@ -1,5 +1,6 @@
 #include "GameSceneMain.h"
 #include "GameSceneRaycaster.h"
+#include "Map.h"
 
 namespace
 {
@@ -67,8 +68,16 @@ namespace game
 		case SDLK_1:
 		case SDLK_KP_1:
 			std::cout << "Load Map" << std::endl;
+			std::string fname;
+			std::cout << "enter filename (leave blank for default.csv): " << fname;
+			std::getline(std::cin, fname);
+			if (fname.empty())
+			{
+				fname = "default.csv";
+			}
+			fname = "./rooms/" + fname;
+			game::map::set_map(fname);
 			break;
-
 		}
 	}
 	

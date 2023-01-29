@@ -7,6 +7,8 @@
 #include <array>
 #include <string>
 #include <chrono>
+#include <Windows.h>
+#include <WinUser.h>
 
 
 namespace
@@ -16,6 +18,10 @@ namespace
 
 int main(int argc, char* args[])
 {
+	// set console position to top left
+	HWND consoleWindow = GetConsoleWindow();
+	SetWindowPos(consoleWindow, 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
 	// satisfy compiler warning for not referencing parameters
 	for (int i = 0; i < argc; ++i)
 	{
