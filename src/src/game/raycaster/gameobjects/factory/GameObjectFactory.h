@@ -17,4 +17,5 @@ namespace game::factory
 	void CreateCabron(const math::Transform& transform, const std::vector<math::Vec2>& waypoints);
 	void CreatePlayerBullet(const math::Transform& transform, GameObject* origin);
 	void CreatePlayerBulletHitFX(const math::Transform& transform);
+	void Clear();
 }

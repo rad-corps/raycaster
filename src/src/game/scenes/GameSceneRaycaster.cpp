@@ -59,7 +59,7 @@ namespace game
 			{SDLK_DOWN, false},
 			{SDLK_LCTRL, false},
 		};
-		Pimpl(SDL_Renderer* renderer)
+		Pimpl(SDL_Renderer* renderer, const std::string& mapFile)
 			: player{ math::Transform{58.4994f, 149.201f, 0.0299706f} }
 			, wallTexture{ renderer, "./img/wall_64.png" }
 			, m_renderer{ renderer }
@@ -70,25 +70,28 @@ namespace game
 			
 			// TODO: cleanup texture memory on exit
 			factory::Init(m_renderer, &m_gameObjects);
+			map::set_map(mapFile);
 			spatial::init_path_finding();
 
-			// initialise level by adding an enemy with a waypoint path
-			factory::CreateCabron(
-				{ 228.849f, 151.799f, 3.15316f }, 
-				{
-					{223.661f, 113.27f},
-					{169.576f, 107.703f},
-					{142.766f, 44.0217f},
-					{99.6444f, 89.271f},
-					{99.5096f, 146.271f},
-					{38.0722f, 155.339f},
-					{43.3761f, 211.787f},
-					{117.929f, 217.882f},
-					{175.284f, 235.681f},
-					{184.17f, 212.622f},
-					{226.004f, 151.912f}
-				}
-			);
+			//// initialise level by adding an enemy with a waypoint path
+			//factory::CreateCabron(
+			//	{ 228.849f, 151.799f, 3.15316f }, 
+			//	{
+			//		{223.661f, 113.27f},
+			//		{169.576f, 107.703f},
+			//		{142.766f, 44.0217f},
+			//		{99.6444f, 89.271f},
+			//		{99.5096f, 146.271f},
+			//		{38.0722f, 155.339f},
+			//		{43.3761f, 211.787f},
+			//		{117.929f, 217.882f},
+			//		{175.284f, 235.681f},
+			//		{184.17f, 212.622f},
+			//		{226.004f, 151.912f}
+			//	}
+			//);
+
+			//factory::CreateCabron({ 100.f, 100.f, 0.f }, {});
 		}
 		Pimpl() = delete;
 		~Pimpl()
@@ -98,8 +101,8 @@ namespace game
 	};
 
 
-	GameSceneRaycaster::GameSceneRaycaster(SDL_Renderer* renderer, TTF_Font* font)
-		: m_impl{ std::make_unique<Pimpl>(renderer) }
+	GameSceneRaycaster::GameSceneRaycaster(SDL_Renderer* renderer, TTF_Font* font, const std::string& mapFile)
+		: m_impl{ std::make_unique<Pimpl>(renderer, mapFile) }
 		, m_renderer{ renderer }
 		, m_font{ font }
 	{}

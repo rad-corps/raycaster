@@ -41,6 +41,14 @@ namespace game
 		}
 	}
 
+	void GameObjectPool::Clear()
+	{
+		for (auto& go : m_gameObjects)
+		{
+			go.m_active = false;
+		}
+	}
+
 	void GameObjectPool::Update(const map::GameMap& map, const std::vector<math::Transform> playerTransforms)
 	{
 		for (auto& go : m_gameObjects)

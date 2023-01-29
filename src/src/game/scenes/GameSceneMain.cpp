@@ -63,7 +63,20 @@ namespace game
 		{
 		case SDLK_0:
 		case SDLK_KP_0:
-			pushPendingState(std::make_unique<GameSceneRaycaster>(m_renderer, m_font));
+			pushPendingState(std::make_unique<GameSceneRaycaster>(m_renderer, m_font, m_mapName));
+			break;
+		case SDLK_1:
+		case SDLK_KP_1:
+			std::cout << "Load Map" << std::endl;
+			std::string fname;
+			std::cout << "enter filename (leave blank for default.csv): " << fname;
+			std::getline(std::cin, fname);
+			if (fname.empty())
+			{
+				fname = "default.csv";
+			}
+			m_mapName = "./rooms/" + fname;
+
 			break;
 		case SDLK_1:
 		case SDLK_KP_1:

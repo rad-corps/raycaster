@@ -36,6 +36,11 @@ namespace game::factory
 		ssWeapons = std::make_unique<rcgf::SpriteSheet>(std::move(txWeapons), 64, 64, 7, 7);
 	}
 
+	void Clear()
+	{
+		m_gameObjects->Clear();
+	}
+
 	void CreateCabron(const math::Transform& transform, const std::vector<math::Vec2>& waypoints)
 	{
 		auto ai = std::make_unique<AI_WaypointFollow>(waypoints);

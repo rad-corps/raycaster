@@ -93,7 +93,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>RCGFMath.obj;EventSystem.obj;Map.obj;Spatial.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>RCGFMath.obj;EventSystem.obj;GameObjectFactory.obj;Map.obj;Spatial.obj;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>Z:\raycaster\out\intermediate\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

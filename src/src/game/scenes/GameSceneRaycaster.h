@@ -10,7 +10,7 @@ namespace game
 	class GameSceneRaycaster: public rcgf::IGameScene
 	{
 	public:
-		GameSceneRaycaster(SDL_Renderer* renderer, TTF_Font* font);
+		GameSceneRaycaster(SDL_Renderer* renderer, TTF_Font* font, const std::string& mapFile);
 		GameSceneRaycaster() = delete;
 		void update() override;
 		void fixedUpdate() override;

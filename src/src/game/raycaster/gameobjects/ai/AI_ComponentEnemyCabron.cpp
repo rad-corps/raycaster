@@ -45,8 +45,12 @@ namespace game
 	void AI_WaypointFollow::InitReturn(GameObject& subject)
 	{
 		std::cout << "Return" << std::endl;
-
 		m_timer = 0.f;
+		if (m_patrolWaypointPositions.size() == 0)
+		{
+			m_behaviour = Behaviour::PATROL;
+			return;
+		}
 
 		// find the closest waypoint 
 		float dist = 1000000.f;
@@ -67,6 +71,16 @@ namespace game
 
 	void AI_WaypointFollow::DoPatrol(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
 	{
+		// can we see the player?
+		if (CanSeePlayer(subject, playerTransforms))
+		{
+			// todo: unhardcode playerTransforms[0]
+			InitEngage(subject, playerTransforms[0].pos);
+			return;
+		}
+
+		if (m_waypointPositions.size() == 0) return;
+		
 		const math::Vec2& currentPos = subject.m_transform.pos;
 		const math::Vec2& nextPos = m_waypointPositions[m_waypointIndex];
 		const math::Vec2 movementDelta = nextPos - currentPos;
@@ -76,19 +90,11 @@ namespace game
 		subject.m_transform.angle = math::vec_to_angle(direction);
 		subject.m_transform.pos += velocity;
 
-		// can we see the player?
-		if (CanSeePlayer(subject, playerTransforms))
-		{
-			// todo: unhardcode playerTransforms[0]
-			InitEngage(subject, playerTransforms[0].pos);
-		}
-
 		// check destination reached
 		if (math::magnitude(movementDelta) < 1.f /* TODO: un-magic number this epsilon */)
 		{
 			m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
 		}
-		
 	}
 	void AI_WaypointFollow::DoEngage(GameObject& subject, GameObjectPool& gameObjects, const map::GameMap& gameMap, const std::vector<math::Transform>& playerTransforms) 
 	{
@@ -99,22 +105,6 @@ namespace game
 			const math::Vec2& currentPos = subject.m_transform.pos;
 			const math::Vec2& nextPos = m_waypointPositions[m_waypointIndex];
 			const math::Vec2 movementDelta = nextPos - currentPos;
-			const math::Vec2 direction = math::normalize(movementDelta);
-			const math::Vec2 velocity = direction * ACTOR_VELOCITY;
-
-			subject.m_transform.angle = math::vec_to_angle(direction);
-			subject.m_transform.pos += velocity;
-
-			if (m_timer > 0.50f)
-			{
-				m_timer = 0.f;
-
-				if (spatial::line_of_sight(subject.m_transform.pos, playerTransforms[0].pos))
-				{
-					m_engageBehaviour = EngageBehaviour::GUN_DRAW;
-					subject.SendAiAnimation(AiAnimation::GunDraw);
-				}
-			}
 
 			// check destination reached
 			if (math::magnitude(movementDelta) < 1.f /* TODO: un-magic number this epsilon */)
@@ -135,7 +125,30 @@ namespace game
 
 				// next waypoint, or cycle if at end
 				m_waypointIndex == m_waypointPositions.size() - 1 ? m_waypointIndex = 0 : ++m_waypointIndex;
+				
+				// return early, if movementDelta == 0 then below calculations will cause failure.
+				return; 
 			}
+
+
+			const math::Vec2 direction = math::normalize(movementDelta);
+			const math::Vec2 velocity = direction * ACTOR_VELOCITY;
+
+			subject.m_transform.angle = math::vec_to_angle(direction);
+			subject.m_transform.pos += velocity;
+
+			if (m_timer > 0.50f)
+			{
+				m_timer = 0.f;
+
+				if (spatial::line_of_sight(subject.m_transform.pos, playerTransforms[0].pos))
+				{
+					m_engageBehaviour = EngageBehaviour::GUN_DRAW;
+					subject.SendAiAnimation(AiAnimation::GunDraw);
+				}
+			}
+
+			
 		}
 		else if (m_engageBehaviour == EngageBehaviour::GUN_DRAW)
 		{
