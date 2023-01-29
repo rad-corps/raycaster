@@ -1,9 +1,10 @@
 #include "GameSceneMain.h"
 #include "GameSceneRaycaster.h"
+#include "Map.h"
 
 namespace
 {
-	constexpr int NUM_OPTIONS = 6;
+	constexpr int NUM_OPTIONS = 2;
 }
 
 namespace game
@@ -15,7 +16,7 @@ namespace game
 		std::unique_ptr<rcgf::Texture> bgTex;
 
 		Pimpl(SDL_Renderer* renderer, TTF_Font* font)
-			: optionsStrings{"0: Transform", "1: User Input", "2: AABB Collision", "3: Polygon", "4: Math", "5: Raycasting"},
+			: optionsStrings{"0: Raycasting", "1: Load Map"},
 			  bgTex{std::make_unique<rcgf::Texture>(renderer, "img/dice.png")}
 		{
 			for (size_t i = 0; i < NUM_OPTIONS; ++i)
@@ -60,9 +61,22 @@ namespace game
 	{
 		switch (keycode)
 		{
-		case SDLK_5:
-		case SDLK_KP_5:
+		case SDLK_0:
+		case SDLK_KP_0:
 			pushPendingState(std::make_unique<GameSceneRaycaster>(m_renderer, m_font));
+			break;
+		case SDLK_1:
+		case SDLK_KP_1:
+			std::cout << "Load Map" << std::endl;
+			std::string fname;
+			std::cout << "enter filename (leave blank for default.csv): " << fname;
+			std::getline(std::cin, fname);
+			if (fname.empty())
+			{
+				fname = "default.csv";
+			}
+			fname = "./rooms/" + fname;
+			game::map::set_map(fname);
 			break;
 		}
 	}
