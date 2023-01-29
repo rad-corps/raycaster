@@ -3,6 +3,7 @@
 #include "RCGFMath.h"
 #include <fstream>
 #include <sstream>
+#include "gameobjects/factory/GameObjectFactory.h"
 
 using math::PI;
 
@@ -50,6 +51,9 @@ namespace game::map
 {
 	void set_map(const std::string& filename)
 	{
+		// clear gameobjects from factory??? 
+		factory::Clear();
+
 		std::cout << "set_map: " << filename << std::endl;
 
 		// load file contents into string
@@ -84,7 +88,25 @@ namespace game::map
 				// hack: adding one as the map format saves -1 for no wall and 0 for wall. 
 				//       our existing memory format has 0 for no wall and 1 for wall. 
 				//       might be able to configure tiled to output differently? 
-				globalMap[mapIndex++] = stoi(word) + 1;
+
+				int mapCellType = stoi(word);
+				if (mapCellType == 0)
+				{
+					globalMap[mapIndex] = 1;
+				}
+				else
+				{
+					globalMap[mapIndex] = 0;
+				}
+
+				if (mapCellType > 0 && mapCellType < 5)
+				{
+					const math::Vec2 worldPos = to_world_position(mapIndex);
+					
+					// todo: convert mapCellType to angle
+					factory::CreateCabron(math::Transform{ worldPos, 0.f }, {});
+				}
+				++mapIndex;
 				++column;
 			}
 			assert(column == MAP_COLS);

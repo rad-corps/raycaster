@@ -25,5 +25,6 @@ namespace game
 		std::unique_ptr<Pimpl> m_impl;
 		SDL_Renderer* m_renderer;
 		TTF_Font* m_font;
+		std::string m_mapName = "./rooms/default.csv";
 	};
 }

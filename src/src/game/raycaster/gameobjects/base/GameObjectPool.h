@@ -18,6 +18,8 @@ namespace game
 
 		void Update(const map::GameMap& map, const std::vector<math::Transform> playerTransforms); // fixed update (60 per second)
 		void Render(const math::Transform& pov, double deltatime);
+		void Clear();
+
 		std::vector<GameObject>& GetPool();
 
 	private:

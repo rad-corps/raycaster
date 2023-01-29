@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gameobjects/base/AI_Component.h"
+#include <cassert>
 
 namespace game
 {

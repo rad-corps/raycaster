@@ -8,8 +8,8 @@ namespace math
 
 	struct Vec2
 	{
-		float x = 0;
-		float y = 0;
+		float x = 0.f;
+		float y = 0.f;
 		Vec2() = default;
 		Vec2(float x, float y); 
 		
@@ -38,7 +38,7 @@ namespace math
 	struct Transform
 	{
 		math::Vec2 pos;
-		float angle;
+		float angle=0.f;
 		Transform(math::Vec2 pos, float angle) : pos{ pos }, angle{ angle }{}
 		Transform(float x, float y, float angle) : pos{ x, y }, angle{ angle }{}
 	};
