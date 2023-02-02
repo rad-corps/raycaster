@@ -25,6 +25,7 @@
     <ClCompile Include="src\framework\Globals.cpp" />
     <ClCompile Include="src\framework\IGameScene.cpp" />
     <ClCompile Include="src\game\raycaster\EventSystem.cpp" />
+    <ClCompile Include="src\game\raycaster\FixedOverlay.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\ai\AI_ComponentBullet.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\ai\AI_ComponentEnemyCabron.cpp" />
     <ClCompile Include="src\game\raycaster\gameobjects\base\GameObjectPool.cpp" />
@@ -49,6 +50,7 @@
     <ClInclude Include="src\framework\Globals.h" />
     <ClInclude Include="src\framework\IGameScene.h" />
     <ClInclude Include="src\game\raycaster\EventSystem.h" />
+    <ClInclude Include="src\game\raycaster\FixedOverlay.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\ai\AI_ComponentBullet.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\ai\AI_ComponentEnemyCabron.h" />
     <ClInclude Include="src\game\raycaster\gameobjects\base\AI_Component.h" />

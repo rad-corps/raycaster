@@ -23,6 +23,7 @@
 #include <time.h>       /* time */
 #include "EventSystem.h"
 #include "Spatial.h"
+#include "FixedOverlay.h"
 
 
 #define RENDER_DEBUG_VALUES
@@ -70,6 +71,7 @@ namespace game
 			
 			// TODO: cleanup texture memory on exit
 			factory::Init(m_renderer, &m_gameObjects);
+			overlay::init(m_renderer);
 			map::set_map(mapFile, player);
 			spatial::init_path_finding();
 		}
@@ -117,6 +119,8 @@ namespace game
 		// forward and backward movement
 		if (keyStates[SDLK_w] || keyStates[SDLK_UP])    player.move(0.f, &map::get_map());
 		if (keyStates[SDLK_s] || keyStates[SDLK_DOWN])  player.move(PI, &map::get_map());
+
+		overlay::update_weapon(m_impl->player.transform);
 	}
 
 	void GameSceneRaycaster::render(double deltatime)
@@ -134,6 +138,7 @@ namespace game
 		// render all gameobjects
 		gameObjects.Render(playerTransform, deltatime);
 		renderEngine.RenderTopDownMap(map::get_map(), playerTransform, m_impl->showRays);
+		overlay::render_weapon();
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)
@@ -182,7 +187,7 @@ namespace game
 			break;
 		}
 		case SDLK_LALT:
-			factory::CreatePlayerBullet(m_impl->player.transform, nullptr);
+			overlay::start_fire();
 			break;
 		case SDLK_RETURN:
 			std::vector<GameObject>& gameObjects = m_impl->m_gameObjects.GetPool();
@@ -200,5 +205,10 @@ namespace game
 	void GameSceneRaycaster::keyUp(SDL_Keycode keycode)
 	{
 		m_impl->keyStates[keycode] = false;
+
+		if (keycode == SDLK_LALT)
+		{
+			overlay::stop_fire();
+		}
 	}
 }
