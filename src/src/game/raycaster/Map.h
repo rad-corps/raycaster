@@ -3,6 +3,11 @@
 #include <array>
 #include "RaycasterConstants.h"
 
+namespace game
+{
+	class Player;
+}
+
 // todo: namespace game::map
 namespace game::map
 {
@@ -31,5 +36,5 @@ namespace game::map
 	bool is_in_wall(const SDL_Rect* playerVolume);
 	const GameMap& get_map();
 	RayWallCollision find_wall_hit_pos(const math::Vec2& pos, float rayAngle);
-	void set_map(const std::string& fileName);
+	void set_map(const std::string& fileName, Player& player);
 }

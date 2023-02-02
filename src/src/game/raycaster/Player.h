@@ -39,6 +39,7 @@ namespace game
 		math::Vec2 getOffset(float angle, float distance) const;
 		void rotate(RotateDirection dir);
 		void move(float relativeAngle, const map::GameMap* map);
+		void setTransform(const math::Transform& transform);
 		void fire();
 
 		math::Transform transform;

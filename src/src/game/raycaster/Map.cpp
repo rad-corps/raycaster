@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include "gameobjects/factory/GameObjectFactory.h"
+#include "Player.h"
 
 
 using math::PI;
@@ -50,7 +51,7 @@ namespace
 
 namespace game::map
 {
-	void set_map(const std::string& filename)
+	void set_map(const std::string& filename, Player& player)
 	{
 		// clear gameobjects from factory??? 
 		factory::Clear();
@@ -98,6 +99,18 @@ namespace game::map
 				else
 				{
 					globalMap[mapIndex] = 0;
+				}
+
+				// set initial player pos/rotation
+				if (mapCellType >= 8 && mapCellType < 16)
+				{
+					// calculate rotation
+					int quarterRotations = mapCellType - 8;
+					float rotation = quarterRotations * (PI / 4.f);
+					const math::Vec2 worldPos = to_world_position(mapIndex);
+
+					// set the player position
+					player.setTransform(math::Transform{ worldPos, rotation });
 				}
 
 				if (mapCellType >= 16 && mapCellType <= 23)
