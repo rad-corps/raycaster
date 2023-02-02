@@ -26,6 +26,11 @@ namespace game
 	{
 	}
 
+	void Player::setTransform(const math::Transform& transform_)
+	{
+		transform = transform_;
+	}
+
 	math::Vec2 Player::getOffset(float angle, float distance) const
 	{
 		return math::Vec2{ cos(angle) * distance, sin(angle) * distance };
