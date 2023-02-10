@@ -62,7 +62,7 @@ namespace game
 		};
 		Pimpl(SDL_Renderer* renderer, const std::string& mapFile)
 			: player{ math::Transform{58.4994f, 149.201f, 0.0299706f} }
-			, wallTexture{ renderer, "./img/wall_64.png" }
+			, wallTexture{ renderer, "./img/WallTileset.png" }
 			, m_renderer{ renderer }
 			, m_renderEngine{ renderer, raycastEngine.GetColumnRenderData() }
 			, m_gameObjects(GAME_OBJECT_ACTIVE_POOL_SZ, m_renderEngine)

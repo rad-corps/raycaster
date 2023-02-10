@@ -45,6 +45,8 @@ namespace game
 		// ray is currently only used for rendering the rays in the top down view. 
 		// This could be removed entirely. Or set as a debug macro
 		Line ray; 
+
+		int wallSpritesheetIndex = -1;
 	};
 
 	enum Facing : unsigned char

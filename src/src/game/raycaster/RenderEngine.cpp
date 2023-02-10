@@ -2,6 +2,7 @@
 #include <cassert>
 #include <iostream>
 #include "EventSystem.h"
+#include "../config/DesignerConstants.h"
 
 
 namespace
@@ -206,7 +207,18 @@ namespace game
 	{
 		for (const ColumnRenderData& crd : crdVec)
 		{
-			crd.columnTexture->render2(&crd.srcRect, &crd.dstRect);
+			// hack. calculate the srcRect elsewhere later
+			// its currently 7 wide *groan*
+			SDL_Rect tmpSrc;
+			tmpSrc.x = (crd.wallSpritesheetIndex % design::WALL_SPRITESHEET_COLUMNS) * 64;
+			tmpSrc.y = (crd.wallSpritesheetIndex / design::WALL_SPRITESHEET_COLUMNS) * 64;
+
+			tmpSrc.x = tmpSrc.x + crd.srcRect.x;
+			tmpSrc.y = tmpSrc.y + crd.srcRect.y;
+			tmpSrc.w = crd.srcRect.w;
+			tmpSrc.h = crd.srcRect.h;
+
+			crd.columnTexture->render2(&tmpSrc, &crd.dstRect);
 		}
 	}
 
@@ -225,7 +237,7 @@ namespace game
 			{
 				// calc rect position and dimension
 				SDL_Rect dstRect{ col * MAP_CELL_PX * TOP_DOWN_SCALE, row * MAP_CELL_PX * TOP_DOWN_SCALE, MAP_CELL_PX * TOP_DOWN_SCALE, MAP_CELL_PX * TOP_DOWN_SCALE };
-				if (map[col + row * MAP_COLS] > 0)
+				if (map[col + row * MAP_COLS] >= 0)
 				{
 					SDL_RenderFillRect(m_renderer, &dstRect);
 				}

@@ -44,6 +44,7 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\config\DesignerConstants.h" />
     <ClInclude Include="src\framework\SpriteSheet.h" />
     <ClInclude Include="src\framework\RCGFMath.h" />
     <ClInclude Include="src\framework\Texture.h" />

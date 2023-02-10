@@ -14,38 +14,38 @@ namespace
 	// todo: we need to be able to replace the map
 	game::map::GameMap globalMap =
 	{
-		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,
-		1,0,0,0,0,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,
-		1,0,0,0,0,0,0,1,1,0,1,0,1,0,0,1,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,1,
-		1,0,0,0,0,0,0,1,1,0,1,0,1,0,0,1,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,1,
-		1,0,0,0,0,1,0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,1,0,0,1,1,0,0,1,1,0,1,
-		1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,-1,-1,-1,0,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,0,0,-1,0,-1,0,-1,-1,0,-1,-1,-1,-1,0,-1,-1,-1,0,-1,0,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,0,0,-1,0,-1,0,-1,-1,0,-1,-1,-1,-1,0,-1,-1,-1,0,-1,0,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,0,-1,0,0,0,0,-1,0,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,0,0,-1,-1,0,0,-1,0,
+		0,-1,-1,-1,-1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,0,0,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	};
 }
 
@@ -59,53 +59,67 @@ namespace game::map
 		std::cout << "set_map: " << filename << std::endl;
 
 		// load file contents into string
-		std::fstream fin;
+		std::fstream wallsFile;
+		std::fstream charactersFile;
 
 		// Open an existing file
-		fin.open(filename, std::ios::in);
+		std::string wallsFileName = filename + "_walls.csv";
+		std::string charactersFileName = filename + "_characters.csv";
+		
+		wallsFile.open(wallsFileName, std::ios::in);
+		charactersFile.open(charactersFileName, std::ios::in);
+		
 
-		if (!fin)
+		if (!wallsFile)
 		{
-			std::cout << "Failed to load map file: " << filename << std::endl;
+			std::cout << "Failed to load file: " << wallsFileName << std::endl;
+			return;
+		}
+		if (!charactersFile)
+		{
+			std::cout << "Failed to load map file: " << charactersFileName << std::endl;
 			return;
 		}
 
+		
 		int mapIndex = 0;
-
 		// Read the Data from the file
 		// as String Vector
-		std::string word, temp;
+		std::string wallCell, wallLine, characterCell, characterLine;
 
-		while (fin >> temp) {
-
+		// entire line goes into temp
+		while (wallsFile >> wallLine) 
+		{
 			// used for breaking words
-			std::stringstream s(temp);
+			std::stringstream wallLineStream(wallLine);
 
 			// read every column data of a row and
 			// store it in a string variable, 'word'
-			int column = 0;
-			while (std::getline(s, word, ',')) {
+			while (std::getline(wallLineStream, wallCell, ','))
+			{
+				// set wall data to map
+				const int mapCellType = stoi(wallCell);
+				globalMap[mapIndex] = mapCellType;
+				++mapIndex;
+			}
+		}
 
-				// set the globalMap data
-				// hack: adding one as the map format saves -1 for no wall and 0 for wall. 
-				//       our existing memory format has 0 for no wall and 1 for wall. 
-				//       might be able to configure tiled to output differently? 
+		mapIndex = 0;
 
-				int mapCellType = stoi(word);
-				if (mapCellType == 0)
-				{
-					globalMap[mapIndex] = 1;
-				}
-				else
-				{
-					globalMap[mapIndex] = 0;
-				}
+		while (charactersFile >> characterLine)
+		{
+			std::stringstream characterLineStream(characterLine);
 
-				// set initial player pos/rotation
-				if (mapCellType >= 8 && mapCellType < 16)
+			while (std::getline(characterLineStream, characterCell, ','))
+			{
+				// set character data to map
+				const int characterCellType = stoi(characterCell);
+
+				//// set initial player pos/rotation
+				if (characterCellType >= 0 && characterCellType < 8)
 				{
 					// calculate rotation
-					int quarterRotations = mapCellType - 8;
+					int quarterRotations = characterCellType;
 					float rotation = quarterRotations * (PI / 4.f);
 					const math::Vec2 worldPos = to_world_position(mapIndex);
 
@@ -113,27 +127,20 @@ namespace game::map
 					player.setTransform(math::Transform{ worldPos, rotation });
 				}
 
-				if (mapCellType >= 16 && mapCellType <= 23)
+				if (characterCellType >= 8 && characterCellType < 16)
 				{
 					// calculate rotation
-					int quarterRotations = mapCellType - 16;
+					int quarterRotations = characterCellType - 8;
 					float rotation = quarterRotations * (PI / 4.f);
 
 					const math::Vec2 worldPos = to_world_position(mapIndex);
-					
+
 					// todo: convert mapCellType to angle
 					factory::CreateCabron(math::Transform{ worldPos, rotation }, {});
 				}
 				++mapIndex;
-				++column;
 			}
-			assert(column == MAP_COLS);
 		}
-
-		// protect against other sized maps
-		assert(mapIndex == MAP_SZ);
-
-		std::cout << mapIndex << std::endl;
 	}
 
 	const GameMap& get_map()
@@ -251,6 +258,19 @@ namespace game::map
 		return ret;
 	}
 
+	int get_wall_spritesheet_index(int x, int y)
+	{
+		const int mapIndex = to_map_index(x, y);
+
+		// hack (maybe return -1 is more suitable here? 0 is a valid spritesheet tile)
+		if (mapIndex == -1)
+		{
+			return 0;
+		}
+
+		return globalMap[mapIndex];
+	}
+
 	// TODO: Remove?
 	bool is_wall(float x, float y)
 	{
@@ -265,14 +285,14 @@ namespace game::map
 		if (mapIndex == -1)
 			return true;
 
-		assert(0 <= mapIndex && mapIndex < MAP_SZ);
-		return globalMap[mapIndex] > 0;
+		assert(mapIndex >= 0 && mapIndex < MAP_SZ);
+		return globalMap[mapIndex] >= 0;
 	}
 
 	bool is_wall(int index)
 	{
-		assert(0 <= index && index < MAP_SZ);
-		return globalMap[index] > 0;
+		assert(index >= 0 && index < MAP_SZ);
+		return globalMap[index] >= 0;
 	}
 
 
@@ -320,6 +340,7 @@ namespace game::map
 			{
 				checkX += xOffset; checkY += yOffset;
 			}
+
 			colIntersectDistance = sqrt((float)pow(checkX - x, 2) + (float)pow(checkY - y, 2));
 			ret.distance = colIntersectDistance;
 			ret.xHitPos = checkX;

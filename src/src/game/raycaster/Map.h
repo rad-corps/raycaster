@@ -30,6 +30,7 @@ namespace game::map
 	math::Vec2 to_world_position(int mapIndex);
 	int to_map_index(const math::Vec2& pos);
 	int to_map_index(int x, int y);
+	int get_wall_spritesheet_index(int x, int y);
 	bool is_wall(float x, float y);
 	bool is_wall(int x, int y);
 	bool is_wall(int index);
