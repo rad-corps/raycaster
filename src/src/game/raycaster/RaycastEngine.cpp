@@ -72,6 +72,7 @@ namespace game
 		// wall height https://permadi.com/1996/05/ray-casting-tutorial-9/
 		ret.dstRect.h = static_cast<int>(MAP_CELL_PX / rayWallCollision.distance * DIST_PROJECTION_PLANE);
 		ret.dstRect.y = (SCREEN_HEIGHT - ret.dstRect.h) / 2;
+		ret.wallSpritesheetIndex = map::get_wall_spritesheet_index((int)rayWallCollision.xHitPos, (int)rayWallCollision.yHitPos);
 
 		return ret;
 	}

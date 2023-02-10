@@ -55,9 +55,37 @@ namespace game
 		{
 			m_impl->texArr[i]->render(30, 30 + 30 * i);
 		}
+
+		// render the map name to text
+		if (m_capturingMapName)
+		{
+			global::Global::renderMonospaceText("Enter Map Name:", 20, 180);
+		}
+		global::Global::renderMonospaceText(m_mapTempName, 20, 200);
 	}
 
-	void GameSceneMain::keyDown(SDL_Keycode keycode)
+	void GameSceneMain::keyDownCapturingText(SDL_Keycode keycode)
+	{
+		if (keycode == SDLK_RETURN)
+		{
+			const std::string mapName = "./rooms/out/" + m_mapTempName;
+			pushPendingState(std::make_unique<GameSceneRaycaster>(m_renderer, m_font, mapName));
+			m_capturingMapName = false;
+			return;
+		}
+
+		if (keycode >= SDLK_SPACE && keycode <= SDLK_z)
+		{
+			m_mapTempName += (char)keycode;
+			return;
+		}
+
+		if (keycode == SDLK_BACKSPACE)
+		{
+			m_mapTempName.pop_back();
+		}
+	}
+	void GameSceneMain::keyDownImpl(SDL_Keycode keycode)
 	{
 		switch (keycode)
 		{
@@ -67,17 +95,20 @@ namespace game
 			break;
 		case SDLK_1:
 		case SDLK_KP_1:
-			std::cout << "Load Map" << std::endl;
-			std::string fname;
-			std::cout << "enter filename (leave blank for default.csv): " << fname;
-			std::getline(std::cin, fname);
-			if (fname.empty())
-			{
-				fname = "default.csv";
-			}
-			m_mapName = "./rooms/" + fname;
-
+			m_capturingMapName = true;
 			break;
+		}
+	}
+
+	void GameSceneMain::keyDown(SDL_Keycode keycode)
+	{
+		if (m_capturingMapName)
+		{
+			keyDownCapturingText(keycode);
+		}
+		else
+		{
+			keyDownImpl(keycode);
 		}
 	}
 	
