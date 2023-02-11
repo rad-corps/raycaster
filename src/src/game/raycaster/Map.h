@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include "RaycasterConstants.h"
 
 namespace game
@@ -11,7 +12,41 @@ namespace game
 // todo: namespace game::map
 namespace game::map
 {
-	using GameMap = std::array<int, MAP_SZ>;
+	// using GameMap = std::array<int, MAP_SZ>;
+
+	struct GameMap
+	{
+		GameMap() 
+			: m_cols{ 0 }
+			, m_rows{ 0 }
+		{}
+
+		GameMap(int cols, int rows)
+			: m_cols{cols}
+			, m_rows{rows}
+		{
+			m_mapData.resize(m_cols * m_rows);
+		}
+
+		int& operator[](int index)
+		{
+			return m_mapData[index];
+		}
+
+		const int& operator[](int index) const
+		{
+			return m_mapData[index];
+		}
+
+		int MAP_COLS() const { return m_cols;  }
+		int MAP_ROWS() const { return m_rows; }
+		int MAP_SZ() const { return m_rows * m_cols; }
+		
+	private:
+		std::vector<int> m_mapData;
+		int m_cols;
+		int m_rows;
+	};
 
 	bool facingDown(float angle_);
 	bool facingUp(float angle_);

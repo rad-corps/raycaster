@@ -17,13 +17,21 @@ namespace game::spatial
 	PathfindingGridCell* get_pathfinding_grid_cell(int index)
 	{
 		assert(index >= 0);
-		assert(index < game::MAP_SZ);
+		
+		// TODO: reintroduce assert
+		//assert(index < game::MAP_SZ);
 		return &pathfindingMap[index];
 	}
 
 	void init_path_finding()
 	{
-		for (int i = 0; i < MAP_SZ; ++i)
+		const map::GameMap& map = map::get_map();
+
+		// don't initialise pathfinding before map is intialised
+		assert(map.MAP_SZ() > 0);
+
+		pathfindingMap.resize(map.MAP_SZ());
+		for (int i = 0; i < map.MAP_SZ(); ++i)
 		{
 			pathfindingMap[i] = PathfindingGridCell{ i };
 		}

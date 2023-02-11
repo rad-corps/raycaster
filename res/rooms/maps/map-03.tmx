@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="16" height="8" tilewidth="64" tileheight="64" infinite="0" nextlayerid="3" nextobjectid="1">
+ <tileset firstgid="1" source="../tileset/walls.tsx"/>
+ <tileset firstgid="71" source="../tileset/characters.tsx"/>
+ <layer id="1" name="walls" width="16" height="8">
+  <data encoding="csv">
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,
+22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,50,
+22,0,0,0,0,0,0,0,16,0,8,0,10,0,0,16,
+22,0,0,0,0,0,0,30,0,0,8,0,0,0,0,50,
+22,0,0,0,0,0,0,30,0,0,8,0,0,0,0,16,
+22,0,0,0,0,0,0,0,0,0,8,0,0,0,0,16,
+22,16,43,44,45,16,16,16,16,16,16,16,16,59,58,57
+</data>
+ </layer>
+ <layer id="2" name="characters" width="16" height="8">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,83,0,
+0,0,71,0,0,0,0,0,0,0,0,0,0,0,83,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,83,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,0,
+0,0,0,0,0,0,0,0,0,0,0,0,85,85,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+</map>

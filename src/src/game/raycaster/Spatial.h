@@ -25,7 +25,9 @@ namespace game::spatial
 			, pos{ game::map::to_world_position(mapIndex) }
 		{
 			assert(mapIndex >= 0);
-			assert(mapIndex < game::MAP_SZ);
+
+			// TODO: reintroduce assert
+			//assert(mapIndex < game::MAP_SZ);
 		}
 		
 		PathfindingGridCell()
@@ -61,5 +63,5 @@ namespace game::spatial
 	};
 
 	PathfindingGridCell* get_pathfinding_grid_cell(int index);
-	using PathfindingMap = std::array<PathfindingGridCell, game::MAP_SZ>;
+	using PathfindingMap = std::vector<PathfindingGridCell>;
 }
