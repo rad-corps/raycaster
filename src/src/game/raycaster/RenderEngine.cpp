@@ -136,8 +136,6 @@ namespace
 			}
 		}
 
-		// TODO: rhsObstructed
-
 		return RectContainer{ screenSpaceSprite, SDL_Rect{0,0,spriteDims,spriteDims} };
 	}
 
@@ -231,13 +229,13 @@ namespace game
 		}
 		// draw the map
 		SDL_SetRenderDrawColor(m_renderer, 0, 128, 0, 0xFF);
-		for (int row = 0; row < MAP_ROWS; ++row)
+		for (int row = 0; row < map.MAP_ROWS(); ++row)
 		{
-			for (int col = 0; col < MAP_COLS; ++col)
+			for (int col = 0; col < map.MAP_COLS(); ++col)
 			{
 				// calc rect position and dimension
 				SDL_Rect dstRect{ col * MAP_CELL_PX * TOP_DOWN_SCALE, row * MAP_CELL_PX * TOP_DOWN_SCALE, MAP_CELL_PX * TOP_DOWN_SCALE, MAP_CELL_PX * TOP_DOWN_SCALE };
-				if (map[col + row * MAP_COLS] >= 0)
+				if (map[col + row * map.MAP_COLS()] >= 0)
 				{
 					SDL_RenderFillRect(m_renderer, &dstRect);
 				}

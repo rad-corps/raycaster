@@ -12,45 +12,37 @@ using math::PI;
 namespace
 {
 	// todo: we need to be able to replace the map
-	game::map::GameMap globalMap =
-	{
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-		0,-1,-1,-1,0,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,0,-1,-1,-1,0,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,0,0,-1,0,-1,0,-1,-1,0,-1,-1,-1,-1,0,-1,-1,-1,0,-1,0,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,0,0,-1,0,-1,0,-1,-1,0,-1,-1,-1,-1,0,-1,-1,-1,0,-1,0,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,0,-1,0,0,0,0,-1,0,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,0,0,-1,-1,0,0,-1,0,
-		0,-1,-1,-1,-1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,0,0,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	};
+	game::map::GameMap globalMap;
 }
 
 namespace game::map
 {
+	void init_global_map(const std::string& fileName)
+	{
+		// TODO: determine number of rows/columns and intialise globalMap with this data
+		int cols = 0;
+		int rows = 0;
+		std::string line;
+		std::fstream file{ fileName, std::ios::in };
+		while (file >> line)
+		{
+			std::stringstream stream(line);
+			std::string tmp;
+			
+			// make sure columns only counted once.
+			if (rows == 0)
+			{
+				while (std::getline(stream, tmp, ','))
+				{
+					++cols;
+				}
+			}
+
+			++rows;
+		}
+		globalMap = game::map::GameMap{ cols, rows };
+	}
+
 	void set_map(const std::string& filename, Player& player)
 	{
 		// clear gameobjects from factory??? 
@@ -65,10 +57,11 @@ namespace game::map
 		// Open an existing file
 		std::string wallsFileName = filename + "_walls.csv";
 		std::string charactersFileName = filename + "_characters.csv";
+
+		init_global_map(wallsFileName);
 		
 		wallsFile.open(wallsFileName, std::ios::in);
 		charactersFile.open(charactersFileName, std::ios::in);
-		
 
 		if (!wallsFile)
 		{
@@ -176,8 +169,8 @@ namespace game::map
 
 	math::Vec2 to_world_position(int mapIndex)
 	{
-		int yIndex = mapIndex / MAP_COLS;
-		int xIndex = mapIndex % MAP_COLS;
+		int yIndex = mapIndex / globalMap.MAP_COLS();
+		int xIndex = mapIndex % globalMap.MAP_COLS();
 		return math::Vec2{ static_cast<float>(xIndex * MAP_CELL_PX + MAP_CELL_PX / 2), static_cast<float>(yIndex * MAP_CELL_PX + MAP_CELL_PX / 2) };
 	}
 
@@ -185,11 +178,11 @@ namespace game::map
 	{
 		const int xIndex = x / MAP_CELL_PX;
 		const int yIndex = y / MAP_CELL_PX;
-		const int mapIndex = xIndex + yIndex * MAP_COLS;
+		const int mapIndex = xIndex + yIndex * globalMap.MAP_COLS();
 
 		// its possible to calculate a bad value with bad input, so lets
 		// just agree to return -1
-		if (mapIndex < 0 || MAP_SZ <= mapIndex)
+		if (mapIndex < 0 || globalMap.MAP_SZ() <= mapIndex)
 		{
 			//assert(false);
 			return -1;
@@ -214,45 +207,45 @@ namespace game::map
 		std::array<int, 8> ret{ -1, -1, -1, -1, -1, -1, -1, -1 };
 
 		// [0][1][2]
-		if (idx >= MAP_COLS) // not the top row
+		if (idx >= globalMap.MAP_COLS()) // not the top row
 		{
-			if (idx % MAP_COLS != 0) // not the left most column
+			if (idx % globalMap.MAP_COLS() != 0) // not the left most column
 			{
-				ret[0] = idx - MAP_COLS - 1;
+				ret[0] = idx - globalMap.MAP_COLS() - 1;
 			}
 			
-			ret[1] = idx - MAP_COLS;
+			ret[1] = idx - globalMap.MAP_COLS();
 
-			if ((idx + 1) % MAP_COLS != 0) // not the right most column
+			if ((idx + 1) % globalMap.MAP_COLS() != 0) // not the right most column
 			{
-				ret[2] = idx - MAP_COLS + 1;
+				ret[2] = idx - globalMap.MAP_COLS() + 1;
 			}
 		}
 
 		// [3]idx[4]
-		if (idx % MAP_COLS != 0) // not the left most column
+		if (idx % globalMap.MAP_COLS() != 0) // not the left most column
 		{
 			ret[3] = idx - 1;
 		}
 		
-		if ((idx + 1) % MAP_COLS != 0) // not the right most column
+		if ((idx + 1) % globalMap.MAP_COLS() != 0) // not the right most column
 		{
 			ret[4] = idx + 1;
 		}
 
 		// [5][6][7]
-		if (idx + MAP_COLS < MAP_SZ)
+		if (idx + globalMap.MAP_COLS() < globalMap.MAP_SZ())
 		{
-			if (idx % MAP_COLS != 0) // not the left most column
+			if (idx % globalMap.MAP_COLS() != 0) // not the left most column
 			{
-				ret[5] = idx + MAP_COLS - 1;
+				ret[5] = idx + globalMap.MAP_COLS() - 1;
 			}
 			
-			ret[6] = idx + MAP_COLS;
+			ret[6] = idx + globalMap.MAP_COLS();
 			
-			if ((idx + 1) % MAP_COLS != 0) // not the right most column
+			if ((idx + 1) % globalMap.MAP_COLS() != 0) // not the right most column
 			{
-				ret[7] = idx + MAP_COLS + 1;
+				ret[7] = idx + globalMap.MAP_COLS() + 1;
 			}
 		}
 		return ret;
@@ -285,13 +278,13 @@ namespace game::map
 		if (mapIndex == -1)
 			return true;
 
-		assert(mapIndex >= 0 && mapIndex < MAP_SZ);
+		assert(mapIndex >= 0 && mapIndex < globalMap.MAP_SZ());
 		return globalMap[mapIndex] >= 0;
 	}
 
 	bool is_wall(int index)
 	{
-		assert(index >= 0 && index < MAP_SZ);
+		assert(index >= 0 && index < globalMap.MAP_SZ());
 		return globalMap[index] >= 0;
 	}
 
