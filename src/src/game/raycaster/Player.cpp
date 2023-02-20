@@ -3,13 +3,14 @@
 #include "Player.h"
 #include "Map.h"
 #include <iostream>
+#include "../config/DesignerConstants.h"
 
 using math::PI;
 
 namespace
 {
-	constexpr float MOVEMENT_SPEED = 0.6f;
-	constexpr float ROTATION_SPEED = 0.02f;
+	// constexpr float MOVEMENT_SPEED = 0.6f;
+	// constexpr float ROTATION_SPEED = 0.02f;
 	constexpr int HALF_WALL_COLLISION_BOX_SZ = 3;
 }
 
@@ -40,11 +41,11 @@ namespace game
 	{
 		if (dir == RotateDirection::Clockwise)
 		{
-			transform.angle += ROTATION_SPEED;
+			transform.angle += design::PLAYER_ROTATION_SPEED;
 		}
 		else
 		{
-			transform.angle -= ROTATION_SPEED;
+			transform.angle -= design::PLAYER_ROTATION_SPEED;
 		}
 		if (transform.angle < 0)
 		{
@@ -65,7 +66,7 @@ namespace game
 		if (movementAngle > PI * 2) movementAngle -= PI * 2;
 		if (movementAngle < 0.f) movementAngle += PI * 2;
 
-		const float yDelta = sin(movementAngle) * MOVEMENT_SPEED;
+		const float yDelta = sin(movementAngle) * design::PLAYER_MOVEMENT_SPEED;
 		transform.pos.y += yDelta;
 		wallCollisionBox.y = static_cast<int>(transform.pos.y) - HALF_WALL_COLLISION_BOX_SZ;
 		if (map::is_in_wall(&wallCollisionBox))
@@ -74,7 +75,7 @@ namespace game
 			wallCollisionBox.y = static_cast<int>(transform.pos.y) - HALF_WALL_COLLISION_BOX_SZ;
 		}
 
-		const float xDelta = cos(movementAngle) * MOVEMENT_SPEED;
+		const float xDelta = cos(movementAngle) * design::PLAYER_MOVEMENT_SPEED;
 		transform.pos.x += xDelta;
 		wallCollisionBox.x = static_cast<int>(transform.pos.x) - HALF_WALL_COLLISION_BOX_SZ;
 		if (map::is_in_wall(&wallCollisionBox))
