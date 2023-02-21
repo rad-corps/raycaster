@@ -21,6 +21,8 @@ namespace rcgf
 		virtual void mouseDown(int button, int x, int y) 
 		{
 		}
+		virtual void gamepadEvent(int gamepadNumber, int buttonOrAxis, int value)
+		{}
 
 		void pushPendingState(std::unique_ptr<IGameScene>);
 		bool hasPendingState();
