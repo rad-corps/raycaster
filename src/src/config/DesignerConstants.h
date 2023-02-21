@@ -7,4 +7,7 @@ namespace design
 
 	constexpr float PLAYER_MOVEMENT_SPEED = 1.2f;
 	constexpr float PLAYER_ROTATION_SPEED = 0.04f;
+
+	//thumbstick range is from -32768 and 32767
+	constexpr int THUMBSTICK_DEADZONE = 8000;
 }

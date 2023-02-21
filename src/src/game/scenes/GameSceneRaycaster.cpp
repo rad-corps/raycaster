@@ -33,6 +33,8 @@ using math::PI;
 namespace
 {
 	SimplePerfCounter perfCounter;
+	math::Vec2 p1GamepadMovement{0.f, 0.f};
+	float p1GamepadRotation = 0.f; // -1 to +1
 }
 
 namespace game
@@ -103,6 +105,7 @@ namespace game
 
 		m_impl->m_gameObjects.Update(map::get_map(), { player.transform });
 
+		// handle keyboard movement
 		if (!keyStates[SDLK_LCTRL])
 		{
 			// rotate
@@ -119,6 +122,18 @@ namespace game
 		// forward and backward movement
 		if (keyStates[SDLK_w] || keyStates[SDLK_UP])    player.move(0.f, &map::get_map());
 		if (keyStates[SDLK_s] || keyStates[SDLK_DOWN])  player.move(PI, &map::get_map());
+
+		// handle gamepad movement
+		player.move(math::vec_to_angle(p1GamepadMovement), &map::get_map(), math::magnitude(p1GamepadMovement));
+		if (p1GamepadRotation < 0)
+		{
+			player.rotate(game::Player::RotateDirection::Anticlockwise, -p1GamepadRotation);
+		}
+		else
+		{
+			player.rotate(game::Player::RotateDirection::Clockwise, p1GamepadRotation);
+		}
+
 
 		overlay::update_weapon(m_impl->player.transform);
 	}
@@ -139,6 +154,39 @@ namespace game
 		gameObjects.Render(playerTransform, deltatime);
 		renderEngine.RenderTopDownMap(map::get_map(), playerTransform, m_impl->showRays);
 		overlay::render_weapon();
+	}
+
+	void GameSceneRaycaster::gamepadEvent(int gamepadNumber, int buttonOrAxis, int value)
+	{
+		constexpr int MAX_VAL = 32768;
+
+		if (gamepadNumber == 0) // player 1
+		{
+			if (buttonOrAxis == 0) // left thumbstick: x
+			{
+				p1GamepadMovement.y = value / (float)MAX_VAL;
+			}
+			else if (buttonOrAxis == 1 ) // left thumbstick: y
+			{
+				p1GamepadMovement.x = -value / (float)MAX_VAL;
+			}
+			else if (buttonOrAxis == 2) // right thumbstick: x
+			{
+				p1GamepadRotation = value / (float)MAX_VAL;
+			}
+			else if (buttonOrAxis == 5) // right trigger
+			{
+				if (value > 0)
+				{
+					overlay::start_fire();
+				}
+				else
+				{
+					overlay::stop_fire();
+				}
+			}
+		}
+		std::cout << buttonOrAxis << ", " << value << std::endl;
 	}
 
 	void GameSceneRaycaster::keyDown(SDL_Keycode keycode)

@@ -9,6 +9,7 @@
 #include <chrono>
 #include <Windows.h>
 #include <WinUser.h>
+#include "config/DesignerConstants.h"
 
 
 namespace
@@ -34,8 +35,6 @@ int main(int argc, char* args[])
 	TTF_Font* font = sdlGlobal.font;
 
 	printf("SDL Initialisation complete\n");
-
-	
 	
 	std::unique_ptr<rcgf::IGameScene> gameState = std::make_unique<game::GameSceneMain>(renderer, font);
 
@@ -72,22 +71,30 @@ int main(int argc, char* args[])
 		// handle events on queue
 		while (SDL_PollEvent(&e) != 0)
 		{
-			// user requests quit
-			if (e.type == SDL_QUIT)
+			switch (e.type)
 			{
+			case SDL_QUIT:
 				quit = true;
-			}
-			else if (e.type == SDL_KEYDOWN)
-			{
+				break;
+			case SDL_KEYDOWN:
 				gameState->keyDown(e.key.keysym.sym);
-			}
-			else if (e.type == SDL_KEYUP)
-			{
+				break;
+			case SDL_KEYUP:
 				gameState->keyUp(e.key.keysym.sym);
-			}
-			else if (e.type == SDL_MOUSEBUTTONDOWN)
-			{
+				break;
+			case SDL_MOUSEBUTTONDOWN:
 				gameState->mouseDown((int)e.button.button, (int)e.button.x, (int)e.button.y);
+				break;
+			case SDL_JOYAXISMOTION:
+				//Motion on controller 0
+				if (abs(e.jaxis.value) > design::THUMBSTICK_DEADZONE)
+				{
+					gameState->gamepadEvent(e.jaxis.which, (int)e.jaxis.axis, e.jaxis.value);
+				}
+				else
+				{
+					gameState->gamepadEvent(e.jaxis.which, (int)e.jaxis.axis, 0);
+				}
 			}
 		}
 

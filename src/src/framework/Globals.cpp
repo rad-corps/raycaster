@@ -21,7 +21,7 @@ namespace
 	std::chrono::steady_clock::time_point currTime;
 	double elapsed_time_ms = 0.0;
 
-	
+	SDL_Joystick* gGameController = NULL;
 }
 
 void SDL_SetRenderDrawColor(SDL_Renderer* renderer, Color color)
@@ -36,7 +36,7 @@ namespace global
 	{
 		SDL_Global ret{};
 		//Initialize SDL
-		if (SDL_Init(SDL_INIT_VIDEO) < 0)
+		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 		{
 			printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 			assert(false);
@@ -75,6 +75,17 @@ namespace global
 		if (!ret.window)
 		{
 			assert(false);
+		}
+
+		//Check for joysticks
+		if (SDL_NumJoysticks() > 0)
+		{
+			//Load joystick
+			gGameController = SDL_JoystickOpen(0);
+			if (gGameController == NULL)
+			{
+				printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
+			}
 		}
 
 		

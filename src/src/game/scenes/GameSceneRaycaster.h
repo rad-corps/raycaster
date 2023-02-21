@@ -17,6 +17,7 @@ namespace game
 		void render(double deltatime) override;
 		void keyDown(SDL_Keycode) override;
 		void keyUp(SDL_Keycode) override;
+		void gamepadEvent(int gamepadNumber, int buttonOrAxis, int value) override;
 
 	private:
 		struct Pimpl;

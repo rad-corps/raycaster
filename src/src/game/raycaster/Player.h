@@ -37,10 +37,9 @@ namespace game
 		};
 
 		math::Vec2 getOffset(float angle, float distance) const;
-		void rotate(RotateDirection dir);
-		void move(float relativeAngle, const map::GameMap* map);
+		void rotate(RotateDirection dir, float speed = 1.f);
+		void move(float relativeAngle, const map::GameMap* map, float speed = 1.f);
 		void setTransform(const math::Transform& transform);
-		void fire();
 
 		math::Transform transform;
 		SDL_Rect wallCollisionBox;

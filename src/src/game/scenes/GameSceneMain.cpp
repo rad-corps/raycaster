@@ -2,6 +2,8 @@
 #include "GameSceneRaycaster.h"
 #include "Map.h"
 
+#include "SDL_gamecontroller.h"
+
 namespace
 {
 	constexpr int NUM_OPTIONS = 2;

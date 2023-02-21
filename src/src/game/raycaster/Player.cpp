@@ -37,15 +37,15 @@ namespace game
 		return math::Vec2{ cos(angle) * distance, sin(angle) * distance };
 	}
 
-	void Player::rotate(RotateDirection dir)
+	void Player::rotate(RotateDirection dir, float speed)
 	{
 		if (dir == RotateDirection::Clockwise)
 		{
-			transform.angle += design::PLAYER_ROTATION_SPEED;
+			transform.angle += design::PLAYER_ROTATION_SPEED * speed;
 		}
 		else
 		{
-			transform.angle -= design::PLAYER_ROTATION_SPEED;
+			transform.angle -= design::PLAYER_ROTATION_SPEED * speed;
 		}
 		if (transform.angle < 0)
 		{
@@ -60,13 +60,14 @@ namespace game
 	// relativeAngle = PI            : move backward
 	// relativeAngle = PI / 2.f      : strafe right
 	// relativeAngle = PI + PI / 2.f : strafe left
-	void Player::move(float relativeAngle, const map::GameMap* gameMap)
+	void Player::move(float relativeAngle, const map::GameMap* gameMap, float speed)
 	{
 		float movementAngle = transform.angle + relativeAngle;
 		if (movementAngle > PI * 2) movementAngle -= PI * 2;
 		if (movementAngle < 0.f) movementAngle += PI * 2;
 
-		const float yDelta = sin(movementAngle) * design::PLAYER_MOVEMENT_SPEED;
+		const float yDelta = sin(movementAngle) * design::PLAYER_MOVEMENT_SPEED * speed;
+
 		transform.pos.y += yDelta;
 		wallCollisionBox.y = static_cast<int>(transform.pos.y) - HALF_WALL_COLLISION_BOX_SZ;
 		if (map::is_in_wall(&wallCollisionBox))
@@ -75,7 +76,8 @@ namespace game
 			wallCollisionBox.y = static_cast<int>(transform.pos.y) - HALF_WALL_COLLISION_BOX_SZ;
 		}
 
-		const float xDelta = cos(movementAngle) * design::PLAYER_MOVEMENT_SPEED;
+		const float xDelta = cos(movementAngle) * design::PLAYER_MOVEMENT_SPEED * speed;
+
 		transform.pos.x += xDelta;
 		wallCollisionBox.x = static_cast<int>(transform.pos.x) - HALF_WALL_COLLISION_BOX_SZ;
 		if (map::is_in_wall(&wallCollisionBox))
@@ -83,11 +85,5 @@ namespace game
 			transform.pos.x -= xDelta;
 			wallCollisionBox.x = static_cast<int>(transform.pos.x) - HALF_WALL_COLLISION_BOX_SZ;
 		}
-	}
-
-
-	void Player::fire()
-	{
-
 	}
 }
