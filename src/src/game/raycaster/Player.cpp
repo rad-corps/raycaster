@@ -67,6 +67,7 @@ namespace game
 		if (movementAngle < 0.f) movementAngle += PI * 2;
 
 		const float yDelta = sin(movementAngle) * design::PLAYER_MOVEMENT_SPEED * speed;
+
 		transform.pos.y += yDelta;
 		wallCollisionBox.y = static_cast<int>(transform.pos.y) - HALF_WALL_COLLISION_BOX_SZ;
 		if (map::is_in_wall(&wallCollisionBox))
@@ -76,6 +77,7 @@ namespace game
 		}
 
 		const float xDelta = cos(movementAngle) * design::PLAYER_MOVEMENT_SPEED * speed;
+
 		transform.pos.x += xDelta;
 		wallCollisionBox.x = static_cast<int>(transform.pos.x) - HALF_WALL_COLLISION_BOX_SZ;
 		if (map::is_in_wall(&wallCollisionBox))
