@@ -19,6 +19,8 @@ namespace game
 		void keyUp(SDL_Keycode) override;
 		void gamepadEvent(int gamepadNumber, int buttonOrAxis, int value) override;
 		void mouseMove(int xRel, int yRel) override;
+		void mouseDown(int button, int x, int y) override;
+		void mouseUp(int button, int x, int y) override;
 
 	private:
 		struct Pimpl;
