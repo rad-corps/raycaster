@@ -21,6 +21,8 @@ namespace rcgf
 		virtual void mouseDown(int button, int x, int y) 
 		{
 		}
+		virtual void mouseMove(int xRel, int yRel)
+		{	}
 		virtual void gamepadEvent(int gamepadNumber, int buttonOrAxis, int value)
 		{}
 
