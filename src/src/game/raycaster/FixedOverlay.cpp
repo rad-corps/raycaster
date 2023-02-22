@@ -2,14 +2,13 @@
 #include "SpriteSheet.h"
 #include <memory>
 #include "gameobjects/factory/GameObjectFactory.h"
+#include "../config/DesignerConstants.h"
 
 namespace
 {
 	std::unique_ptr<rcgf::SpriteSheet> ssPlayerWeapons;
 	SDL_Renderer* renderer = nullptr;
 	float msFireTimer = 0.f;
-	float msWeaponSpeed = 200.f;
-	float msWeaponReadySpeed = 50.f;
 	game::overlay::FireStatus fireStatus = game::overlay::FireStatus::NOT_FIRING;
 }
 
@@ -55,7 +54,7 @@ namespace game::overlay
 		switch (fireStatus)
 		{
 		case FireStatus::READY_01:
-			if (msFireTimer > msWeaponReadySpeed)
+			if (msFireTimer > design::UZI_READY_SPEED)
 			{
 				fireStatus = FireStatus::FIRE;
 				msFireTimer = 0.f;
@@ -63,14 +62,14 @@ namespace game::overlay
 			}
 			break;
 		case FireStatus::FIRE:
-			if (msFireTimer > msWeaponSpeed / 2)
+			if (msFireTimer > design::UZI_FIRE_RATE / 2)
 			{
 				fireStatus = FireStatus::RECOIL;
 				msFireTimer = 0.f;
 			}
 			break;
 		case FireStatus::RECOIL:
-			if (msFireTimer > msWeaponSpeed / 2)
+			if (msFireTimer > design::UZI_FIRE_RATE / 2)
 			{
 				fireStatus = FireStatus::FIRE;
 				msFireTimer = 0.f;

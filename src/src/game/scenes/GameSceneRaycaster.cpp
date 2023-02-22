@@ -24,6 +24,7 @@
 #include "EventSystem.h"
 #include "Spatial.h"
 #include "FixedOverlay.h"
+#include "../config/DesignerConstants.h"
 
 
 #define RENDER_DEBUG_VALUES
@@ -35,6 +36,7 @@ namespace
 	SimplePerfCounter perfCounter;
 	math::Vec2 p1GamepadMovement{0.f, 0.f};
 	float p1GamepadRotation = 0.f; // -1 to +1
+	float mouseRotation = 0.f;
 }
 
 namespace game
@@ -109,15 +111,19 @@ namespace game
 		if (!keyStates[SDLK_LCTRL])
 		{
 			// rotate
-			if (keyStates[SDLK_d] || keyStates[SDLK_RIGHT]) player.rotate(Player::RotateDirection::Clockwise);
-			if (keyStates[SDLK_a] || keyStates[SDLK_LEFT])  player.rotate(Player::RotateDirection::Anticlockwise);
+			if (keyStates[SDLK_RIGHT]) player.rotate(Player::RotateDirection::Clockwise);
+			if (keyStates[SDLK_LEFT])  player.rotate(Player::RotateDirection::Anticlockwise);
 		}
 		else
 		{
 			// strafe
-			if (keyStates[SDLK_d] || keyStates[SDLK_RIGHT]) player.move(PI / 2.f, &map::get_map());
-			if (keyStates[SDLK_a] || keyStates[SDLK_LEFT])  player.move(PI + PI * 0.5f, &map::get_map());
+			if (keyStates[SDLK_RIGHT]) player.move(PI / 2.f, &map::get_map());
+			if (keyStates[SDLK_LEFT])  player.move(PI + PI * 0.5f, &map::get_map());
 		}
+
+		// strafe
+		if (keyStates[SDLK_d]) player.move(PI / 2.f, &map::get_map());
+		if (keyStates[SDLK_a]) player.move(PI + PI * 0.5f, &map::get_map());
 
 		// forward and backward movement
 		if (keyStates[SDLK_w] || keyStates[SDLK_UP])    player.move(0.f, &map::get_map());
@@ -134,6 +140,17 @@ namespace game
 			player.rotate(game::Player::RotateDirection::Clockwise, p1GamepadRotation);
 		}
 
+		// handle mouse rotation
+		if (mouseRotation > 0)
+		{
+			player.rotate(game::Player::RotateDirection::Clockwise, mouseRotation);
+		}
+		else
+		{
+			player.rotate(game::Player::RotateDirection::Anticlockwise, -mouseRotation);
+		}
+		mouseRotation = 0.f; // reset mouseRotation as it accumulates between fixedUpdate
+		
 
 		overlay::update_weapon(m_impl->player.transform);
 	}
@@ -154,6 +171,27 @@ namespace game
 		gameObjects.Render(playerTransform, deltatime);
 		renderEngine.RenderTopDownMap(map::get_map(), playerTransform, m_impl->showRays);
 		overlay::render_weapon();
+	}
+
+	void GameSceneRaycaster::mouseMove(int xRel, int yRel)
+	{
+		mouseRotation += (float)xRel * design::MOUSE_SENSITIVITY;
+	}
+
+	void GameSceneRaycaster::mouseDown(int button, int x, int y)
+	{
+		if (button == 1) // LMB
+		{
+			overlay::start_fire();
+		}
+	}
+
+	void GameSceneRaycaster::mouseUp(int button, int x, int y)
+	{
+		if (button == 1) // LMB
+		{
+			overlay::stop_fire();
+		}
 	}
 
 	void GameSceneRaycaster::gamepadEvent(int gamepadNumber, int buttonOrAxis, int value)

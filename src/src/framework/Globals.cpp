@@ -120,6 +120,10 @@ namespace global
 			8,  // rows
 			15  // cols
 		);
+
+		// SDL_ShowCursor(SDL_DISABLE);
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+
 		return ret;
 	}
 

@@ -2,6 +2,7 @@
 
 #include "gameobjects/base/AI_Component.h"
 #include <cassert>
+#include "../config/DesignerConstants.h"
 
 namespace game
 {
@@ -67,6 +68,6 @@ namespace game
 		std::vector<math::Vec2> m_patrolWaypointPositions;
 		int m_waypointIndexCache = 0; // required for returning to initial path
 		
-		float m_health = 5.5f;
+		float m_health = design::ENEMY_HEALTH_CABRON;
 	};
 }

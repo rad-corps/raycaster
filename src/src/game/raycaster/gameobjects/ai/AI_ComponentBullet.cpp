@@ -3,6 +3,7 @@
 #include "./gameobjects/base/GameObjectPool.h"
 #include "RaycasterConstants.h"
 #include "./gameobjects/factory/GameObjectFactory.h"
+#include "../config/DesignerConstants.h"
 
 namespace
 {
@@ -46,7 +47,7 @@ namespace game
 			// get the distance from subject to gameObject
 			if (math::magnitude(gameObject.m_transform.pos - subject.m_transform.pos) < 3.f /* TODO: this shouldn't be a magic number*/)
 			{
-				gameObject.SendEnemyDamaged(EnemyDamagePayload{ 1.f, &gameObject });
+				gameObject.SendEnemyDamaged(EnemyDamagePayload{ design::UZI_BULLET_DAMAGE, &gameObject });
 				subject.m_active = false;
 			}
 		}

@@ -85,6 +85,12 @@ int main(int argc, char* args[])
 			case SDL_MOUSEBUTTONDOWN:
 				gameState->mouseDown((int)e.button.button, (int)e.button.x, (int)e.button.y);
 				break;
+			case SDL_MOUSEBUTTONUP:
+				gameState->mouseUp((int)e.button.button, (int)e.button.x, (int)e.button.y);
+				break;
+			case SDL_MOUSEMOTION:
+				gameState->mouseMove(e.motion.xrel, e.motion.yrel);
+				break;
 			case SDL_JOYAXISMOTION:
 				//Motion on controller 0
 				if (abs(e.jaxis.value) > design::THUMBSTICK_DEADZONE)
